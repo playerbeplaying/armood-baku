@@ -1,1 +1,595 @@
+cat > /home/claude/table.html << 'ENDOFFILE'
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Armood — Sifariş</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#C9A84C;--gold-light:#E8C97A;
+  --dark:#0F0D0A;--dark2:#1A1712;--dark3:#252118;
+  --cream:#F7F2E8;--text-muted:rgba(247,242,232,0.5);
+  --ff-head:'Georgia',serif;--ff-body:system-ui,sans-serif;
+  --nav-h:60px;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-weight:300;min-height:100vh;}
 
+/* NAV */
+.top-bar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(15,13,10,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,0.15);display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem;z-index:100;}
+.top-bar-logo{font-family:var(--ff-head);font-size:1.3rem;color:var(--gold);letter-spacing:0.08em;}
+.top-bar-table{font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);}
+.top-bar-table span{color:var(--gold-light);font-weight:500;}
+
+/* LOADING / ERROR */
+.state-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;text-align:center;padding:2rem;}
+.state-screen .icon{font-size:3rem;}
+.state-screen h2{font-family:var(--ff-head);font-size:1.8rem;color:var(--gold);}
+.state-screen p{color:var(--text-muted);font-size:0.9rem;line-height:1.7;}
+.spinner{width:36px;height:36px;border:2px solid rgba(201,168,76,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* LIVE INDICATOR */
+.live-bar{margin-top:var(--nav-h);background:rgba(201,168,76,0.06);border-bottom:1px solid rgba(201,168,76,0.1);padding:0.5rem 1.2rem;display:flex;align-items:center;gap:0.5rem;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* CATEGORIES */
+.cats{display:flex;gap:0.5rem;padding:1rem 1rem 0.5rem;overflow-x:auto;scrollbar-width:none;}
+.cats::-webkit-scrollbar{display:none;}
+.cat-btn{flex-shrink:0;padding:0.45rem 1rem;border:1px solid rgba(201,168,76,0.25);background:transparent;color:rgba(247,242,232,0.5);font-family:var(--ff-body);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border-radius:2px;}
+.cat-btn.active,.cat-btn:hover{background:var(--gold);border-color:var(--gold);color:var(--dark);}
+
+/* MENU ITEMS */
+.menu-list{padding:0.5rem 1rem 180px;display:flex;flex-direction:column;gap:1px;}
+.menu-item{background:var(--dark2);border:1px solid rgba(201,168,76,0.08);padding:1rem;display:flex;align-items:center;gap:0.9rem;transition:border-color 0.2s;}
+.menu-item:hover{border-color:rgba(201,168,76,0.25);}
+.menu-item-emoji{font-size:1.8rem;width:40px;text-align:center;flex-shrink:0;}
+.menu-item-info{flex:1;min-width:0;}
+.menu-item-name{font-family:var(--ff-head);font-size:1rem;color:var(--cream);margin-bottom:0.2rem;}
+.menu-item-desc{font-size:0.75rem;color:var(--text-muted);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.menu-item-price{font-family:var(--ff-head);font-size:1rem;color:var(--gold);flex-shrink:0;}
+.menu-item-unavail{opacity:0.4;pointer-events:none;}
+.unavail-tag{font-size:0.65rem;color:#e05c5c;letter-spacing:0.08em;text-transform:uppercase;}
+
+/* ADD BUTTON */
+.add-btn{width:30px;height:30px;border:1px solid rgba(201,168,76,0.4);background:transparent;color:var(--gold);font-size:1.3rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;border-radius:2px;}
+.add-btn:hover{background:var(--gold);color:var(--dark);}
+
+/* QTY CONTROL */
+.qty-ctrl{display:flex;align-items:center;gap:0.4rem;flex-shrink:0;}
+.qty-btn{width:28px;height:28px;border:1px solid rgba(201,168,76,0.35);background:transparent;color:var(--gold);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;border-radius:2px;}
+.qty-btn:hover{background:var(--gold);color:var(--dark);}
+.qty-num{font-size:0.9rem;font-weight:500;color:var(--cream);min-width:18px;text-align:center;}
+
+/* CART PANEL */
+.cart-panel{position:fixed;bottom:0;left:0;right:0;background:rgba(15,13,10,0.97);backdrop-filter:blur(16px);border-top:1px solid rgba(201,168,76,0.2);z-index:90;transition:max-height 0.35s ease;}
+.cart-bar{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.2rem;cursor:pointer;}
+.cart-bar-left{display:flex;align-items:center;gap:0.7rem;}
+.cart-icon{font-size:1.2rem;}
+.cart-bar-label{font-size:0.85rem;font-weight:500;color:var(--cream);}
+.cart-count-badge{background:var(--gold);color:var(--dark);font-size:0.7rem;font-weight:600;padding:0.1rem 0.5rem;border-radius:20px;min-width:20px;text-align:center;}
+.cart-bar-total{font-family:var(--ff-head);font-size:1.1rem;color:var(--gold);}
+.cart-expand-icon{color:var(--text-muted);font-size:1rem;transition:transform 0.3s;}
+.cart-panel.expanded .cart-expand-icon{transform:rotate(180deg);}
+
+.cart-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease;}
+.cart-panel.expanded .cart-body{max-height:60vh;overflow-y:auto;}
+.cart-body-inner{padding:0 1.2rem 1rem;}
+.cart-empty-msg{text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.85rem;}
+.cart-line{display:flex;align-items:center;gap:0.7rem;padding:0.6rem 0;border-bottom:1px solid rgba(201,168,76,0.07);}
+.cart-line:last-child{border-bottom:none;}
+.cart-line-name{flex:1;font-size:0.85rem;color:var(--cream);}
+.cart-line-qty{font-size:0.75rem;color:var(--text-muted);}
+.cart-line-price{font-family:var(--ff-head);font-size:0.95rem;color:var(--gold);}
+.cart-line-del{background:none;border:none;color:rgba(247,242,232,0.2);cursor:pointer;font-size:1rem;padding:0;transition:color 0.2s;}
+.cart-line-del:hover{color:#e05c5c;}
+.cart-footer{padding:0.8rem 0 0.2rem;display:flex;flex-direction:column;gap:0.6rem;}
+.cart-total-row{display:flex;justify-content:space-between;font-size:0.9rem;color:var(--text-muted);}
+.cart-total-row.bold{color:var(--cream);font-weight:500;font-size:1rem;}
+.cart-total-row.bold span:last-child{color:var(--gold);font-family:var(--ff-head);font-size:1.1rem;}
+.cart-note-input{width:100%;background:var(--dark);border:1px solid rgba(201,168,76,0.15);color:var(--cream);padding:0.6rem 0.8rem;font-family:var(--ff-body);font-size:0.85rem;outline:none;transition:border-color 0.2s;border-radius:2px;}
+.cart-note-input:focus{border-color:var(--gold);}
+.cart-note-input::placeholder{color:rgba(247,242,232,0.25);}
+.btn-place-order{width:100%;background:var(--gold);color:var(--dark);border:none;cursor:pointer;font-family:var(--ff-body);font-size:0.82rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;padding:0.9rem;transition:background 0.2s;}
+.btn-place-order:hover{background:var(--gold-light);}
+.btn-place-order:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-clear-cart{width:100%;background:transparent;border:1px solid rgba(247,242,232,0.1);color:rgba(247,242,232,0.3);cursor:pointer;font-family:var(--ff-body);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.55rem;transition:all 0.2s;border-radius:2px;}
+.btn-clear-cart:hover{border-color:rgba(247,242,232,0.25);color:rgba(247,242,232,0.5);}
+
+/* ORDERS STATUS */
+.orders-section{padding:0 1rem 0.5rem;margin-top:0.5rem;}
+.orders-section-title{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;font-weight:500;}
+.order-status-card{background:var(--dark3);border:1px solid rgba(201,168,76,0.12);padding:0.8rem 1rem;margin-bottom:0.5rem;border-radius:2px;}
+.order-status-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;}
+.order-status-id{font-size:0.72rem;color:var(--text-muted);}
+.order-status-badge{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.15rem 0.5rem;border-radius:20px;}
+.badge-pending{background:rgba(201,168,76,0.15);color:var(--gold-light);}
+.badge-confirmed{background:rgba(59,130,246,0.15);color:#93c5fd;}
+.badge-ready{background:rgba(74,222,128,0.15);color:#4ade80;}
+.badge-paid{background:rgba(107,114,128,0.15);color:#9ca3af;}
+.order-status-items{font-size:0.8rem;color:var(--text-muted);line-height:1.6;}
+
+/* SUCCESS TOAST */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--dark3);border:1px solid var(--gold);color:var(--cream);padding:0.8rem 1.5rem;font-size:0.85rem;z-index:200;opacity:0;transition:all 0.4s;white-space:nowrap;border-radius:2px;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* CHECKOUT OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(10,8,6,0.88);z-index:150;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.checkout-sheet{background:var(--dark2);border:1px solid rgba(201,168,76,0.2);border-bottom:none;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
+.checkout-sheet h3{font-family:var(--ff-head);font-size:1.6rem;color:var(--cream);margin-bottom:0.3rem;}
+.checkout-sheet .sub{font-size:0.8rem;color:var(--text-muted);margin-bottom:1.2rem;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+.form-group{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.7rem;}
+.form-group label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(247,242,232,0.4);}
+.form-group input,.form-group select,.form-group textarea{background:var(--dark);border:1px solid rgba(201,168,76,0.15);color:var(--cream);padding:0.7rem 0.8rem;font-family:var(--ff-body);font-size:0.88rem;outline:none;transition:border-color 0.2s;-webkit-appearance:none;border-radius:2px;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);}
+.form-group select option{background:var(--dark2);}
+.checkout-summary{background:var(--dark3);padding:0.8rem 1rem;margin:0.5rem 0 0.8rem;border-radius:2px;}
+.checkout-summary p{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;}
+.checkout-sum-line{display:flex;justify-content:space-between;font-size:0.83rem;color:rgba(247,242,232,0.6);padding:0.2rem 0;}
+.checkout-sum-total{display:flex;justify-content:space-between;font-size:0.95rem;font-weight:500;color:var(--cream);border-top:1px solid rgba(201,168,76,0.1);margin-top:0.4rem;padding-top:0.4rem;}
+.checkout-sum-total span:last-child{color:var(--gold);font-family:var(--ff-head);}
+.delivery-type{display:flex;gap:0.6rem;margin-bottom:0.8rem;}
+.type-btn{flex:1;padding:0.6rem;border:1px solid rgba(201,168,76,0.2);background:transparent;color:rgba(247,242,232,0.45);font-family:var(--ff-body);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border-radius:2px;}
+.type-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.08);}
+.btn-submit-order{width:100%;background:var(--gold);color:var(--dark);border:none;cursor:pointer;font-family:var(--ff-body);font-size:0.83rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;padding:0.95rem;transition:background 0.2s;margin-top:0.3rem;border-radius:2px;}
+.btn-submit-order:hover{background:var(--gold-light);}
+.btn-close-overlay{position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(247,242,232,0.35);font-size:1.4rem;cursor:pointer;transition:color 0.2s;}
+.btn-close-overlay:hover{color:var(--cream);}
+.overlay-wrap{position:relative;width:100%;max-width:480px;}
+.success-view{text-align:center;padding:2rem 1rem;}
+.success-view .check{font-size:3rem;display:block;margin-bottom:0.8rem;}
+.success-view h3{font-family:var(--ff-head);font-size:2rem;color:var(--gold);margin-bottom:0.5rem;}
+.success-view p{font-size:0.88rem;color:var(--text-muted);line-height:1.8;}
+.success-view .eta{color:var(--gold-light);font-weight:500;}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-logo">ARMOOD</div>
+  <div class="top-bar-table">Masa <span id="tableNumDisplay">—</span></div>
+</div>
+
+<div id="loadingScreen" class="state-screen">
+  <div class="spinner"></div>
+  <p style="color:var(--text-muted);">Yüklənir...</p>
+</div>
+
+<div id="errorScreen" class="state-screen" style="display:none">
+  <div class="icon">⚠️</div>
+  <h2>Masa Tapılmadı</h2>
+  <p>Bu QR kod etibarsızdır və ya masa mövcud deyil.<br>Zəhmət olmasa ofisiantdan kömək istəyin.</p>
+</div>
+
+<div id="mainContent" style="display:none">
+  <div class="live-bar">
+    <div class="live-dot"></div>
+    <span>Canlı sifariş — dəyişikliklər dərhal görünür</span>
+  </div>
+
+  <div class="orders-section" id="ordersSection" style="display:none">
+    <div class="orders-section-title">Masanızın sifarişləri</div>
+    <div id="ordersList"></div>
+  </div>
+
+  <div class="cats" id="catBar">
+    <button class="cat-btn active" data-cat="all">Hamısı</button>
+    <button class="cat-btn" data-cat="seheri">Səhər yeməyi</button>
+    <button class="cat-btn" data-cat="ana">Ana yeməklər</button>
+    <button class="cat-btn" data-cat="salatlar">Salatlar</button>
+    <button class="cat-btn" data-cat="icecekler">İçkilər</button>
+  </div>
+
+  <div class="menu-list" id="menuList"></div>
+</div>
+
+<!-- CART -->
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-bar" id="cartBar">
+    <div class="cart-bar-left">
+      <span class="cart-icon">🛒</span>
+      <span class="cart-bar-label">Səbət</span>
+      <span class="cart-count-badge" id="cartCount">0</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.7rem;">
+      <span class="cart-bar-total" id="cartBarTotal">₼0.00</span>
+      <span class="cart-expand-icon">▲</span>
+    </div>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-body-inner">
+      <div class="cart-empty-msg" id="cartEmptyMsg">Səbətiniz boşdur. Yemək seçin!</div>
+      <div id="cartLines"></div>
+      <div class="cart-footer" id="cartFooter" style="display:none">
+        <input class="cart-note-input" id="cartNote" type="text" placeholder="Qeyd əlavə edin (ixtiyari)...">
+        <div class="cart-total-row"><span>Aralıq cəm</span><span id="cartSubtotal">₼0.00</span></div>
+        <div class="cart-total-row bold"><span>Cəmi</span><span id="cartTotal">₼0.00</span></div>
+        <button class="btn-place-order" id="btnPlaceOrder">Sifariş Ver →</button>
+        <button class="btn-clear-cart" id="btnClearCart">Səbəti Təmizlə</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT OVERLAY -->
+<div class="overlay" id="checkoutOverlay">
+  <div class="overlay-wrap">
+    <button class="btn-close-overlay" id="btnCloseOverlay">✕</button>
+    <div class="checkout-sheet">
+      <div id="checkoutFormView">
+        <h3>Sifarişi Tamamla</h3>
+        <p class="sub">Məlumatlarınızı daxil edin</p>
+        <div class="delivery-type">
+          <button class="type-btn active" id="typeTable">🍽️ Masada</button>
+          <button class="type-btn" id="typePickup">📦 Paket</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ad Soyad</label>
+            <input type="text" id="coName" placeholder="Adınız">
+          </div>
+          <div class="form-group">
+            <label>Telefon</label>
+            <input type="tel" id="coPhone" placeholder="050 000 00 00">
+          </div>
+        </div>
+        <div class="checkout-summary">
+          <p>Sifarişiniz</p>
+          <div id="coSummaryLines"></div>
+          <div class="checkout-sum-total">
+            <span>Cəmi</span><span id="coTotal">₼0.00</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Ödəniş üsulu</label>
+          <select id="coPayment">
+            <option>Nağd</option>
+            <option>Kart</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Qeyd (ixtiyari)</label>
+          <textarea id="coNote" placeholder="Xüsusi istəklər..." style="min-height:60px;resize:vertical;"></textarea>
+        </div>
+        <button class="btn-submit-order" id="btnSubmitOrder">Sifarişi Göndər →</button>
+      </div>
+      <div id="checkoutSuccessView" class="success-view" style="display:none">
+        <span class="check">✓</span>
+        <h3>Sifariş Alındı!</h3>
+        <p>Sifarişiniz qəbul edildi.<br>Tezliklə hazırlanacaq.<br><br>Təxmini vaxt: <span class="eta">15–25 dəqiqə</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
+
+const api = (path, opts={}) => fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+  headers: {'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation', ...opts.headers},
+  ...opts
+}).then(r => r.json());
+
+const rpc = (fn, body) => fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+  method:'POST', headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+  body: JSON.stringify(body)
+}).then(r=>r.json());
+
+// State
+let tableData = null;
+let menuItems = [];
+let cart = {};
+let currentCat = 'all';
+let cartExpanded = false;
+let orderType = 'table';
+let tableOrders = [];
+let realtimeChannel = null;
+
+// Get token from URL
+const token = new URLSearchParams(location.search).get('t');
+
+async function init() {
+  if (!token) { showError(); return; }
+  try {
+    // Find table by token
+    const tables = await api(`restaurant_tables?token=eq.${token}&select=*`);
+    if (!tables.length || tables.error) { showError(); return; }
+    tableData = tables[0];
+    document.getElementById('tableNumDisplay').textContent = tableData.table_number;
+    document.title = `Armood — Masa ${tableData.table_number}`;
+
+    // Load menu
+    const menu = await api('menu_items?select=*&order=category');
+    menuItems = menu;
+
+    // Load existing orders for this table
+    await loadOrders();
+
+    // Show content
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+
+    renderMenu();
+    setupRealtime();
+    setupListeners();
+  } catch(e) {
+    showError();
+  }
+}
+
+async function loadOrders() {
+  if (!tableData) return;
+  const orders = await api(`orders?table_id=eq.${tableData.id}&status=neq.paid&select=*,order_items(*,menu_items(name,price))`);
+  tableOrders = Array.isArray(orders) ? orders : [];
+  renderOrders();
+}
+
+function renderOrders() {
+  const section = document.getElementById('ordersSection');
+  const list = document.getElementById('ordersList');
+  if (!tableOrders.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = tableOrders.map(o => {
+    const items = (o.order_items || []).map(i => `${i.quantity}× ${i.menu_items?.name || 'Məhsul'}`).join(', ');
+    const statusMap = {pending:'Gözləyir',confirmed:'Təsdiqləndi',ready:'Hazırdır',paid:'Ödənilib'};
+    const badgeMap = {pending:'badge-pending',confirmed:'badge-confirmed',ready:'badge-ready',paid:'badge-paid'};
+    return `<div class="order-status-card">
+      <div class="order-status-header">
+        <span class="order-status-id">Sifariş #${o.id.toString().slice(-4)}</span>
+        <span class="order-status-badge ${badgeMap[o.status]||'badge-pending'}">${statusMap[o.status]||o.status}</span>
+      </div>
+      <div class="order-status-items">${items}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMenu() {
+  const list = document.getElementById('menuList');
+  const filtered = currentCat === 'all' ? menuItems : menuItems.filter(i => i.category === currentCat);
+  if (!filtered.length) { list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem;font-size:0.85rem;">Bu kateqoriyada məhsul yoxdur</p>'; return; }
+  list.innerHTML = filtered.map(item => {
+    const qty = cart[item.id]?.qty || 0;
+    const unavail = !item.available;
+    return `<div class="menu-item${unavail?' menu-item-unavail':''}">
+      <span class="menu-item-emoji">${item.emoji||'🍽️'}</span>
+      <div class="menu-item-info">
+        <div class="menu-item-name">${item.name}</div>
+        <div class="menu-item-desc">${unavail?'<span class="unavail-tag">Mövcud deyil</span>':item.description||''}</div>
+      </div>
+      <span class="menu-item-price">₼${Number(item.price).toFixed(2)}</span>
+      ${qty > 0
+        ? `<div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
+            <span class="qty-num">${qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
+          </div>`
+        : `<button class="add-btn" onclick="changeQty('${item.id}',1)">+</button>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function changeQty(id, delta) {
+  const item = menuItems.find(i => i.id == id);
+  if (!item) return;
+  if (!cart[id]) cart[id] = {item, qty: 0};
+  cart[id].qty = Math.max(0, cart[id].qty + delta);
+  if (cart[id].qty === 0) delete cart[id];
+  renderMenu();
+  renderCart();
+}
+
+function renderCart() {
+  const items = Object.values(cart);
+  const totalQty = items.reduce((s,c)=>s+c.qty,0);
+  const subtotal = items.reduce((s,c)=>s+c.qty*Number(c.item.price),0);
+
+  document.getElementById('cartCount').textContent = totalQty;
+  document.getElementById('cartBarTotal').textContent = `₼${subtotal.toFixed(2)}`;
+
+  const linesEl = document.getElementById('cartLines');
+  const footerEl = document.getElementById('cartFooter');
+  const emptyEl = document.getElementById('cartEmptyMsg');
+
+  if (!items.length) {
+    linesEl.innerHTML = '';
+    footerEl.style.display = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  footerEl.style.display = 'flex';
+
+  linesEl.innerHTML = items.map(({item,qty}) => `
+    <div class="cart-line">
+      <span class="cart-line-name">${item.emoji} ${item.name}</span>
+      <span class="cart-line-qty">${qty}×</span>
+      <span class="cart-line-price">₼${(qty*Number(item.price)).toFixed(2)}</span>
+      <button class="cart-line-del" onclick="removeFromCart('${item.id}')">✕</button>
+    </div>`).join('');
+
+  document.getElementById('cartSubtotal').textContent = `₼${subtotal.toFixed(2)}`;
+  document.getElementById('cartTotal').textContent = `₼${subtotal.toFixed(2)}`;
+}
+
+function removeFromCart(id) {
+  delete cart[id];
+  renderMenu();
+  renderCart();
+}
+
+function setupRealtime() {
+  // Poll for order status updates every 15 seconds
+  setInterval(loadOrders, 15000);
+}
+
+function setupListeners() {
+  // Category buttons
+  document.getElementById('catBar').addEventListener('click', e => {
+    const btn = e.target.closest('.cat-btn');
+    if (!btn) return;
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    renderMenu();
+  });
+
+  // Cart toggle
+  document.getElementById('cartBar').addEventListener('click', () => {
+    cartExpanded = !cartExpanded;
+    document.getElementById('cartPanel').classList.toggle('expanded', cartExpanded);
+  });
+
+  // Place order
+  document.getElementById('btnPlaceOrder').addEventListener('click', openCheckout);
+
+  // Clear cart
+  document.getElementById('btnClearCart').addEventListener('click', () => {
+    cart = {};
+    renderMenu();
+    renderCart();
+  });
+
+  // Close overlay
+  document.getElementById('btnCloseOverlay').addEventListener('click', closeCheckout);
+  document.getElementById('checkoutOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('checkoutOverlay')) closeCheckout();
+  });
+
+  // Delivery type
+  document.getElementById('typeTable').addEventListener('click', () => {
+    orderType = 'table';
+    document.getElementById('typeTable').classList.add('active');
+    document.getElementById('typePickup').classList.remove('active');
+  });
+  document.getElementById('typePickup').addEventListener('click', () => {
+    orderType = 'pickup';
+    document.getElementById('typePickup').classList.add('active');
+    document.getElementById('typeTable').classList.remove('active');
+  });
+
+  // Submit order
+  document.getElementById('btnSubmitOrder').addEventListener('click', submitOrder);
+}
+
+function openCheckout() {
+  const items = Object.values(cart);
+  if (!items.length) return;
+  const subtotal = items.reduce((s,c)=>s+c.qty*Number(c.item.price),0);
+  document.getElementById('coSummaryLines').innerHTML = items.map(({item,qty}) =>
+    `<div class="checkout-sum-line"><span>${qty}× ${item.name}</span><span>₼${(qty*Number(item.price)).toFixed(2)}</span></div>`
+  ).join('');
+  document.getElementById('coTotal').textContent = `₼${subtotal.toFixed(2)}`;
+  document.getElementById('coNote').value = document.getElementById('cartNote').value;
+  document.getElementById('checkoutFormView').style.display = 'block';
+  document.getElementById('checkoutSuccessView').style.display = 'none';
+  document.getElementById('checkoutOverlay').classList.add('open');
+}
+
+function closeCheckout() {
+  document.getElementById('checkoutOverlay').classList.remove('open');
+}
+
+async function submitOrder() {
+  const name = document.getElementById('coName').value.trim();
+  const phone = document.getElementById('coPhone').value.trim();
+  const note = document.getElementById('coNote').value.trim();
+  const payment = document.getElementById('coPayment').value;
+
+  if (!name) { showToast('Adınızı daxil edin'); return; }
+
+  const items = Object.values(cart);
+  const total = items.reduce((s,c)=>s+c.qty*Number(c.item.price),0);
+
+  const btn = document.getElementById('btnSubmitOrder');
+  btn.disabled = true;
+  btn.textContent = 'Göndərilir...';
+
+  try {
+    // Create order
+    const orderRes = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      method:'POST',
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json','Prefer':'return=representation'},
+      body: JSON.stringify({
+        table_id: tableData.id,
+        status: 'pending',
+        total: total,
+        notes: `${name} | ${phone} | ${payment} | ${note} | ${orderType}`
+      })
+    });
+    const orderData = await orderRes.json();
+    const orderId = orderData[0]?.id;
+    if (!orderId) throw new Error('Order creation failed');
+
+    // Add order items
+    const orderItems = items.map(({item,qty}) => ({
+      order_id: orderId,
+      menu_item_id: item.id,
+      quantity: qty,
+      price_at_order: Number(item.price),
+      added_by: name
+    }));
+
+    await fetch(`${SUPABASE_URL}/rest/v1/order_items`, {
+      method:'POST',
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+      body: JSON.stringify(orderItems)
+    });
+
+    // Update table status
+    await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`, {
+      method:'PATCH',
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+      body: JSON.stringify({status:'ordered'})
+    });
+
+    // Show success
+    document.getElementById('checkoutFormView').style.display = 'none';
+    document.getElementById('checkoutSuccessView').style.display = 'block';
+
+    // Clear cart
+    cart = {};
+    renderMenu();
+    renderCart();
+    cartExpanded = false;
+    document.getElementById('cartPanel').classList.remove('expanded');
+
+    // Reload orders after 1.5s
+    setTimeout(async () => {
+      await loadOrders();
+      closeCheckout();
+    }, 3000);
+
+  } catch(e) {
+    showToast('Xəta baş verdi. Yenidən cəhd edin.');
+    btn.disabled = false;
+    btn.textContent = 'Sifarişi Göndər →';
+  }
+}
+
+function showError() {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('errorScreen').style.display = 'flex';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+init();
+</script>
+</body>
+</html>
+ENDOFFILE
+echo "Done"
