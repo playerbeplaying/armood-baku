@@ -387,7 +387,7 @@ async function loadDashboard() {
 
   const [tables, orders] = await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
-    api('orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&status=neq.draft&order=created_at.desc')
+    api('orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc')
   ]);
 
   allOrders = Array.isArray(orders) ? orders : [];
@@ -440,7 +440,7 @@ function renderTableCards(tables, container) {
 async function loadTables() {
   const [tables, orders] = await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
-    api('orders?select=*,order_items(*,menu_items(name))&status=neq.paid&status=neq.draft')
+    api('orders?select=*,order_items(*,menu_items(name))&status=neq.paid')
   ]);
   allOrders = Array.isArray(orders) ? orders : [];
   renderTableCards(Array.isArray(tables) ? tables : [], document.getElementById('tablesGrid'));
