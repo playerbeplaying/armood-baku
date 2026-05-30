@@ -56,9 +56,19 @@ nav.scrolled{
   border-bottom:1px solid var(--border);
   box-shadow:0 2px 16px rgba(30,24,16,0.06);
 }
-.nav-logo{
-  font-family:var(--ff-head);font-size:1.6rem;font-weight:700;
-  color:var(--ink);letter-spacing:0.01em;text-decoration:none;
+.nav-logo {
+  font-family: var(--ff-head);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--white); /* Changed from var(--ink) to var(--white) */
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+/* This ensures that when you scroll down and the bar turns white, 
+   the text turns back to dark so it stays visible */
+nav.scrolled .nav-logo {
+  color: var(--ink);
 }
 .nav-logo em{color:var(--terra);font-style:italic;}
 .nav-links{display:flex;gap:2.2rem;list-style:none;}
