@@ -1,3 +1,4 @@
+cat > /home/claude/table.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -33,7 +34,6 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
 /* LIVE INDICATOR */
 .live-bar{margin-top:var(--nav-h);background:rgba(201,168,76,0.06);border-bottom:1px solid rgba(201,168,76,0.1);padding:0.5rem 1.2rem;display:flex;align-items:center;gap:0.5rem;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);}
 .live-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
-.live-sync-msg{margin-left:auto;font-size:0.68rem;color:rgba(201,168,76,0.5);transition:opacity 0.5s;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 
 /* CATEGORIES */
@@ -43,7 +43,7 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
 .cat-btn.active,.cat-btn:hover{background:var(--gold);border-color:var(--gold);color:var(--dark);}
 
 /* MENU ITEMS */
-.menu-list{padding:0.5rem 1rem 220px;display:flex;flex-direction:column;gap:1px;}
+.menu-list{padding:0.5rem 1rem 180px;display:flex;flex-direction:column;gap:1px;}
 .menu-item{background:var(--dark2);border:1px solid rgba(201,168,76,0.08);padding:1rem;display:flex;align-items:center;gap:0.9rem;transition:border-color 0.2s;}
 .menu-item:hover{border-color:rgba(201,168,76,0.25);}
 .menu-item-emoji{font-size:1.8rem;width:40px;text-align:center;flex-shrink:0;}
@@ -76,13 +76,12 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
 .cart-panel.expanded .cart-expand-icon{transform:rotate(180deg);}
 
 .cart-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease;}
-.cart-panel.expanded .cart-body{max-height:65vh;overflow-y:auto;}
+.cart-panel.expanded .cart-body{max-height:60vh;overflow-y:auto;}
 .cart-body-inner{padding:0 1.2rem 1rem;}
 .cart-empty-msg{text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.85rem;}
 .cart-line{display:flex;align-items:center;gap:0.7rem;padding:0.6rem 0;border-bottom:1px solid rgba(201,168,76,0.07);}
 .cart-line:last-child{border-bottom:none;}
 .cart-line-name{flex:1;font-size:0.85rem;color:var(--cream);}
-.cart-line-who{font-size:0.7rem;color:rgba(201,168,76,0.5);margin-left:0.3rem;}
 .cart-line-qty{font-size:0.75rem;color:var(--text-muted);}
 .cart-line-price{font-family:var(--ff-head);font-size:0.95rem;color:var(--gold);}
 .cart-line-del{background:none;border:none;color:rgba(247,242,232,0.2);cursor:pointer;font-size:1rem;padding:0;transition:color 0.2s;}
@@ -94,13 +93,13 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
 .cart-note-input{width:100%;background:var(--dark);border:1px solid rgba(201,168,76,0.15);color:var(--cream);padding:0.6rem 0.8rem;font-family:var(--ff-body);font-size:0.85rem;outline:none;transition:border-color 0.2s;border-radius:2px;}
 .cart-note-input:focus{border-color:var(--gold);}
 .cart-note-input::placeholder{color:rgba(247,242,232,0.25);}
-.btn-place-order{width:100%;background:var(--gold);color:var(--dark);border:none;cursor:pointer;font-family:var(--ff-body);font-size:0.82rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;padding:0.9rem;transition:background 0.2s;border-radius:2px;}
+.btn-place-order{width:100%;background:var(--gold);color:var(--dark);border:none;cursor:pointer;font-family:var(--ff-body);font-size:0.82rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;padding:0.9rem;transition:background 0.2s;}
 .btn-place-order:hover{background:var(--gold-light);}
 .btn-place-order:disabled{opacity:0.4;cursor:not-allowed;}
 .btn-clear-cart{width:100%;background:transparent;border:1px solid rgba(247,242,232,0.1);color:rgba(247,242,232,0.3);cursor:pointer;font-family:var(--ff-body);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.55rem;transition:all 0.2s;border-radius:2px;}
 .btn-clear-cart:hover{border-color:rgba(247,242,232,0.25);color:rgba(247,242,232,0.5);}
 
-/* CONFIRMED ORDERS STATUS */
+/* ORDERS STATUS */
 .orders-section{padding:0 1rem 0.5rem;margin-top:0.5rem;}
 .orders-section-title{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;font-weight:500;}
 .order-status-card{background:var(--dark3);border:1px solid rgba(201,168,76,0.12);padding:0.8rem 1rem;margin-bottom:0.5rem;border-radius:2px;}
@@ -113,42 +112,35 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
 .badge-paid{background:rgba(107,114,128,0.15);color:#9ca3af;}
 .order-status-items{font-size:0.8rem;color:var(--text-muted);line-height:1.6;}
 
-/* TOAST */
-.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--dark3);border:1px solid var(--gold);color:var(--cream);padding:0.8rem 1.5rem;font-size:0.85rem;z-index:200;opacity:0;transition:all 0.4s;white-space:nowrap;border-radius:2px;pointer-events:none;}
+/* SUCCESS TOAST */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:var(--dark3);border:1px solid var(--gold);color:var(--cream);padding:0.8rem 1.5rem;font-size:0.85rem;z-index:200;opacity:0;transition:all 0.4s;white-space:nowrap;border-radius:2px;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* NAME MODAL */
-.name-overlay{display:none;position:fixed;inset:0;background:rgba(10,8,6,0.88);z-index:150;align-items:center;justify-content:center;padding:1.5rem;}
-.name-overlay.open{display:flex;}
-.name-sheet{background:var(--dark2);border:1px solid rgba(201,168,76,0.2);padding:2rem;width:100%;max-width:380px;border-radius:2px;}
-.name-sheet h3{font-family:var(--ff-head);font-size:1.6rem;color:var(--cream);margin-bottom:0.4rem;}
-.name-sheet p{font-size:0.82rem;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.6;}
-.name-sheet input{width:100%;background:var(--dark);border:1px solid rgba(201,168,76,0.2);color:var(--cream);padding:0.8rem 1rem;font-family:var(--ff-body);font-size:0.95rem;outline:none;border-radius:2px;margin-bottom:1rem;}
-.name-sheet input:focus{border-color:var(--gold);}
-.name-sheet button{width:100%;background:var(--gold);color:var(--dark);border:none;cursor:pointer;font-family:var(--ff-body);font-size:0.82rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;padding:0.85rem;border-radius:2px;transition:background 0.2s;}
-.name-sheet button:hover{background:var(--gold-light);}
-
-/* CONFIRM OVERLAY */
+/* CHECKOUT OVERLAY */
 .overlay{display:none;position:fixed;inset:0;background:rgba(10,8,6,0.88);z-index:150;align-items:flex-end;justify-content:center;}
 .overlay.open{display:flex;}
-.checkout-sheet{background:var(--dark2);border:1px solid rgba(201,168,76,0.2);border-bottom:none;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;border-radius:2px 2px 0 0;}
+.checkout-sheet{background:var(--dark2);border:1px solid rgba(201,168,76,0.2);border-bottom:none;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
 .checkout-sheet h3{font-family:var(--ff-head);font-size:1.6rem;color:var(--cream);margin-bottom:0.3rem;}
 .checkout-sheet .sub{font-size:0.8rem;color:var(--text-muted);margin-bottom:1.2rem;}
-.checkout-summary{background:var(--dark3);padding:0.8rem 1rem;margin:0.5rem 0 1rem;border-radius:2px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+.form-group{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.7rem;}
+.form-group label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(247,242,232,0.4);}
+.form-group input,.form-group select,.form-group textarea{background:var(--dark);border:1px solid rgba(201,168,76,0.15);color:var(--cream);padding:0.7rem 0.8rem;font-family:var(--ff-body);font-size:0.88rem;outline:none;transition:border-color 0.2s;-webkit-appearance:none;border-radius:2px;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold);}
+.form-group select option{background:var(--dark2);}
+.checkout-summary{background:var(--dark3);padding:0.8rem 1rem;margin:0.5rem 0 0.8rem;border-radius:2px;}
 .checkout-summary p{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem;}
 .checkout-sum-line{display:flex;justify-content:space-between;font-size:0.83rem;color:rgba(247,242,232,0.6);padding:0.2rem 0;}
-.checkout-sum-line .who{font-size:0.7rem;color:rgba(201,168,76,0.5);margin-left:0.3rem;}
 .checkout-sum-total{display:flex;justify-content:space-between;font-size:0.95rem;font-weight:500;color:var(--cream);border-top:1px solid rgba(201,168,76,0.1);margin-top:0.4rem;padding-top:0.4rem;}
 .checkout-sum-total span:last-child{color:var(--gold);font-family:var(--ff-head);}
-.form-group{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.8rem;}
-.form-group label{font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(247,242,232,0.4);}
-.form-group select{background:var(--dark);border:1px solid rgba(201,168,76,0.15);color:var(--cream);padding:0.7rem 0.8rem;font-family:var(--ff-body);font-size:0.88rem;outline:none;-webkit-appearance:none;border-radius:2px;}
-.form-group select:focus{border-color:var(--gold);}
-.form-group select option{background:var(--dark2);}
+.delivery-type{display:flex;gap:0.6rem;margin-bottom:0.8rem;}
+.type-btn{flex:1;padding:0.6rem;border:1px solid rgba(201,168,76,0.2);background:transparent;color:rgba(247,242,232,0.45);font-family:var(--ff-body);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border-radius:2px;}
+.type-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.08);}
 .btn-submit-order{width:100%;background:var(--gold);color:var(--dark);border:none;cursor:pointer;font-family:var(--ff-body);font-size:0.83rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;padding:0.95rem;transition:background 0.2s;margin-top:0.3rem;border-radius:2px;}
 .btn-submit-order:hover{background:var(--gold-light);}
-.btn-close-overlay{width:100%;background:transparent;border:1px solid rgba(247,242,232,0.1);color:rgba(247,242,232,0.3);cursor:pointer;font-family:var(--ff-body);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;padding:0.6rem;margin-top:0.5rem;transition:all 0.2s;border-radius:2px;}
-.btn-close-overlay:hover{border-color:rgba(247,242,232,0.25);color:rgba(247,242,232,0.5);}
+.btn-close-overlay{position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(247,242,232,0.35);font-size:1.4rem;cursor:pointer;transition:color 0.2s;}
+.btn-close-overlay:hover{color:var(--cream);}
+.overlay-wrap{position:relative;width:100%;max-width:480px;}
 .success-view{text-align:center;padding:2rem 1rem;}
 .success-view .check{font-size:3rem;display:block;margin-bottom:0.8rem;}
 .success-view h3{font-family:var(--ff-head);font-size:2rem;color:var(--gold);margin-bottom:0.5rem;}
@@ -177,13 +169,11 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
 <div id="mainContent" style="display:none">
   <div class="live-bar">
     <div class="live-dot"></div>
-    <span>Canlı ümumi səbət — hamı eyni səbəti görür</span>
-    <span class="live-sync-msg" id="syncMsg"></span>
+    <span>Canlı sifariş — dəyişikliklər dərhal görünür</span>
   </div>
 
-  <!-- Confirmed/ready orders for this table -->
   <div class="orders-section" id="ordersSection" style="display:none">
-    <div class="orders-section-title">Göndərilmiş sifarişlər</div>
+    <div class="orders-section-title">Masanızın sifarişləri</div>
     <div id="ordersList"></div>
   </div>
 
@@ -203,7 +193,7 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
   <div class="cart-bar" id="cartBar">
     <div class="cart-bar-left">
       <span class="cart-icon">🛒</span>
-      <span class="cart-bar-label">Ümumi Səbət</span>
+      <span class="cart-bar-label">Səbət</span>
       <span class="cart-count-badge" id="cartCount">0</span>
     </div>
     <div style="display:flex;align-items:center;gap:0.7rem;">
@@ -216,51 +206,63 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
       <div class="cart-empty-msg" id="cartEmptyMsg">Səbətiniz boşdur. Yemək seçin!</div>
       <div id="cartLines"></div>
       <div class="cart-footer" id="cartFooter" style="display:none">
+        <input class="cart-note-input" id="cartNote" type="text" placeholder="Qeyd əlavə edin (ixtiyari)...">
+        <div class="cart-total-row"><span>Aralıq cəm</span><span id="cartSubtotal">₼0.00</span></div>
         <div class="cart-total-row bold"><span>Cəmi</span><span id="cartTotal">₼0.00</span></div>
-        <button class="btn-place-order" id="btnPlaceOrder">Sifarişi Ver →</button>
+        <button class="btn-place-order" id="btnPlaceOrder">Sifariş Ver →</button>
         <button class="btn-clear-cart" id="btnClearCart">Səbəti Təmizlə</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- NAME MODAL (shown on first interaction) -->
-<div class="name-overlay" id="nameOverlay">
-  <div class="name-sheet">
-    <h3>Salam! 👋</h3>
-    <p>Adınızı daxil edin ki, ümumi səbətdə kimin nə sifariş etdiyini görək.</p>
-    <input type="text" id="nameInput" placeholder="Adınız..." maxlength="30" autocomplete="off">
-    <button id="btnSaveName">Daxil Ol →</button>
-  </div>
-</div>
-
-<!-- CONFIRM ORDER OVERLAY -->
-<div class="overlay" id="confirmOverlay">
-  <div class="checkout-sheet">
-    <div id="confirmFormView">
-      <h3>Sifarişi Göndər</h3>
-      <p class="sub">Masadakı hamının seçimləri birlikdə göndəriləcək</p>
-      <div class="checkout-summary">
-        <p>Ümumi səbət</p>
-        <div id="confirmSummaryLines"></div>
-        <div class="checkout-sum-total">
-          <span>Cəmi</span><span id="confirmTotal">₼0.00</span>
+<!-- CHECKOUT OVERLAY -->
+<div class="overlay" id="checkoutOverlay">
+  <div class="overlay-wrap">
+    <button class="btn-close-overlay" id="btnCloseOverlay">✕</button>
+    <div class="checkout-sheet">
+      <div id="checkoutFormView">
+        <h3>Sifarişi Tamamla</h3>
+        <p class="sub">Məlumatlarınızı daxil edin</p>
+        <div class="delivery-type">
+          <button class="type-btn active" id="typeTable">🍽️ Masada</button>
+          <button class="type-btn" id="typePickup">📦 Paket</button>
         </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Ad Soyad</label>
+            <input type="text" id="coName" placeholder="Adınız">
+          </div>
+          <div class="form-group">
+            <label>Telefon</label>
+            <input type="tel" id="coPhone" placeholder="050 000 00 00">
+          </div>
+        </div>
+        <div class="checkout-summary">
+          <p>Sifarişiniz</p>
+          <div id="coSummaryLines"></div>
+          <div class="checkout-sum-total">
+            <span>Cəmi</span><span id="coTotal">₼0.00</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Ödəniş üsulu</label>
+          <select id="coPayment">
+            <option>Nağd</option>
+            <option>Kart</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Qeyd (ixtiyari)</label>
+          <textarea id="coNote" placeholder="Xüsusi istəklər..." style="min-height:60px;resize:vertical;"></textarea>
+        </div>
+        <button class="btn-submit-order" id="btnSubmitOrder">Sifarişi Göndər →</button>
       </div>
-      <div class="form-group">
-        <label>Ödəniş üsulu</label>
-        <select id="coPayment">
-          <option>Nağd</option>
-          <option>Kart</option>
-        </select>
+      <div id="checkoutSuccessView" class="success-view" style="display:none">
+        <span class="check">✓</span>
+        <h3>Sifariş Alındı!</h3>
+        <p>Sifarişiniz qəbul edildi.<br>Tezliklə hazırlanacaq.<br><br>Təxmini vaxt: <span class="eta">15–25 dəqiqə</span></p>
       </div>
-      <button class="btn-submit-order" id="btnSubmitOrder">Sifarişi Göndər →</button>
-      <button class="btn-close-overlay" id="btnCloseOverlay">Geri Qayıt</button>
-    </div>
-    <div id="confirmSuccessView" class="success-view" style="display:none">
-      <span class="check">✓</span>
-      <h3>Sifariş Alındı!</h3>
-      <p>Sifarişiniz mətbəxə göndərildi.<br>Tezliklə hazırlanacaq.<br><br>Təxmini vaxt: <span class="eta">15–25 dəqiqə</span></p>
     </div>
   </div>
 </div>
@@ -271,297 +273,102 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
 const SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 
-const HEADERS = {
-  'apikey': SUPABASE_ANON,
-  'Authorization': `Bearer ${SUPABASE_ANON}`,
-  'Content-Type': 'application/json',
-  'Prefer': 'return=representation'
-};
+const api = (path, opts={}) => fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+  headers: {'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation', ...opts.headers},
+  ...opts
+}).then(r => r.json());
 
-const api = (path, opts = {}) => {
-  const { headers: optHeaders, ...restOpts } = opts;
-  return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: { ...HEADERS, ...optHeaders },
-    ...restOpts
-  }).then(r => r.json());
-};
+const rpc = (fn, body) => fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+  method:'POST', headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+  body: JSON.stringify(body)
+}).then(r=>r.json());
 
-// ── STATE ──
+// State
 let tableData = null;
 let menuItems = [];
+let cart = {};
 let currentCat = 'all';
 let cartExpanded = false;
+let orderType = 'table';
+let tableOrders = [];
+let realtimeChannel = null;
 
-// The shared draft order ID stored in this table's draft slot
-let draftOrderId = null;
-// Local copy of cart items from Supabase (array of {id, menu_item_id, quantity, added_by, price_at_order, menu_items:{name,price,emoji}})
-let sharedCartItems = [];
-// Confirmed orders (non-draft)
-let confirmedOrders = [];
-
-let myName = localStorage.getItem('armood_name') || '';
-let syncInterval = null;
-let isSyncing = false;
-
+// Get token from URL
 const token = new URLSearchParams(location.search).get('t');
 
-// ── INIT ──
 async function init() {
   if (!token) { showError(); return; }
   try {
-    const tables = await api(`restaurant_tables?token=eq.${encodeURIComponent(token)}&select=*`);
+    // Find table by token
+    const tables = await api(`restaurant_tables?token=eq.${token}&select=*`);
     if (!tables.length || tables.error) { showError(); return; }
     tableData = tables[0];
-
     document.getElementById('tableNumDisplay').textContent = tableData.table_number;
     document.title = `Armood — Masa ${tableData.table_number}`;
 
-    const menu = await api('menu_items?select=*&order=category&available=eq.true');
-    menuItems = Array.isArray(menu) ? menu : [];
+    // Load menu
+    const menu = await api('menu_items?select=*&order=category');
+    menuItems = menu;
 
+    // Load existing orders for this table
+    await loadOrders();
+
+    // Show content
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('mainContent').style.display = 'block';
 
-    // Ask name if not set
-    if (!myName) {
-      document.getElementById('nameOverlay').classList.add('open');
-    }
-
+    renderMenu();
+    setupRealtime();
     setupListeners();
-
-    // syncFromSupabase handles initial render of menu + cart
-    await syncFromSupabase();
-    syncInterval = setInterval(syncFromSupabase, 3000);
-
-  } catch (e) {
-    console.error(e);
+  } catch(e) {
     showError();
   }
 }
 
-// ── SYNC: pull shared cart from Supabase ──
-async function syncFromSupabase() {
+async function loadOrders() {
   if (!tableData) return;
-  try {
-    // Find existing draft order for this table
-    const drafts = await api(
-      `orders?table_id=eq.${tableData.id}&status=eq.draft&select=id,notes&order=created_at.desc&limit=1`
-    );
-
-    if (Array.isArray(drafts) && drafts.length) {
-      draftOrderId = drafts[0].id;
-
-      // Fetch all items in this draft order
-      const items = await api(
-        `order_items?order_id=eq.${draftOrderId}&select=id,menu_item_id,quantity,added_by,price_at_order,menu_items(name,price,emoji)`
-      );
-      sharedCartItems = Array.isArray(items) ? items : [];
-    } else {
-      draftOrderId = null;
-      sharedCartItems = [];
-    }
-
-    // Fetch confirmed orders (pending/confirmed/ready) for status display
-    const confirmed = await api(
-      `orders?table_id=eq.${tableData.id}&status=in.(pending,confirmed,ready)&select=id,status,total,created_at,order_items(quantity,menu_items!menu_item_id(name))`
-    );
-    confirmedOrders = Array.isArray(confirmed) ? confirmed : [];
-
-    renderCart();
-    renderMenu();
-    renderConfirmedOrders();
-
-    flashSync();
-  } catch (e) {
-    console.error('Sync error', e);
-  }
+  const orders = await api(`orders?table_id=eq.${tableData.id}&status=neq.paid&select=*,order_items(*,menu_items(name,price))`);
+  tableOrders = Array.isArray(orders) ? orders : [];
+  renderOrders();
 }
 
-function flashSync() {
-  const el = document.getElementById('syncMsg');
-  el.textContent = 'yeniləndi';
-  el.style.opacity = '1';
-  setTimeout(() => { el.style.opacity = '0'; }, 1500);
+function renderOrders() {
+  const section = document.getElementById('ordersSection');
+  const list = document.getElementById('ordersList');
+  if (!tableOrders.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = tableOrders.map(o => {
+    const items = (o.order_items || []).map(i => `${i.quantity}× ${i.menu_items?.name || 'Məhsul'}`).join(', ');
+    const statusMap = {pending:'Gözləyir',confirmed:'Təsdiqləndi',ready:'Hazırdır',paid:'Ödənilib'};
+    const badgeMap = {pending:'badge-pending',confirmed:'badge-confirmed',ready:'badge-ready',paid:'badge-paid'};
+    return `<div class="order-status-card">
+      <div class="order-status-header">
+        <span class="order-status-id">Sifariş #${o.id.toString().slice(-4)}</span>
+        <span class="order-status-badge ${badgeMap[o.status]||'badge-pending'}">${statusMap[o.status]||o.status}</span>
+      </div>
+      <div class="order-status-items">${items}</div>
+    </div>`;
+  }).join('');
 }
 
-// ── ADD / REMOVE items (writes to Supabase immediately) ──
-async function changeQty(menuItemId, delta) {
-  if (!myName) {
-    document.getElementById('nameOverlay').classList.add('open');
-    return;
-  }
-
-  // Ensure draft order exists
-  if (!draftOrderId) {
-    await createDraftOrder();
-  }
-
-  const existing = sharedCartItems.find(i => i.menu_item_id === menuItemId && i.added_by === myName);
-  const menuItem = menuItems.find(i => i.id === menuItemId);
-  if (!menuItem) return;
-
-  if (existing) {
-    const newQty = existing.quantity + delta;
-    if (newQty <= 0) {
-      // Delete this item
-      await api(`order_items?id=eq.${existing.id}`, { method: 'DELETE', headers: { ...HEADERS, 'Prefer': '' } });
-    } else {
-      // Update quantity
-      await api(`order_items?id=eq.${existing.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ quantity: newQty })
-      });
-    }
-  } else if (delta > 0) {
-    // Insert new item
-    await api('order_items', {
-      method: 'POST',
-      body: JSON.stringify({
-        order_id: draftOrderId,
-        menu_item_id: menuItemId,
-        quantity: 1,
-        price_at_order: Number(menuItem.price),
-        added_by: myName
-      })
-    });
-  }
-
-  // Update draft total
-  await updateDraftTotal();
-
-  // Re-sync immediately so UI feels instant
-  await syncFromSupabase();
-}
-
-async function createDraftOrder() {
-  const res = await api('orders', {
-    method: 'POST',
-    body: JSON.stringify({
-      table_id: tableData.id,
-      status: 'draft',
-      total: 0,
-      notes: ''
-    })
-  });
-  if (Array.isArray(res) && res.length) {
-    draftOrderId = res[0].id;
-  } else {
-    console.error('createDraftOrder failed:', res);
-    return;
-  }
-  await api(`restaurant_tables?id=eq.${tableData.id}`, {
-    method: 'PATCH',
-    headers: { ...HEADERS, 'Prefer': '' },
-    body: JSON.stringify({ status: 'active' })
-  });
-}
-
-async function updateDraftTotal() {
-  if (!draftOrderId) return;
-  const items = await api(`order_items?order_id=eq.${draftOrderId}&select=quantity,price_at_order`);
-  const total = Array.isArray(items)
-    ? items.reduce((s, i) => s + i.quantity * Number(i.price_at_order), 0)
-    : 0;
-  await api(`orders?id=eq.${draftOrderId}`, {
-    method: 'PATCH',
-    headers: { ...HEADERS, 'Prefer': '' },
-    body: JSON.stringify({ total })
-  });
-}
-
-async function clearSharedCart() {
-  if (!draftOrderId) return;
-  if (!confirm('Ümumi səbəti tamamilə təmizləmək istəyirsiniz?')) return;
-  await api(`order_items?order_id=eq.${draftOrderId}`, {
-    method: 'DELETE',
-    headers: { ...HEADERS, 'Prefer': '' }
-  });
-  await api(`orders?id=eq.${draftOrderId}`, {
-    method: 'DELETE',
-    headers: { ...HEADERS, 'Prefer': '' }
-  });
-  draftOrderId = null;
-  sharedCartItems = [];
-  await syncFromSupabase();
-}
-
-// ── SUBMIT ORDER (draft → pending) ──
-async function submitOrder() {
-  if (!draftOrderId || !sharedCartItems.length) return;
-  const btn = document.getElementById('btnSubmitOrder');
-  btn.disabled = true;
-  btn.textContent = 'Göndərilir...';
-
-  try {
-    const payment = document.getElementById('coPayment').value;
-    const total = sharedCartItems.reduce((s, i) => s + i.quantity * Number(i.price_at_order), 0);
-
-    await api(`orders?id=eq.${draftOrderId}`, {
-      method: 'PATCH',
-      headers: { ...HEADERS, 'Prefer': '' },
-      body: JSON.stringify({
-        status: 'pending',
-        total,
-        notes: `Ödəniş: ${payment}`
-      })
-    });
-
-    await api(`restaurant_tables?id=eq.${tableData.id}`, {
-      method: 'PATCH',
-      headers: { ...HEADERS, 'Prefer': '' },
-      body: JSON.stringify({ status: 'ordered' })
-    });
-
-    draftOrderId = null;
-    sharedCartItems = [];
-
-    document.getElementById('confirmFormView').style.display = 'none';
-    document.getElementById('confirmSuccessView').style.display = 'block';
-
-    await syncFromSupabase();
-
-    setTimeout(() => {
-      closeConfirm();
-      document.getElementById('confirmFormView').style.display = 'block';
-      document.getElementById('confirmSuccessView').style.display = 'none';
-      btn.disabled = false;
-      btn.textContent = 'Sifarişi Göndər →';
-    }, 3500);
-
-  } catch (e) {
-    showToast('Xəta baş verdi. Yenidən cəhd edin.');
-    btn.disabled = false;
-    btn.textContent = 'Sifarişi Göndər →';
-  }
-}
-
-// ── RENDER ──
 function renderMenu() {
   const list = document.getElementById('menuList');
   const filtered = currentCat === 'all' ? menuItems : menuItems.filter(i => i.category === currentCat);
-  if (!filtered.length) {
-    list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem;font-size:0.85rem;">Bu kateqoriyada məhsul yoxdur</p>';
-    return;
-  }
-
+  if (!filtered.length) { list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:2rem;font-size:0.85rem;">Bu kateqoriyada məhsul yoxdur</p>'; return; }
   list.innerHTML = filtered.map(item => {
-    // Count how many of this item are in the shared cart (by current user)
-    const myEntry = sharedCartItems.find(i => i.menu_item_id === item.id && i.added_by === myName);
-    const myQty = myEntry ? myEntry.quantity : 0;
-    // Total across all users
-    const totalQty = sharedCartItems.filter(i => i.menu_item_id === item.id).reduce((s, i) => s + i.quantity, 0);
-
-    return `<div class="menu-item">
-      <span class="menu-item-emoji">${item.emoji || '🍽️'}</span>
+    const qty = cart[item.id]?.qty || 0;
+    const unavail = !item.available;
+    return `<div class="menu-item${unavail?' menu-item-unavail':''}">
+      <span class="menu-item-emoji">${item.emoji||'🍽️'}</span>
       <div class="menu-item-info">
-        <div class="menu-item-name">${item.name}${totalQty > 0 && myQty === 0 ? ` <span style="font-size:0.7rem;color:rgba(201,168,76,0.6);">· ${totalQty} səbətdə</span>` : ''}</div>
-        <div class="menu-item-desc">${item.description || ''}</div>
+        <div class="menu-item-name">${item.name}</div>
+        <div class="menu-item-desc">${unavail?'<span class="unavail-tag">Mövcud deyil</span>':item.description||''}</div>
       </div>
       <span class="menu-item-price">₼${Number(item.price).toFixed(2)}</span>
-      ${myQty > 0
+      ${qty > 0
         ? `<div class="qty-ctrl">
             <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
-            <span class="qty-num">${myQty}</span>
+            <span class="qty-num">${qty}</span>
             <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
           </div>`
         : `<button class="add-btn" onclick="changeQty('${item.id}',1)">+</button>`
@@ -570,13 +377,23 @@ function renderMenu() {
   }).join('');
 }
 
+function changeQty(id, delta) {
+  const item = menuItems.find(i => i.id == id);
+  if (!item) return;
+  if (!cart[id]) cart[id] = {item, qty: 0};
+  cart[id].qty = Math.max(0, cart[id].qty + delta);
+  if (cart[id].qty === 0) delete cart[id];
+  renderMenu();
+  renderCart();
+}
+
 function renderCart() {
-  const items = sharedCartItems;
-  const totalQty = items.reduce((s, i) => s + i.quantity, 0);
-  const total = items.reduce((s, i) => s + i.quantity * Number(i.price_at_order), 0);
+  const items = Object.values(cart);
+  const totalQty = items.reduce((s,c)=>s+c.qty,0);
+  const subtotal = items.reduce((s,c)=>s+c.qty*Number(c.item.price),0);
 
   document.getElementById('cartCount').textContent = totalQty;
-  document.getElementById('cartBarTotal').textContent = `₼${total.toFixed(2)}`;
+  document.getElementById('cartBarTotal').textContent = `₼${subtotal.toFixed(2)}`;
 
   const linesEl = document.getElementById('cartLines');
   const footerEl = document.getElementById('cartFooter');
@@ -591,70 +408,35 @@ function renderCart() {
   emptyEl.style.display = 'none';
   footerEl.style.display = 'flex';
 
-  linesEl.innerHTML = items.map(item => {
-    const name = item.menu_items?.name || '?';
-    const emoji = item.menu_items?.emoji || '';
-    const isMe = item.added_by === myName;
-    return `<div class="cart-line">
-      <span class="cart-line-name">${emoji} ${name}<span class="cart-line-who">${item.added_by}</span></span>
-      <span class="cart-line-qty">${item.quantity}×</span>
-      <span class="cart-line-price">₼${(item.quantity * Number(item.price_at_order)).toFixed(2)}</span>
-      ${isMe ? `<button class="cart-line-del" onclick="changeQty('${item.menu_item_id}',-${item.quantity})">✕</button>` : '<span style="width:20px"></span>'}
-    </div>`;
-  }).join('');
+  linesEl.innerHTML = items.map(({item,qty}) => `
+    <div class="cart-line">
+      <span class="cart-line-name">${item.emoji} ${item.name}</span>
+      <span class="cart-line-qty">${qty}×</span>
+      <span class="cart-line-price">₼${(qty*Number(item.price)).toFixed(2)}</span>
+      <button class="cart-line-del" onclick="removeFromCart('${item.id}')">✕</button>
+    </div>`).join('');
 
-  document.getElementById('cartTotal').textContent = `₼${total.toFixed(2)}`;
+  document.getElementById('cartSubtotal').textContent = `₼${subtotal.toFixed(2)}`;
+  document.getElementById('cartTotal').textContent = `₼${subtotal.toFixed(2)}`;
 }
 
-function renderConfirmedOrders() {
-  const section = document.getElementById('ordersSection');
-  const list = document.getElementById('ordersList');
-  if (!confirmedOrders.length) { section.style.display = 'none'; return; }
-  section.style.display = 'block';
-  const statusMap = { pending: 'Gözləyir', confirmed: 'Təsdiqləndi', ready: 'Hazırdır' };
-  const badgeMap = { pending: 'badge-pending', confirmed: 'badge-confirmed', ready: 'badge-ready' };
-  list.innerHTML = confirmedOrders.map(o => {
-    const items = (o.order_items || []).map(i => `${i.quantity}× ${i.menu_items?.name || '?'}`).join(', ');
-    return `<div class="order-status-card">
-      <div class="order-status-header">
-        <span class="order-status-id">Sifariş #${o.id.toString().slice(-4)}</span>
-        <span class="order-status-badge ${badgeMap[o.status] || 'badge-pending'}">${statusMap[o.status] || o.status}</span>
-      </div>
-      <div class="order-status-items">${items}</div>
-    </div>`;
-  }).join('');
+function removeFromCart(id) {
+  delete cart[id];
+  renderMenu();
+  renderCart();
 }
 
-// ── CONFIRM OVERLAY ──
-function openConfirm() {
-  if (!sharedCartItems.length) return;
-  const total = sharedCartItems.reduce((s, i) => s + i.quantity * Number(i.price_at_order), 0);
-  document.getElementById('confirmSummaryLines').innerHTML = sharedCartItems.map(item => {
-    const name = item.menu_items?.name || '?';
-    return `<div class="checkout-sum-line">
-      <span>${item.quantity}× ${name} <span class="who">${item.added_by}</span></span>
-      <span>₼${(item.quantity * Number(item.price_at_order)).toFixed(2)}</span>
-    </div>`;
-  }).join('');
-  document.getElementById('confirmTotal').textContent = `₼${total.toFixed(2)}`;
-  document.getElementById('confirmOverlay').classList.add('open');
+function setupRealtime() {
+  // Poll for order status updates every 15 seconds
+  setInterval(loadOrders, 15000);
 }
 
-function closeConfirm() {
-  document.getElementById('confirmOverlay').classList.remove('open');
-}
-
-// ── LISTENERS ──
 function setupListeners() {
-  // Name save
-  document.getElementById('btnSaveName').addEventListener('click', saveName);
-  document.getElementById('nameInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveName(); });
-
-  // Categories
+  // Category buttons
   document.getElementById('catBar').addEventListener('click', e => {
     const btn = e.target.closest('.cat-btn');
     if (!btn) return;
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     currentCat = btn.dataset.cat;
     renderMenu();
@@ -666,23 +448,131 @@ function setupListeners() {
     document.getElementById('cartPanel').classList.toggle('expanded', cartExpanded);
   });
 
-  // Place order → open confirm
-  document.getElementById('btnPlaceOrder').addEventListener('click', openConfirm);
+  // Place order
+  document.getElementById('btnPlaceOrder').addEventListener('click', openCheckout);
 
   // Clear cart
-  document.getElementById('btnClearCart').addEventListener('click', clearSharedCart);
+  document.getElementById('btnClearCart').addEventListener('click', () => {
+    cart = {};
+    renderMenu();
+    renderCart();
+  });
 
-  // Confirm overlay
+  // Close overlay
+  document.getElementById('btnCloseOverlay').addEventListener('click', closeCheckout);
+  document.getElementById('checkoutOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('checkoutOverlay')) closeCheckout();
+  });
+
+  // Delivery type
+  document.getElementById('typeTable').addEventListener('click', () => {
+    orderType = 'table';
+    document.getElementById('typeTable').classList.add('active');
+    document.getElementById('typePickup').classList.remove('active');
+  });
+  document.getElementById('typePickup').addEventListener('click', () => {
+    orderType = 'pickup';
+    document.getElementById('typePickup').classList.add('active');
+    document.getElementById('typeTable').classList.remove('active');
+  });
+
+  // Submit order
   document.getElementById('btnSubmitOrder').addEventListener('click', submitOrder);
-  document.getElementById('btnCloseOverlay').addEventListener('click', closeConfirm);
 }
 
-function saveName() {
-  const val = document.getElementById('nameInput').value.trim();
-  if (!val) return;
-  myName = val;
-  localStorage.setItem('armood_name', myName);
-  document.getElementById('nameOverlay').classList.remove('open');
+function openCheckout() {
+  const items = Object.values(cart);
+  if (!items.length) return;
+  const subtotal = items.reduce((s,c)=>s+c.qty*Number(c.item.price),0);
+  document.getElementById('coSummaryLines').innerHTML = items.map(({item,qty}) =>
+    `<div class="checkout-sum-line"><span>${qty}× ${item.name}</span><span>₼${(qty*Number(item.price)).toFixed(2)}</span></div>`
+  ).join('');
+  document.getElementById('coTotal').textContent = `₼${subtotal.toFixed(2)}`;
+  document.getElementById('coNote').value = document.getElementById('cartNote').value;
+  document.getElementById('checkoutFormView').style.display = 'block';
+  document.getElementById('checkoutSuccessView').style.display = 'none';
+  document.getElementById('checkoutOverlay').classList.add('open');
+}
+
+function closeCheckout() {
+  document.getElementById('checkoutOverlay').classList.remove('open');
+}
+
+async function submitOrder() {
+  const name = document.getElementById('coName').value.trim();
+  const phone = document.getElementById('coPhone').value.trim();
+  const note = document.getElementById('coNote').value.trim();
+  const payment = document.getElementById('coPayment').value;
+
+  if (!name) { showToast('Adınızı daxil edin'); return; }
+
+  const items = Object.values(cart);
+  const total = items.reduce((s,c)=>s+c.qty*Number(c.item.price),0);
+
+  const btn = document.getElementById('btnSubmitOrder');
+  btn.disabled = true;
+  btn.textContent = 'Göndərilir...';
+
+  try {
+    // Create order
+    const orderRes = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      method:'POST',
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json','Prefer':'return=representation'},
+      body: JSON.stringify({
+        table_id: tableData.id,
+        status: 'pending',
+        total: total,
+        notes: `${name} | ${phone} | ${payment} | ${note} | ${orderType}`
+      })
+    });
+    const orderData = await orderRes.json();
+    const orderId = orderData[0]?.id;
+    if (!orderId) throw new Error('Order creation failed');
+
+    // Add order items
+    const orderItems = items.map(({item,qty}) => ({
+      order_id: orderId,
+      menu_item_id: item.id,
+      quantity: qty,
+      price_at_order: Number(item.price),
+      added_by: name
+    }));
+
+    await fetch(`${SUPABASE_URL}/rest/v1/order_items`, {
+      method:'POST',
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+      body: JSON.stringify(orderItems)
+    });
+
+    // Update table status
+    await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`, {
+      method:'PATCH',
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+      body: JSON.stringify({status:'ordered'})
+    });
+
+    // Show success
+    document.getElementById('checkoutFormView').style.display = 'none';
+    document.getElementById('checkoutSuccessView').style.display = 'block';
+
+    // Clear cart
+    cart = {};
+    renderMenu();
+    renderCart();
+    cartExpanded = false;
+    document.getElementById('cartPanel').classList.remove('expanded');
+
+    // Reload orders after 1.5s
+    setTimeout(async () => {
+      await loadOrders();
+      closeCheckout();
+    }, 3000);
+
+  } catch(e) {
+    showToast('Xəta baş verdi. Yenidən cəhd edin.');
+    btn.disabled = false;
+    btn.textContent = 'Sifarişi Göndər →';
+  }
 }
 
 function showError() {
@@ -701,3 +591,5 @@ init();
 </script>
 </body>
 </html>
+ENDOFFILE
+echo "Done"
