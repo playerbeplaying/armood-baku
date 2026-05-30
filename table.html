@@ -278,10 +278,13 @@ const HEADERS = {
   'Prefer': 'return=representation'
 };
 
-const api = (path, opts = {}) => fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-  headers: { ...HEADERS, ...opts.headers },
-  ...opts
-}).then(r => r.json());
+const api = (path, opts = {}) => {
+  const { headers: optHeaders, ...restOpts } = opts;
+  return fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { ...HEADERS, ...optHeaders },
+    ...restOpts
+  }).then(r => r.json());
+};
 
 // ── STATE ──
 let tableData = null;
@@ -401,7 +404,7 @@ async function changeQty(menuItemId, delta) {
     const newQty = existing.quantity + delta;
     if (newQty <= 0) {
       // Delete this item
-      await api(`order_items?id=eq.${existing.id}`, { method: 'DELETE', headers: { 'Prefer': '' } });
+      await api(`order_items?id=eq.${existing.id}`, { method: 'DELETE', headers: { ...HEADERS, 'Prefer': '' } });
     } else {
       // Update quantity
       await api(`order_items?id=eq.${existing.id}`, {
