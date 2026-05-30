@@ -271,14 +271,15 @@ body{background:var(--dark);color:var(--cream);font-family:var(--ff-body);font-w
 const SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 
+const HEADERS = {
+  'apikey': SUPABASE_ANON,
+  'Authorization': `Bearer ${SUPABASE_ANON}`,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
 const api = (path, opts = {}) => fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-  headers: {
-    'apikey': SUPABASE_ANON,
-    'Authorization': `Bearer ${SUPABASE_ANON}`,
-    'Content-Type': 'application/json',
-    'Prefer': 'return=representation',
-    ...opts.headers
-  },
+  headers: { ...HEADERS, ...opts.headers },
   ...opts
 }).then(r => r.json());
 
@@ -323,10 +324,9 @@ async function init() {
       document.getElementById('nameOverlay').classList.add('open');
     }
 
-    renderMenu();
     setupListeners();
 
-    // Load shared cart immediately, then poll every 3 seconds
+    // syncFromSupabase handles initial render of menu + cart
     await syncFromSupabase();
     syncInterval = setInterval(syncFromSupabase, 3000);
 
@@ -442,11 +442,13 @@ async function createDraftOrder() {
   });
   if (Array.isArray(res) && res.length) {
     draftOrderId = res[0].id;
+  } else {
+    console.error('createDraftOrder failed:', res);
+    return;
   }
-  // Update table status to active
   await api(`restaurant_tables?id=eq.${tableData.id}`, {
     method: 'PATCH',
-    headers: { 'Prefer': '' },
+    headers: { ...HEADERS, 'Prefer': '' },
     body: JSON.stringify({ status: 'active' })
   });
 }
@@ -459,7 +461,7 @@ async function updateDraftTotal() {
     : 0;
   await api(`orders?id=eq.${draftOrderId}`, {
     method: 'PATCH',
-    headers: { 'Prefer': '' },
+    headers: { ...HEADERS, 'Prefer': '' },
     body: JSON.stringify({ total })
   });
 }
@@ -469,11 +471,11 @@ async function clearSharedCart() {
   if (!confirm('Ümumi səbəti tamamilə təmizləmək istəyirsiniz?')) return;
   await api(`order_items?order_id=eq.${draftOrderId}`, {
     method: 'DELETE',
-    headers: { 'Prefer': '' }
+    headers: { ...HEADERS, 'Prefer': '' }
   });
   await api(`orders?id=eq.${draftOrderId}`, {
     method: 'DELETE',
-    headers: { 'Prefer': '' }
+    headers: { ...HEADERS, 'Prefer': '' }
   });
   draftOrderId = null;
   sharedCartItems = [];
@@ -493,7 +495,7 @@ async function submitOrder() {
 
     await api(`orders?id=eq.${draftOrderId}`, {
       method: 'PATCH',
-      headers: { 'Prefer': '' },
+      headers: { ...HEADERS, 'Prefer': '' },
       body: JSON.stringify({
         status: 'pending',
         total,
@@ -501,10 +503,9 @@ async function submitOrder() {
       })
     });
 
-    // Update table status
     await api(`restaurant_tables?id=eq.${tableData.id}`, {
       method: 'PATCH',
-      headers: { 'Prefer': '' },
+      headers: { ...HEADERS, 'Prefer': '' },
       body: JSON.stringify({ status: 'ordered' })
     });
 
