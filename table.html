@@ -363,7 +363,7 @@ async function syncFromSupabase() {
 
     // Fetch confirmed orders (pending/confirmed/ready) for status display
     const confirmed = await api(
-      `orders?table_id=eq.${tableData.id}&status=in.(pending,confirmed,ready)&select=id,status,total,created_at,order_items(quantity,menu_items(name))`
+      `orders?table_id=eq.${tableData.id}&status=in.(pending,confirmed,ready)&select=id,status,total,created_at,order_items(quantity,menu_items!menu_item_id(name))`
     );
     confirmedOrders = Array.isArray(confirmed) ? confirmed : [];
 
