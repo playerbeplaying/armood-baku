@@ -662,22 +662,24 @@ async function loadQR() {
   const tables = await api('restaurant_tables?select=*&order=table_number');
   const grid = document.getElementById('qrGrid');
   if (!Array.isArray(tables)) { grid.innerHTML='<div class="loading-state">Error loading tables</div>'; return; }
-
+  
+  // 1. Create the visual boxes for the QR codes
   grid.innerHTML = tables.map(t => `
     <div class="qr-card">
-      <div id="qr-${t.id}" style="display: flex; justify-content: center;"></div>
-      <div class="qr-table-label" style="margin-top:10px;">Table ${t.table_number}</div>
-      <!-- This is just the visual label for the admin -->
-      <div class="qr-url" style="color: var(--muted); font-size: 0.7rem; margin-bottom: 10px;">
-        https://armood-baku.vercel.app/table.html?t=${t.token}
-      </div>
+      <div id="qr-${t.id}" style="display:flex; justify-content:center;"></div>
+      <div class="qr-table-label" style="margin-top:10px;">Masa ${t.table_number}</div>
+      <div class="qr-url" style="font-size: 0.65rem; color: #888; margin-bottom:10px;">https://armood-baku.vercel.app/table.html?t=${t.token}</div>
       <button class="btn-xs" onclick="downloadQR('${t.id}','${t.table_number}')">⬇ Download QR</button>
     </div>`).join('');
 
+  // 2. Generate the actual QR data
   tables.forEach(t => {
-    // This is the part that the phone actually scans
-    new QRCode(document.getElementById(`qr-${t.id}`), {
-      text: `https://armood-baku.vercel.app/table.html?t=${t.token}`,
+    const qrContainer = document.getElementById(`qr-${t.id}`);
+    qrContainer.innerHTML = ""; // Clear any old content
+    
+    new QRCode(qrContainer, {
+      // THE LINE BELOW IS THE MOST IMPORTANT:
+      text: `https://armood-baku.vercel.app/table.html?t=${t.token}`, 
       width: 160,
       height: 160,
       colorDark: "#000000",
