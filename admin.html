@@ -1,3 +1,4 @@
+cat > /home/claude/admin.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -8,64 +9,28 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  /* ── BRAND PALETTE (shared) ── */
-  --bg:#faf8f4;
-  --bg2:#f3ede2;
-  --bg3:#e9e0d0;
-  --white:#ffffff;
-  --ink:#1e1810;
-  --ink2:#3a2d1e;
-  --muted:#8a7560;
-  --muted2:#b89f85;
-  --border:#e0d5c5;
-  --border2:#cdbfa9;
-
-  --terra:#bf4e1e;
-  --terra-hover:#a84218;
-  --terra-light:#d97040;
-  --terra-pale:#fdf0e8;
-  --terra-mid:#e8825a;
-
-  --slate:#3d5068;
-  --slate-light:#6a8aaa;
-  --slate-pale:#eaf0f6;
-  --gold:#c49a3a;
-  --gold-pale:#fdf5e0;
-  --green:#2e6b45;
-  --green-pale:#e5f2eb;
-  --amber:#c49a3a;
-  --amber-light:#fdf5e0;
-  --red:#b83232;
-  --red-light:#fdeaea;
-  --purple:#6d5a9e;
-  --purple-light:#ede9fe;
-
-  /* Admin sidebar uses ink/terra instead of blue */
-  --nav-h:64px;
-  --sidebar-w:240px;
-
-  --ff-head:'Lora',Georgia,serif;
-  --ff-body:'Inter',system-ui,sans-serif;
+  --bg:#faf8f4;--bg2:#f3ede2;--bg3:#e9e0d0;
+  --white:#ffffff;--ink:#1e1810;--ink2:#3a2d1e;
+  --muted:#8a7560;--muted2:#b89f85;
+  --border:#e0d5c5;--border2:#cdbfa9;
+  --terra:#bf4e1e;--terra-hover:#a84218;--terra-light:#d97040;
+  --terra-pale:#fdf0e8;--terra-mid:#e8825a;
+  --slate:#3d5068;--slate-light:#6a8aaa;--slate-pale:#eaf0f6;
+  --gold:#c49a3a;--gold-pale:#fdf5e0;
+  --green:#2e6b45;--green-pale:#e5f2eb;
+  --amber:#c49a3a;--amber-light:#fdf5e0;
+  --red:#b83232;--red-light:#fdeaea;
+  --purple:#6d5a9e;--purple-light:#ede9fe;
+  --nav-h:64px;--sidebar-w:240px;
+  --ff-head:'Lora',Georgia,serif;--ff-body:'Inter',system-ui,sans-serif;
 }
 html{scroll-behavior:smooth;}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-
-/* TOP NAV */
-.topnav{
-  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
-  background:white;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 1.5rem 0 0;z-index:100;
-  box-shadow:0 1px 3px rgba(30,24,16,0.05);
-}
-.topnav-left{
-  display:flex;align-items:center;
-  width:var(--sidebar-w);padding:0 1.5rem;
-  border-right:1px solid var(--border);height:100%;
-}
+.topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem 0 0;z-index:100;box-shadow:0 1px 3px rgba(30,24,16,0.05);}
+.topnav-left{display:flex;align-items:center;width:var(--sidebar-w);padding:0 1.5rem;border-right:1px solid var(--border);height:100%;}
 .topnav-logo{display:flex;align-items:center;gap:0.7rem;text-decoration:none;}
 .logo-mark{width:34px;height:34px;background:var(--terra);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-size:1.1rem;color:white;font-style:italic;}
 .logo-name{font-family:var(--ff-head);font-size:1.3rem;color:var(--ink);letter-spacing:0.01em;font-weight:700;}
@@ -78,11 +43,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-logout{padding:0.4rem 0.9rem;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
 .btn-logout:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
 .topnav-clock{font-size:0.78rem;color:var(--muted);font-variant-numeric:tabular-nums;}
-
-/* LAYOUT */
 .layout{display:flex;margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h));}
-
-/* SIDEBAR */
 .sidebar{width:var(--sidebar-w);background:white;border-right:1px solid var(--border);padding:1.2rem 0;flex-shrink:0;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;}
 .sidebar-section{padding:0 0.75rem;margin-bottom:0.5rem;}
 .sidebar-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2);padding:0.4rem 0.75rem;margin-bottom:0.2rem;}
@@ -91,16 +52,12 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .nav-item.active{background:var(--terra-pale);color:var(--terra);}
 .nav-item-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
 .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:0.65rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;min-width:18px;text-align:center;}
-
-/* MAIN */
 .main{flex:1;padding:2rem;overflow-x:hidden;background:var(--bg);}
 .page{display:none;}
 .page.active{display:block;}
 .page-header{margin-bottom:1.8rem;}
 .page-title{font-family:var(--ff-head);font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:0.2rem;}
 .page-sub{font-size:0.85rem;color:var(--muted);}
-
-/* STAT CARDS */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;}
 .stat-card{background:white;border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:0.5rem;transition:box-shadow 0.2s;}
 .stat-card:hover{box-shadow:0 4px 12px rgba(30,24,16,0.07);}
@@ -113,8 +70,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .stat-icon.purple{background:var(--purple-light);}
 .stat-val{font-size:1.9rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;}
 .stat-trend{font-size:0.75rem;color:var(--muted);}
-
-/* TABLE CARDS */
 .tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;margin-bottom:2rem;}
 .table-card{background:white;border:1.5px solid var(--border);border-radius:12px;padding:1.2rem;transition:all 0.2s;cursor:default;}
 .table-card:hover{box-shadow:0 4px 16px rgba(30,24,16,0.07);}
@@ -136,8 +91,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-xs.success:hover{background:#256139;}
 .btn-xs.primary{background:var(--terra);border-color:var(--terra);color:white;}
 .btn-xs.primary:hover{background:var(--terra-hover);}
-
-/* ORDERS TABLE */
 .card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .card-header{padding:1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .card-header h3{font-size:0.95rem;font-weight:600;color:var(--ink);}
@@ -152,13 +105,9 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .b-ready{background:var(--green-pale);color:var(--green);}
 .b-paid{background:var(--bg2);color:var(--muted);}
 .b-cancelled{background:var(--red-light);color:var(--red);}
-
-/* FILTER TABS */
 .filter-tabs{display:flex;gap:0.4rem;flex-wrap:wrap;}
 .ftab{padding:0.35rem 0.8rem;font-size:0.78rem;font-weight:500;border-radius:7px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
 .ftab:hover,.ftab.active{background:var(--terra);border-color:var(--terra);color:white;}
-
-/* MENU ITEMS */
 .menu-item-row{display:flex;align-items:center;gap:1rem;padding:0.9rem 1.4rem;border-bottom:1px solid rgba(224,213,197,0.5);}
 .menu-item-row:last-child{border-bottom:none;}
 .menu-emoji{font-size:1.5rem;width:38px;text-align:center;flex-shrink:0;}
@@ -170,8 +119,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .toggle::after{content:'';position:absolute;top:2.5px;left:2.5px;width:16px;height:16px;border-radius:50%;background:white;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
 .toggle.on{background:var(--terra);}
 .toggle.on::after{transform:translateX(17px);}
-
-/* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.5);z-index:200;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px);}
 .modal-overlay.open{display:flex;}
 .modal{background:white;border-radius:16px;padding:2rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(30,24,16,0.18);}
@@ -187,16 +134,11 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-primary:hover{background:var(--terra-hover);}
 .btn-outline-sm{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;cursor:pointer;font-family:var(--ff-body);font-size:0.85rem;font-weight:500;padding:0.75rem 1.5rem;transition:all 0.2s;}
 .btn-outline-sm:hover{border-color:var(--ink2);color:var(--ink);}
-
-/* QR */
 .qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.5rem;}
 .qr-card{background:white;border:1px solid var(--border);border-radius:12px;padding:1.5rem;text-align:center;transition:box-shadow 0.2s;}
 .qr-card:hover{box-shadow:0 4px 16px rgba(30,24,16,0.08);}
-.qr-card canvas{display:block;margin:0 auto 0.8rem;border-radius:4px;}
 .qr-table-label{font-family:var(--ff-head);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.3rem;}
 .qr-url{font-size:0.63rem;color:var(--muted);word-break:break-all;margin-bottom:0.8rem;}
-
-/* STAFF */
 .staff-row{display:flex;align-items:center;gap:1rem;padding:0.9rem 1.4rem;border-bottom:1px solid rgba(224,213,197,0.5);}
 .staff-row:last-child{border-bottom:none;}
 .staff-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--terra),var(--terra-light));color:white;font-size:0.82rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -206,18 +148,21 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .role-pill{font-size:0.67rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:20px;}
 .role-director{background:var(--terra-pale);color:var(--terra);}
 .role-manager{background:var(--slate-pale);color:var(--slate);}
-
-/* TOAST */
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:white;padding:0.75rem 1.2rem;border-radius:10px;font-size:0.83rem;font-weight:500;z-index:300;opacity:0;transform:translateY(8px);transition:all 0.3s;box-shadow:0 8px 24px rgba(30,24,16,0.2);display:flex;align-items:center;gap:0.5rem;}
 .toast.show{opacity:1;transform:translateY(0);}
-
-/* SECTION HEADER */
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.7rem;}
 .sec-title{font-size:1rem;font-weight:700;color:var(--ink);}
 .loading-state{text-align:center;padding:3rem;color:var(--muted);font-size:0.85rem;}
 .refresh-btn{display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.8rem;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.15s;}
 .refresh-btn:hover{border-color:var(--terra);color:var(--terra);}
-
+/* WAITER CALL ROW */
+.wcall-row{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1.2rem;border-bottom:1px solid rgba(224,213,197,0.5);}
+.wcall-row:last-child{border-bottom:none;}
+.wcall-table{font-size:0.88rem;font-weight:600;color:var(--ink);}
+.wcall-reason{font-size:0.76rem;color:var(--muted);margin-top:0.1rem;}
+.wcall-time{font-size:0.7rem;color:var(--muted2);margin-top:0.1rem;}
+.wcall-badge{font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:20px;background:#fef3c7;color:#92400e;animation:wpulse 2s infinite;}
+@keyframes wpulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
 @media(max-width:900px){
   .sidebar{display:none;}
   .topnav-left{width:auto;border-right:none;}
@@ -254,6 +199,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="nav-item active" data-page="dashboard"><span class="nav-item-icon">📊</span> Dashboard</div>
       <div class="nav-item" data-page="tables"><span class="nav-item-icon">🍽️</span> Tables</div>
       <div class="nav-item" data-page="orders"><span class="nav-item-icon">📋</span> Orders <span class="nav-badge" id="pendingBadge" style="display:none">0</span></div>
+      <div class="nav-item" data-page="waiter"><span class="nav-item-icon">🔔</span> Waiter Calls <span class="nav-badge" id="waiterNavBadge" style="display:none">0</span></div>
     </div>
     <div class="sidebar-section" style="margin-top:0.5rem;">
       <div class="sidebar-label">Management</div>
@@ -293,6 +239,16 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
           <div class="stat-trend">Available right now</div>
         </div>
       </div>
+
+      <!-- WAITER CALLS ON DASHBOARD -->
+      <div class="sec-header">
+        <span class="sec-title">🔔 Waiter Calls <span id="waiterDashBadge" style="display:none;background:var(--red);color:white;font-size:0.65rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:10px;margin-left:0.3rem;vertical-align:middle;">0</span></span>
+        <button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button>
+      </div>
+      <div class="card" style="margin-bottom:2rem;">
+        <div id="waiterCallsDash"><div class="loading-state">Loading...</div></div>
+      </div>
+
       <div class="sec-header">
         <span class="sec-title">Live Tables</span>
         <button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button>
@@ -327,6 +283,16 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
           </table>
         </div>
       </div>
+    </div>
+
+    <!-- WAITER CALLS PAGE -->
+    <div class="page" id="page-waiter">
+      <div class="page-header"><div class="page-title">Waiter Calls</div><div class="page-sub">Customers requesting assistance at their table</div></div>
+      <div class="sec-header">
+        <span class="sec-title">Active Calls</span>
+        <button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button>
+      </div>
+      <div class="card" id="waiterCallsPage"><div class="loading-state">Loading...</div></div>
     </div>
 
     <!-- MENU -->
@@ -409,7 +375,8 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
 <div class="toast" id="toast">✓ Done</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!-- QR library that actually works -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script>
 const SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
@@ -458,6 +425,7 @@ function loadPage(page) {
   if (page==='dashboard') loadDashboard();
   else if (page==='tables') loadTables();
   else if (page==='orders') loadOrders();
+  else if (page==='waiter') loadWaiterCalls();
   else if (page==='menu') loadMenu();
   else if (page==='qr') loadQR();
   else if (page==='staff') loadStaff();
@@ -490,6 +458,7 @@ async function loadDashboard() {
   else { badge.style.display = 'none'; }
 
   renderTableCards(tables, document.getElementById('dashTables'));
+  loadWaiterCalls();
 }
 
 function renderTableCards(tables, container) {
@@ -560,7 +529,6 @@ async function loadOrders() {
   tbody.innerHTML = orders.map(o => {
     const items = (o.order_items||[]).map(i=>`${i.quantity}× ${i.menu_items?.name||'?'}`).join(', ');
     const date = new Date(o.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    // Website orders have table_id null
     const tableLabel = o.restaurant_tables?.table_number ? `Table ${o.restaurant_tables.table_number}` : '<span style="color:var(--terra);font-size:0.72rem;font-weight:600;">WEBSITE</span>';
     const opts = ['pending','confirmed','ready','paid','cancelled'].map(s =>
       `<option value="${s}" ${o.status===s?'selected':''}>${statusLabel(s)}</option>`).join('');
@@ -584,6 +552,56 @@ function filterOrders(status, btn) {
   loadOrders();
 }
 
+// ── WAITER CALLS ──
+async function loadWaiterCalls() {
+  try {
+    const calls = await api('waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc');
+    const count = Array.isArray(calls) ? calls.length : 0;
+
+    // Update badges
+    ['waiterDashBadge','waiterNavBadge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (count > 0) { el.textContent = count; el.style.display = 'inline-block'; }
+      else { el.style.display = 'none'; }
+    });
+
+    const html = count
+      ? calls.map(c => `
+          <div class="wcall-row">
+            <div>
+              <div class="wcall-table">Table ${c.restaurant_tables?.table_number || '?'}</div>
+              <div class="wcall-reason">${c.reason}</div>
+              <div class="wcall-time">${new Date(c.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.6rem;">
+              <span class="wcall-badge">Waiting</span>
+              <button class="btn-xs success" onclick="dismissWaiterCall('${c.id}')">✓ Done</button>
+            </div>
+          </div>`).join('')
+      : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
+
+    const dash = document.getElementById('waiterCallsDash');
+    const page = document.getElementById('waiterCallsPage');
+    if (dash) dash.innerHTML = html;
+    if (page) page.innerHTML = html;
+
+  } catch(e) {
+    const msg = '<div class="loading-state">Run the waiter_calls SQL setup first</div>';
+    const dash = document.getElementById('waiterCallsDash');
+    const page = document.getElementById('waiterCallsPage');
+    if (dash) dash.innerHTML = msg;
+    if (page) page.innerHTML = msg;
+  }
+}
+
+async function dismissWaiterCall(id) {
+  await api(`waiter_calls?id=eq.${id}`, {method:'PATCH', body:JSON.stringify({status:'seen'})});
+  showToast('✓ Waiter call dismissed');
+  loadWaiterCalls();
+}
+
+// ── MENU ──
 let menuItems = [];
 async function loadMenu() {
   const items = await api('menu_items?select=*&order=category,name');
@@ -658,6 +676,7 @@ async function saveMenuItem() {
   loadMenu();
 }
 
+// ── QR CODES (uses qrcode npm library via CDN — renders proper canvas) ──
 async function loadQR() {
   const tables = await api('restaurant_tables?select=*&order=table_number');
   const grid = document.getElementById('qrGrid');
@@ -665,41 +684,24 @@ async function loadQR() {
 
   grid.innerHTML = tables.map(t => `
     <div class="qr-card">
-      <div id="qr-${t.id}" style="display:flex; justify-content:center; padding: 10px; background: white;"></div>
-      <div class="qr-table-label" style="margin-top:10px; font-weight: bold; color: #120f0b;">Masa ${t.table_number}</div>
-      <div class="qr-url" style="font-size: 0.65rem; color: #888; margin-bottom:10px; word-break:break-all;">armood-baku.vercel.app/table.html?t=${t.token.trim()}</div>
+      <canvas id="qr-canvas-${t.id}" style="display:block;margin:0 auto 0.8rem;border-radius:4px;"></canvas>
+      <div class="qr-table-label">Masa ${t.table_number}</div>
+      <div class="qr-url">armood-baku.vercel.app/table.html?t=${t.token.trim()}</div>
       <button class="btn-xs" onclick="downloadQR('${t.id}','${t.table_number}')">⬇ Download QR</button>
     </div>`).join('');
 
   tables.forEach(t => {
-    const container = document.getElementById(`qr-${t.id}`);
-    container.innerHTML = '';
-    const url = `https://armood-baku.vercel.app/table.html?t=${encodeURIComponent(t.token.trim())}`;
-
-    // Use Google Charts API — guaranteed scannable by all phones
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.width = 180;
-    img.height = 180;
-    img.style.display = 'block';
-    img.src = `https://chart.googleapis.com/chart?chs=180x180&cht=qr&chl=${encodeURIComponent(url)}&choe=UTF-8&chld=H|1`;
-
-    // Also draw to hidden canvas so download works
-    const canvas = document.createElement('canvas');
-    canvas.width = 180;
-    canvas.height = 180;
-    canvas.style.display = 'none';
-    canvas.id = `qr-canvas-${t.id}`;
-
-    img.onload = () => {
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, 180, 180);
-    };
-
-    container.appendChild(img);
-    container.appendChild(canvas);
+    const url = `https://armood-baku.vercel.app/table.html?t=${t.token.trim()}`;
+    const canvas = document.getElementById(`qr-canvas-${t.id}`);
+    QRCode.toCanvas(canvas, url, {
+      width: 180,
+      margin: 2,
+      color: { dark: '#000000', light: '#ffffff' },
+      errorCorrectionLevel: 'H'
+    }, err => { if (err) console.error('QR error:', err); });
   });
 }
+
 function downloadQR(id, num) {
   const canvas = document.getElementById(`qr-canvas-${id}`);
   if (!canvas) { showToast('QR not ready yet'); return; }
@@ -710,6 +712,7 @@ function downloadQR(id, num) {
   showToast('QR downloaded');
 }
 
+// ── STAFF ──
 async function loadStaff() {
   if (currentUser.role !== 'director') {
     document.getElementById('staffList').innerHTML = '<div class="loading-state">Access restricted to directors</div>';
@@ -782,11 +785,14 @@ document.querySelectorAll('.modal-overlay').forEach(overlay=>{
 });
 
 setInterval(()=>{
-  if(document.getElementById('page-dashboard').classList.contains('active'))loadDashboard();
-  if(document.getElementById('page-tables').classList.contains('active'))loadTables();
+  if(document.getElementById('page-dashboard').classList.contains('active')) { loadDashboard(); }
+  if(document.getElementById('page-tables').classList.contains('active')) loadTables();
+  if(document.getElementById('page-waiter').classList.contains('active')) loadWaiterCalls();
 },30000);
 
 loadDashboard();
 </script>
 </body>
 </html>
+ENDOFFILE
+echo "Done"
