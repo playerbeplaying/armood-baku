@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+python3 - << 'PYEOF'
+# The core issue: session.token may be the Supabase access_token (JWT) 
+# but the session storage format from admin-login.html determines what key it's under.
+# We need to handle multiple possible formats AND add a debug overlay.
+# Also need to use SUPABASE_ANON as fallback bearer for public tables (RLS permissive reads).
+
+content = r"""<!DOCTYPE html>
 <html lang="az">
 <head>
 <meta charset="UTF-8">
@@ -145,10 +151,15 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .wcall-time{font-size:0.7rem;color:var(--muted2);margin-top:0.1rem;}
 .wcall-badge{font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:20px;background:#fef3c7;color:#92400e;animation:wpulse 2s infinite;}
 @keyframes wpulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+/* DEBUG PANEL */
+.debug-bar{position:fixed;bottom:0;left:0;right:0;background:#1e1810;color:#a0ffa0;font-family:monospace;font-size:0.72rem;padding:0.5rem 1rem;z-index:9999;max-height:220px;overflow-y:auto;display:none;}
+.debug-bar.show{display:block;}
+.debug-toggle{position:fixed;bottom:0.5rem;left:0.5rem;z-index:10000;background:#1e1810;color:#a0ffa0;border:none;border-radius:6px;font-size:0.68rem;padding:0.3rem 0.6rem;cursor:pointer;font-family:monospace;}
 @media(max-width:900px){.sidebar{display:none;}.topnav-left{width:auto;border-right:none;}.main{padding:1rem;}}
 </style>
 </head>
 <body>
+
 <nav class="topnav">
   <div class="topnav-left">
     <a class="topnav-logo" href="#">
@@ -168,6 +179,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <button class="btn-logout" id="btnLogout">Sign out</button>
   </div>
 </nav>
+
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-section">
@@ -272,6 +284,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
   </main>
 </div>
+
 <!-- MENU MODAL -->
 <div class="modal-overlay" id="menuModal">
   <div class="modal">
@@ -311,35 +324,104 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 </div>
 
 <div class="toast" id="toast">Done</div>
+<div class="debug-bar" id="debugBar"></div>
+<button class="debug-toggle" id="debugToggle" onclick="toggleDebug()">🐛 debug</button>
+
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script>
 var SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 
-var sessionRaw = localStorage.getItem('armood_session');
-if (!sessionRaw) { window.location.href = 'admin-login.html'; }
-var session = JSON.parse(sessionRaw || '{}');
-var currentUser = session.user;
-var authToken = session.token;
-if (!currentUser || !authToken) { window.location.href = 'admin-login.html'; }
-
-var uname = currentUser.full_name || currentUser.email;
-document.getElementById('adminName').textContent = uname;
-document.getElementById('adminRole').textContent = currentUser.role === 'director' ? 'Director' : 'Manager';
-document.getElementById('userInitials').textContent = uname.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
-
-if (currentUser.role === 'director') {
-  document.querySelectorAll('.director-only').forEach(function(el){ el.style.display = 'flex'; });
+/* ── DEBUG PANEL ── */
+var debugLines = [];
+function dbg(msg) {
+  var t = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  debugLines.push('[' + t + '] ' + msg);
+  if (debugLines.length > 60) debugLines.shift();
+  document.getElementById('debugBar').innerHTML = debugLines.slice().reverse().map(function(l){
+    var col = l.includes('ERROR') ? '#ff8080' : l.includes('OK') ? '#80ff80' : '#a0ffa0';
+    return '<div style="color:' + col + '">' + l + '</div>';
+  }).join('');
 }
+function toggleDebug() {
+  var bar = document.getElementById('debugBar');
+  bar.classList.toggle('show');
+}
+
+/* ── SESSION: handle multiple possible storage formats ──
+   admin-login.html may store as:
+     { user, token }              <- our format
+     { user, access_token }       <- supabase sdk v1
+     { session: { access_token }} <- supabase sdk v2
+   We try all three and fall back to SUPABASE_ANON so reads still work.
+*/
+var currentUser = null;
+var authToken = SUPABASE_ANON; // safe default — allows anon reads
+
+(function initSession() {
+  var raw = localStorage.getItem('armood_session');
+  dbg('localStorage armood_session: ' + (raw ? raw.substring(0,80) + '...' : 'NULL'));
+
+  if (!raw) {
+    dbg('ERROR: No session found — redirecting to login');
+    window.location.href = 'admin-login.html';
+    return;
+  }
+
+  var s;
+  try { s = JSON.parse(raw); } catch(e) {
+    dbg('ERROR: Session JSON parse failed: ' + e.message);
+    window.location.href = 'admin-login.html';
+    return;
+  }
+
+  // Extract user — try multiple shapes
+  currentUser = s.user || s.data || null;
+  if (currentUser && currentUser.user) currentUser = currentUser.user; // nested
+
+  // Extract token — try every known key
+  var tok = s.token || s.access_token ||
+    (s.session && s.session.access_token) ||
+    (s.data && s.data.session && s.data.session.access_token) ||
+    null;
+
+  if (tok) {
+    authToken = tok;
+    dbg('OK: token found, length=' + tok.length + ', starts=' + tok.substring(0,20));
+  } else {
+    dbg('WARN: No token in session — using anon key. Writes may fail.');
+  }
+
+  if (!currentUser) {
+    dbg('ERROR: No user object in session');
+    window.location.href = 'admin-login.html';
+    return;
+  }
+
+  dbg('OK: user=' + (currentUser.email || currentUser.id || '?') + ' role=' + (currentUser.role || currentUser.user_metadata?.role || '?'));
+
+  // Populate UI
+  var role = currentUser.role || (currentUser.user_metadata && currentUser.user_metadata.role) || 'manager';
+  currentUser.role = role; // normalise
+  var uname = currentUser.full_name || (currentUser.user_metadata && currentUser.user_metadata.full_name) || currentUser.email || 'Admin';
+  document.getElementById('adminName').textContent = uname;
+  document.getElementById('adminRole').textContent = role === 'director' ? 'Director' : 'Manager';
+  document.getElementById('userInitials').textContent = uname.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
+  if (role === 'director') {
+    document.querySelectorAll('.director-only').forEach(function(el){ el.style.display = 'flex'; });
+  }
+})();
 
 function updateClock() {
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
-updateClock();
-setInterval(updateClock, 1000);
+updateClock(); setInterval(updateClock, 1000);
 
+/* ── API helper: logs every call and its response shape ── */
 function api(path, opts) {
   opts = opts || {};
+  var method = opts.method || 'GET';
+  dbg(method + ' /rest/v1/' + path.substring(0,60));
   return fetch(SUPABASE_URL + '/rest/v1/' + path, {
     headers: Object.assign({
       'apikey': SUPABASE_ANON,
@@ -347,9 +429,20 @@ function api(path, opts) {
       'Content-Type': 'application/json',
       'Prefer': 'return=representation'
     }, opts.headers || {}),
-    method: opts.method || 'GET',
+    method: method,
     body: opts.body
-  }).then(function(r){ return r.json(); });
+  }).then(function(r) {
+    dbg('  -> HTTP ' + r.status + ' ' + r.statusText);
+    return r.json().then(function(data) {
+      if (data && data.code) dbg('  ERROR body: ' + JSON.stringify(data).substring(0,120));
+      else if (Array.isArray(data)) dbg('  OK: ' + data.length + ' rows');
+      else dbg('  OK: ' + JSON.stringify(data).substring(0,80));
+      return data;
+    });
+  }).catch(function(e) {
+    dbg('  FETCH ERROR: ' + e.message);
+    return null;
+  });
 }
 
 document.getElementById('btnLogout').addEventListener('click', function() {
@@ -387,17 +480,19 @@ async function loadDashboard() {
     api('restaurant_tables?select=*&order=table_number'),
     api('orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc')
   ]);
-  var tables = results[0];
-  var orders = results[1];
-  allOrders = Array.isArray(orders) ? orders : [];
+  var tables = Array.isArray(results[0]) ? results[0] : [];
+  var orders = Array.isArray(results[1]) ? results[1] : [];
+  allOrders = orders;
+  dbg('Dashboard: ' + tables.length + ' tables, ' + orders.length + ' orders');
+
   var today = new Date().toDateString();
   var todayOrders = allOrders.filter(function(o){ return new Date(o.created_at).toDateString() === today; });
   var revenue = todayOrders.filter(function(o){ return o.status === 'paid'; }).reduce(function(s,o){ return s + Number(o.total); }, 0);
   var active = allOrders.filter(function(o){ return ['pending','confirmed','ready'].includes(o.status); }).length;
-  var empty = Array.isArray(tables) ? tables.filter(function(t){ return t.status === 'empty'; }).length : 0;
+  var empty = tables.filter(function(t){ return t.status === 'empty'; }).length;
   var pending = allOrders.filter(function(o){ return o.status === 'pending'; }).length;
 
-  document.getElementById('statRevenue').textContent = '\u20BC' + revenue.toFixed(2);
+  document.getElementById('statRevenue').textContent = '₼' + revenue.toFixed(2);
   document.getElementById('statActive').textContent = active;
   document.getElementById('statToday').textContent = todayOrders.length;
   document.getElementById('statEmpty').textContent = empty;
@@ -411,8 +506,8 @@ async function loadDashboard() {
 }
 
 function renderTableCards(tables, container) {
-  if (!Array.isArray(tables) || !tables.length) {
-    container.innerHTML = '<div class="loading-state">No tables found</div>';
+  if (!tables.length) {
+    container.innerHTML = '<div class="loading-state">No tables found — check Supabase RLS or data</div>';
     return;
   }
   container.innerHTML = tables.map(function(t) {
@@ -490,7 +585,7 @@ async function loadOrders() {
       '<td style="color:var(--muted);font-size:0.72rem;">#' + o.id.toString().slice(-4) + '</td>' +
       '<td>' + tableLabel + '</td>' +
       '<td style="max-width:200px;font-size:0.78rem;color:var(--muted);">' + items + '</td>' +
-      '<td style="font-weight:700;color:var(--terra);">\u20BC' + Number(o.total).toFixed(2) + '</td>' +
+      '<td style="font-weight:700;color:var(--terra);">₼' + Number(o.total).toFixed(2) + '</td>' +
       '<td style="max-width:120px;font-size:0.75rem;color:var(--muted);">' + (o.notes||'—') + '</td>' +
       '<td><span class="badge b-' + o.status + '">' + statusLabel(o.status) + '</span></td>' +
       '<td style="font-size:0.75rem;color:var(--muted);">' + date + '</td>' +
@@ -506,17 +601,18 @@ function filterOrders(status, btn) {
   loadOrders();
 }
 
-/* ── WAITER CALLS ──
-   FIX: was using SUPABASE_ANON as Bearer in loadWaiterCalls — now uses authToken
-   so Supabase RLS policies are satisfied for authenticated reads. */
 async function loadWaiterCalls() {
   try {
+    dbg('GET waiter_calls?status=eq.pending');
     var res = await fetch(
       SUPABASE_URL + '/rest/v1/waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc',
       { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' } }
     );
+    dbg('  waiter_calls HTTP ' + res.status);
     var calls = await res.json();
+    if (calls && calls.code) { dbg('  ERROR: ' + JSON.stringify(calls)); calls = []; }
     var count = Array.isArray(calls) ? calls.length : 0;
+    dbg('  waiter_calls: ' + count + ' pending');
 
     ['waiterNavBadge','waiterDashBadge'].forEach(function(id) {
       var el = document.getElementById(id);
@@ -534,14 +630,14 @@ async function loadWaiterCalls() {
             '<div style="display:flex;align-items:center;gap:0.6rem;"><span class="wcall-badge">Waiting</span><button class="btn-xs success" onclick="dismissWaiterCall(\'' + c.id + '\')">Done</button></div>' +
           '</div>';
         }).join('')
-      : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls</div>';
+      : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
 
     var dash = document.getElementById('waiterCallsDash');
     var page = document.getElementById('waiterCallsPage');
     if (dash) dash.innerHTML = html;
     if (page) page.innerHTML = html;
   } catch(e) {
-    console.error('Waiter calls error:', e);
+    dbg('ERROR loadWaiterCalls: ' + e.message);
   }
 }
 
@@ -564,8 +660,8 @@ async function loadMenu() {
   if (!menuItems.length) { grid.innerHTML = '<div class="loading-state">Menu is empty</div>'; return; }
   grid.innerHTML = menuItems.map(function(item) {
     return '<div class="menu-item-row">' +
-      '<span class="menu-emoji">' + (item.emoji||'') + '</span>' +
-      '<div class="menu-info"><div class="menu-name">' + item.name + '</div><div class="menu-meta">' + catLabel(item.category) + ' · \u20BC' + Number(item.price).toFixed(2) + '</div></div>' +
+      '<span class="menu-emoji">' + (item.emoji||'🍽️') + '</span>' +
+      '<div class="menu-info"><div class="menu-name">' + item.name + '</div><div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div></div>' +
       '<button class="toggle ' + (item.available?'on':'') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>' +
       '<button class="btn-xs" onclick=\'openEditMenu(' + JSON.stringify(item) + ')\'>Edit</button>' +
       '<button class="btn-xs danger" onclick="deleteMenuItem(\'' + item.id + '\')">Delete</button>' +
@@ -578,14 +674,11 @@ async function toggleItem(id, current) {
   showToast(current ? 'Item disabled' : 'Item enabled');
   loadMenu();
 }
-
 async function deleteMenuItem(id) {
   if (!confirm('Delete this menu item?')) return;
   await api('menu_items?id=eq.' + id, {method:'DELETE'});
-  showToast('Item deleted');
-  loadMenu();
+  showToast('Item deleted'); loadMenu();
 }
-
 function openAddMenu() {
   document.getElementById('menuModalTitle').textContent = 'Add Menu Item';
   document.getElementById('menuEditId').value = '';
@@ -593,7 +686,6 @@ function openAddMenu() {
   document.getElementById('menuCat').value = 'ana';
   document.getElementById('menuModal').classList.add('open');
 }
-
 function openEditMenu(item) {
   document.getElementById('menuModalTitle').textContent = 'Edit Item';
   document.getElementById('menuEditId').value = item.id;
@@ -604,64 +696,61 @@ function openEditMenu(item) {
   document.getElementById('menuCat').value = item.category;
   document.getElementById('menuModal').classList.add('open');
 }
-
 async function saveMenuItem() {
   var id = document.getElementById('menuEditId').value;
   var data = {
     name: document.getElementById('menuName').value.trim(),
-    emoji: document.getElementById('menuEmoji').value.trim() || '',
+    emoji: document.getElementById('menuEmoji').value.trim() || '🍽️',
     description: document.getElementById('menuDesc').value.trim(),
     price: parseFloat(document.getElementById('menuPrice').value),
     category: document.getElementById('menuCat').value,
     available: true
   };
   if (!data.name || !data.price) { showToast('Name and price are required'); return; }
-  if (id) {
-    await api('menu_items?id=eq.' + id, {method:'PATCH', body:JSON.stringify(data)});
-    showToast('Item updated');
-  } else {
-    await api('menu_items', {method:'POST', body:JSON.stringify(data)});
-    showToast('Item added');
-  }
-  closeModal('menuModal');
-  loadMenu();
+  if (id) { await api('menu_items?id=eq.' + id, {method:'PATCH', body:JSON.stringify(data)}); showToast('Item updated'); }
+  else { await api('menu_items', {method:'POST', body:JSON.stringify(data)}); showToast('Item added'); }
+  closeModal('menuModal'); loadMenu();
 }
 
-/* ── QR CODES ──
-   FIX: token trimmed; error shown per-card if generation fails;
-   canvas nodes exist in DOM before QRCode.toCanvas is called. */
 async function loadQR() {
-  var tables = await api('restaurant_tables?select=*&order=table_number');
+  var tables = await api('restaurant_tables?select=id,table_number,token&order=table_number');
   var grid = document.getElementById('qrGrid');
   if (!Array.isArray(tables) || !tables.length) {
-    grid.innerHTML = '<div class="loading-state">No tables found. Add tables in Supabase first.</div>';
+    grid.innerHTML = '<div class="loading-state">No tables found — check debug panel for API errors</div>';
     return;
   }
+  dbg('QR: rendering ' + tables.length + ' tables');
+
   grid.innerHTML = tables.map(function(t) {
+    var tok = (t.token || '').trim();
+    var url = 'https://armood-baku.vercel.app/table.html?t=' + tok;
+    dbg('QR table ' + t.table_number + ' token=' + (tok ? tok.substring(0,12) + '...' : 'MISSING'));
     return '<div class="qr-card">' +
       '<canvas id="qr-canvas-' + t.id + '" style="display:block;margin:0 auto 0.8rem;border-radius:4px;"></canvas>' +
       '<div class="qr-table-label">Masa ' + t.table_number + '</div>' +
-      '<div class="qr-url">https://armood-baku.vercel.app/table.html?t=' + (t.token||'').trim() + '</div>' +
+      '<div class="qr-url">' + url + '</div>' +
       '<button class="btn-xs" onclick="downloadQR(\'' + t.id + '\',' + t.table_number + ')">Download</button>' +
     '</div>';
   }).join('');
 
-  tables.forEach(function(t) {
-    if (!t.token) return;
-    var url = 'https://armood-baku.vercel.app/table.html?t=' + t.token.trim();
-    var canvas = document.getElementById('qr-canvas-' + t.id);
-    if (!canvas) return;
-    QRCode.toCanvas(canvas, url, {
-      width: 200, margin: 2,
-      color: { dark: '#1e1810', light: '#ffffff' },
-      errorCorrectionLevel: 'M'
-    }, function(err) {
-      if (err) {
-        console.error('QR error table ' + t.table_number + ':', err);
-        canvas.insertAdjacentHTML('afterend', '<p style="color:var(--red);font-size:0.72rem;">QR error</p>');
-      }
+  /* Render QR codes after DOM is updated */
+  setTimeout(function() {
+    tables.forEach(function(t) {
+      var tok = (t.token || '').trim();
+      if (!tok) { dbg('WARN: table ' + t.table_number + ' has no token, skipping QR'); return; }
+      var canvas = document.getElementById('qr-canvas-' + t.id);
+      if (!canvas) { dbg('WARN: canvas not found for table ' + t.table_number); return; }
+      var url = 'https://armood-baku.vercel.app/table.html?t=' + tok;
+      QRCode.toCanvas(canvas, url, {
+        width: 220, margin: 3,
+        color: { dark: '#000000', light: '#ffffff' },
+        errorCorrectionLevel: 'M'
+      }, function(err) {
+        if (err) dbg('ERROR QR table ' + t.table_number + ': ' + err.message);
+        else dbg('OK QR table ' + t.table_number);
+      });
     });
-  });
+  }, 50);
 }
 
 function downloadQR(id, num) {
@@ -692,13 +781,11 @@ async function loadStaff() {
     '</div>';
   }).join('');
 }
-
 function openAddStaff() {
   ['staffName','staffEmail','staffPassword'].forEach(function(id){ document.getElementById(id).value = ''; });
   document.getElementById('staffRole').value = 'manager';
   document.getElementById('staffModal').classList.add('open');
 }
-
 async function saveStaff() {
   var name = document.getElementById('staffName').value.trim();
   var email = document.getElementById('staffEmail').value.trim();
@@ -715,38 +802,27 @@ async function saveStaff() {
     var userData = await res.json();
     if (userData.error || !userData.id) { showToast('Error: ' + (userData.error ? userData.error.message : 'Unknown')); return; }
     await api('admins', {method:'POST', body:JSON.stringify({id:userData.id, email:email, full_name:name, role:role})});
-    showToast('Admin added');
-    closeModal('staffModal');
-    loadStaff();
-  } catch(e) { showToast('Error occurred'); }
+    showToast('Admin added'); closeModal('staffModal'); loadStaff();
+  } catch(e) { showToast('Error occurred'); dbg('ERROR saveStaff: ' + e.message); }
 }
-
 async function removeStaff(id) {
   if (!confirm('Remove this admin?')) return;
   await api('admins?id=eq.' + id, {method:'DELETE'});
-  showToast('Admin removed');
-  loadStaff();
+  showToast('Admin removed'); loadStaff();
 }
 
-function statusLabel(s) {
-  return {pending:'Pending',confirmed:'Confirmed',ready:'Ready',paid:'Paid',cancelled:'Cancelled'}[s] || s;
-}
-function tableStatusLabel(s) {
-  return {empty:'Empty',active:'Active',ordered:'Ordered',paid:'Paid'}[s] || s;
-}
-function catLabel(c) {
-  return {seheri:'Breakfast',ana:'Main',salatlar:'Salads',icecekler:'Drinks'}[c] || c;
-}
+function statusLabel(s) { return {pending:'Pending',confirmed:'Confirmed',ready:'Ready',paid:'Paid',cancelled:'Cancelled'}[s]||s; }
+function tableStatusLabel(s) { return {empty:'Empty',active:'Active',ordered:'Ordered',paid:'Paid'}[s]||s; }
+function catLabel(c) { return {seheri:'Breakfast',ana:'Main',salatlar:'Salads',icecekler:'Drinks'}[c]||c; }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function showToast(msg) {
   var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
 document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
-  overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.classList.remove('open'); });
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
 });
 
 setInterval(function() {
@@ -755,10 +831,14 @@ setInterval(function() {
   if (document.getElementById('page-orders').classList.contains('active')) loadOrders();
   if (document.getElementById('page-waiter').classList.contains('active')) loadWaiterCalls();
 }, 30000);
-
 setInterval(loadWaiterCalls, 15000);
 
 loadDashboard();
 </script>
 </body>
-</html>
+</html>"""
+
+with open('/mnt/user-data/outputs/admin.html', 'w', encoding='utf-8') as f:
+    f.write(content)
+print("Done:", len(content), "chars")
+PYEOF
