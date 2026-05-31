@@ -774,57 +774,46 @@ async function loadQR() {
   var tables = await api('restaurant_tables?select=id,table_number,token&order=table_number');
   var grid = document.getElementById('qrGrid');
   if (!Array.isArray(tables) || !tables.length) {
-    grid.innerHTML = '<div class="loading-state">No tables found — check debug panel for API errors</div>';
+    grid.innerHTML = '<div class="loading-state">No tables found</div>';
     return;
   }
-  dbg('QR: rendering ' + tables.length + ' tables');
+  dbg('QR: ' + tables.length + ' tables');
 
+  // Build cards with an <img> placeholder — no library needed, uses qrserver.com REST API
   grid.innerHTML = tables.map(function(t) {
     var tok = (t.token || '').trim();
-    var url = 'https://armood-baku.vercel.app/table.html?t=' + tok;
-    dbg('QR table ' + t.table_number + ' token=' + (tok ? tok.substring(0,12) + '...' : 'MISSING'));
-    return '<div class="qr-card">' +
-      '<canvas id="qr-canvas-' + t.id + '" style="display:block;margin:0 auto 0.8rem;border-radius:4px;"></canvas>' +
+    var pageUrl = 'https://armood-baku.vercel.app/table.html?t=' + encodeURIComponent(tok);
+    var qrImgUrl = tok
+      ? 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&ecc=M&data=' + encodeURIComponent(pageUrl)
+      : '';
+    dbg('QR table ' + t.table_number + ' tok=' + (tok ? tok.substring(0,10)+'...' : 'MISSING'));
+    return '<div class="qr-card" id="qr-card-' + t.id + '">' +
+      (tok
+        ? '<img src="' + qrImgUrl + '" width="220" height="220" ' +
+          'style="display:block;margin:0 auto 0.8rem;border-radius:4px;" ' +
+          'data-dl-url="' + qrImgUrl + '" ' +
+          'onload="dbg('OK QR Masa ' + t.table_number + '')" ' +
+          'onerror="this.outerHTML='<p style=\"color:var(--red);font-size:0.75rem;\">QR failed — check network</p>'">'
+        : '<p style="color:var(--red);font-size:0.75rem;">No token for this table</p>') +
       '<div class="qr-table-label">Masa ' + t.table_number + '</div>' +
-      '<div class="qr-url">' + url + '</div>' +
-      '<button class="btn-xs" onclick="downloadQR(\'' + t.id + '\',' + t.table_number + ')">Download</button>' +
+      '<div class="qr-url">' + pageUrl + '</div>' +
+      '<button class="btn-xs" onclick="downloadQR('' + t.id + '',' + t.table_number + ')">Download</button>' +
     '</div>';
   }).join('');
-
-  /* Render QR codes as <img> tags using the Google Charts QR API — no library needed */
-  tables.forEach(function(t) {
-    var tok = (t.token || '').trim();
-    if (!tok) { dbg('WARN: table ' + t.table_number + ' no token'); return; }
-    var wrap = document.getElementById('qr-wrap-' + t.id);
-    if (!wrap) { dbg('WARN: qr wrap missing for table ' + t.table_number); return; }
-    var url = 'https://armood-baku.vercel.app/table.html?t=' + tok;
-    var apiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=' + encodeURIComponent(url);
-    var img = document.createElement('img');
-    img.width = 220; img.height = 220;
-    img.style.borderRadius = '4px';
-    img.style.display = 'block';
-    img.style.margin = '0 auto 0.8rem';
-    img.onload = function() { dbg('OK QR table ' + t.table_number); };
-    img.onerror = function() { dbg('ERROR QR img failed table ' + t.table_number); wrap.innerHTML = '<p style="color:var(--red);font-size:0.72rem;">QR load failed</p>'; };
-    img.src = apiUrl;
-    wrap.appendChild(img);
-    // Store url for download
-    wrap.dataset.url = url;
-    wrap.dataset.qrApi = apiUrl;
-  });
 }
 
 function downloadQR(id, num) {
-  var wrap = document.getElementById('qr-wrap-' + id);
-  if (!wrap) { showToast('QR not ready'); return; }
-  var img = wrap.querySelector('img');
-  if (!img) { showToast('QR still loading'); return; }
-  // Use the QR API URL directly as download link
+  var card = document.getElementById('qr-card-' + id);
+  if (!card) { showToast('QR card not found'); return; }
+  var img = card.querySelector('img');
+  if (!img) { showToast('QR not ready'); return; }
   var link = document.createElement('a');
   link.download = 'armood-masa-' + num + '.png';
-  link.href = wrap.dataset.qrApi || img.src;
+  link.href = img.getAttribute('data-dl-url') || img.src;
   link.target = '_blank';
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
   showToast('QR downloading');
 }
 
