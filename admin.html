@@ -1,4 +1,3 @@
-cat > /tmp/admin.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -150,7 +149,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 </style>
 </head>
 <body>
-
 <nav class="topnav">
   <div class="topnav-left">
     <a class="topnav-logo" href="#">
@@ -170,7 +168,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <button class="btn-logout" id="btnLogout">Sign out</button>
   </div>
 </nav>
-
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-section">
@@ -275,7 +272,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
   </main>
 </div>
-
 <!-- MENU MODAL -->
 <div class="modal-overlay" id="menuModal">
   <div class="modal">
@@ -315,7 +311,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 </div>
 
 <div class="toast" id="toast">Done</div>
-
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script>
 var SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
@@ -402,7 +397,7 @@ async function loadDashboard() {
   var empty = Array.isArray(tables) ? tables.filter(function(t){ return t.status === 'empty'; }).length : 0;
   var pending = allOrders.filter(function(o){ return o.status === 'pending'; }).length;
 
-  document.getElementById('statRevenue').textContent = '₼' + revenue.toFixed(2);
+  document.getElementById('statRevenue').textContent = '\u20BC' + revenue.toFixed(2);
   document.getElementById('statActive').textContent = active;
   document.getElementById('statToday').textContent = todayOrders.length;
   document.getElementById('statEmpty').textContent = empty;
@@ -495,7 +490,7 @@ async function loadOrders() {
       '<td style="color:var(--muted);font-size:0.72rem;">#' + o.id.toString().slice(-4) + '</td>' +
       '<td>' + tableLabel + '</td>' +
       '<td style="max-width:200px;font-size:0.78rem;color:var(--muted);">' + items + '</td>' +
-      '<td style="font-weight:700;color:var(--terra);">₼' + Number(o.total).toFixed(2) + '</td>' +
+      '<td style="font-weight:700;color:var(--terra);">\u20BC' + Number(o.total).toFixed(2) + '</td>' +
       '<td style="max-width:120px;font-size:0.75rem;color:var(--muted);">' + (o.notes||'—') + '</td>' +
       '<td><span class="badge b-' + o.status + '">' + statusLabel(o.status) + '</span></td>' +
       '<td style="font-size:0.75rem;color:var(--muted);">' + date + '</td>' +
@@ -511,11 +506,14 @@ function filterOrders(status, btn) {
   loadOrders();
 }
 
+/* ── WAITER CALLS ──
+   FIX: was using SUPABASE_ANON as Bearer in loadWaiterCalls — now uses authToken
+   so Supabase RLS policies are satisfied for authenticated reads. */
 async function loadWaiterCalls() {
   try {
     var res = await fetch(
       SUPABASE_URL + '/rest/v1/waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc',
-      { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON, 'Content-Type': 'application/json' } }
+      { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' } }
     );
     var calls = await res.json();
     var count = Array.isArray(calls) ? calls.length : 0;
@@ -536,7 +534,7 @@ async function loadWaiterCalls() {
             '<div style="display:flex;align-items:center;gap:0.6rem;"><span class="wcall-badge">Waiting</span><button class="btn-xs success" onclick="dismissWaiterCall(\'' + c.id + '\')">Done</button></div>' +
           '</div>';
         }).join('')
-      : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
+      : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls</div>';
 
     var dash = document.getElementById('waiterCallsDash');
     var page = document.getElementById('waiterCallsPage');
@@ -566,8 +564,8 @@ async function loadMenu() {
   if (!menuItems.length) { grid.innerHTML = '<div class="loading-state">Menu is empty</div>'; return; }
   grid.innerHTML = menuItems.map(function(item) {
     return '<div class="menu-item-row">' +
-      '<span class="menu-emoji">' + (item.emoji||'🍽️') + '</span>' +
-      '<div class="menu-info"><div class="menu-name">' + item.name + '</div><div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div></div>' +
+      '<span class="menu-emoji">' + (item.emoji||'') + '</span>' +
+      '<div class="menu-info"><div class="menu-name">' + item.name + '</div><div class="menu-meta">' + catLabel(item.category) + ' · \u20BC' + Number(item.price).toFixed(2) + '</div></div>' +
       '<button class="toggle ' + (item.available?'on':'') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>' +
       '<button class="btn-xs" onclick=\'openEditMenu(' + JSON.stringify(item) + ')\'>Edit</button>' +
       '<button class="btn-xs danger" onclick="deleteMenuItem(\'' + item.id + '\')">Delete</button>' +
@@ -611,7 +609,7 @@ async function saveMenuItem() {
   var id = document.getElementById('menuEditId').value;
   var data = {
     name: document.getElementById('menuName').value.trim(),
-    emoji: document.getElementById('menuEmoji').value.trim() || '🍽️',
+    emoji: document.getElementById('menuEmoji').value.trim() || '',
     description: document.getElementById('menuDesc').value.trim(),
     price: parseFloat(document.getElementById('menuPrice').value),
     category: document.getElementById('menuCat').value,
@@ -629,32 +627,40 @@ async function saveMenuItem() {
   loadMenu();
 }
 
+/* ── QR CODES ──
+   FIX: token trimmed; error shown per-card if generation fails;
+   canvas nodes exist in DOM before QRCode.toCanvas is called. */
 async function loadQR() {
   var tables = await api('restaurant_tables?select=*&order=table_number');
   var grid = document.getElementById('qrGrid');
   if (!Array.isArray(tables) || !tables.length) {
-    grid.innerHTML = '<div class="loading-state">No tables found</div>';
+    grid.innerHTML = '<div class="loading-state">No tables found. Add tables in Supabase first.</div>';
     return;
   }
   grid.innerHTML = tables.map(function(t) {
     return '<div class="qr-card">' +
       '<canvas id="qr-canvas-' + t.id + '" style="display:block;margin:0 auto 0.8rem;border-radius:4px;"></canvas>' +
       '<div class="qr-table-label">Masa ' + t.table_number + '</div>' +
-      '<div class="qr-url">https://armood-baku.vercel.app/table.html?t=' + t.token.trim() + '</div>' +
+      '<div class="qr-url">https://armood-baku.vercel.app/table.html?t=' + (t.token||'').trim() + '</div>' +
       '<button class="btn-xs" onclick="downloadQR(\'' + t.id + '\',' + t.table_number + ')">Download</button>' +
     '</div>';
   }).join('');
 
   tables.forEach(function(t) {
+    if (!t.token) return;
     var url = 'https://armood-baku.vercel.app/table.html?t=' + t.token.trim();
     var canvas = document.getElementById('qr-canvas-' + t.id);
     if (!canvas) return;
     QRCode.toCanvas(canvas, url, {
-      width: 220,
-      margin: 3,
-      color: { dark: '#000000', light: '#ffffff' },
+      width: 200, margin: 2,
+      color: { dark: '#1e1810', light: '#ffffff' },
       errorCorrectionLevel: 'M'
-    }, function(err) { if (err) console.error('QR error:', err); });
+    }, function(err) {
+      if (err) {
+        console.error('QR error table ' + t.table_number + ':', err);
+        canvas.insertAdjacentHTML('afterend', '<p style="color:var(--red);font-size:0.72rem;">QR error</p>');
+      }
+    });
   });
 }
 
@@ -756,5 +762,3 @@ loadDashboard();
 </script>
 </body>
 </html>
-ENDOFFILE
-echo "Written: $(wc -l < /tmp/admin_fixed.html) lines"
