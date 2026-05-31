@@ -374,7 +374,7 @@ async function init(){
     tableData=tables[0];
     document.getElementById('tableNum').textContent=tableData.table_number;
     document.title=`Armood — Masa ${tableData.table_number}`;
-    const menu=await api('menu_items?select=*&order=category,name');
+    const menu = await api('menu_items?select=*&is_active=eq.true&order=category,name');
     menuItems=Array.isArray(menu)?menu:[];
     await loadOrders();
     document.getElementById('loadScreen').style.display='none';
