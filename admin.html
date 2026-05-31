@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/admin.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -65,7 +66,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .bnav-label{font-size:0.6rem;font-weight:600;letter-spacing:0.02em;}
 .bnav-dot{position:absolute;top:6px;right:calc(50% - 14px);background:var(--red);color:white;font-size:0.55rem;font-weight:700;padding:0.1rem 0.3rem;border-radius:10px;min-width:16px;text-align:center;display:none;}
 
-/* ─── MORE MENU OVERLAY ─── */
+/* ─── MORE MENU ─── */
 .more-menu-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.45);z-index:150;align-items:flex-end;justify-content:stretch;}
 .more-menu-overlay.open{display:flex;}
 .more-menu-sheet{background:white;border-radius:16px 16px 0 0;padding:1rem 1rem 1.5rem;width:100%;}
@@ -93,25 +94,107 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .stat-val{font-size:1.6rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;}
 .stat-trend{font-size:0.7rem;color:var(--muted);}
 
-/* ─── TABLE CARDS ─── */
-.tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.85rem;margin-bottom:1.5rem;}
-.table-card{background:white;border:1.5px solid var(--border);border-radius:12px;padding:1rem;transition:all 0.2s;}
-.table-card:hover{box-shadow:0 4px 16px rgba(30,24,16,0.07);}
-.table-card.s-active{border-color:rgba(61,80,104,0.3);}.table-card.s-ordered{border-color:rgba(46,107,69,0.3);}
-.table-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.7rem;}
-.table-num{font-family:var(--ff-head);font-size:1rem;font-weight:700;color:var(--ink);}
-.tbl-badge{font-size:0.65rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:20px;}
-.tbl-empty{background:var(--bg2);color:var(--muted);}.tbl-active{background:var(--slate-pale);color:var(--slate);}
-.tbl-ordered{background:var(--green-pale);color:var(--green);}.tbl-paid{background:var(--bg2);color:var(--muted);}
-.table-orders-text{font-size:0.75rem;color:var(--muted);min-height:32px;line-height:1.6;margin-bottom:0.7rem;}
-.table-actions{display:flex;gap:0.4rem;flex-wrap:wrap;}
-.btn-xs{padding:0.28rem 0.6rem;font-size:0.7rem;font-weight:500;border-radius:6px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;}
-.btn-xs:hover,.btn-xs:active{border-color:var(--terra);color:var(--terra);background:var(--terra-pale);}
-.btn-xs.danger:hover,.btn-xs.danger:active{border-color:var(--red);color:var(--red);background:var(--red-light);}
-.btn-xs.success{background:var(--green);border-color:var(--green);color:white;}
-.btn-xs.success:hover,.btn-xs.success:active{background:#256139;}
-.btn-xs.primary{background:var(--terra);border-color:var(--terra);color:white;}
-.btn-xs.primary:hover,.btn-xs.primary:active{background:var(--terra-hover);}
+/* ─── TABLE CARDS (REDESIGNED) ─── */
+.tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin-bottom:1.5rem;}
+
+.table-card{
+  background:white;border:1.5px solid var(--border);border-radius:14px;
+  overflow:hidden;transition:box-shadow 0.2s,border-color 0.2s;
+  cursor:pointer;
+}
+.table-card:hover{box-shadow:0 4px 16px rgba(30,24,16,0.08);}
+.table-card.s-active{border-color:rgba(61,80,104,0.35);}
+.table-card.s-ordered{border-color:rgba(46,107,69,0.4);}
+.table-card.s-ordered .tc-header{background:var(--green-pale);}
+.table-card.s-active .tc-header{background:var(--slate-pale);}
+
+/* Card header — always visible */
+.tc-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.85rem 1rem;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  transition:background 0.2s;
+}
+.tc-num{font-family:var(--ff-head);font-size:1.1rem;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:0.5rem;}
+.tc-right{display:flex;align-items:center;gap:0.5rem;}
+.tc-status-pill{font-size:0.63rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:20px;}
+.tsp-empty{background:var(--bg3);color:var(--muted);}
+.tsp-active{background:var(--slate-pale);color:var(--slate);}
+.tsp-ordered{background:var(--green-pale);color:var(--green);}
+.tsp-paid{background:var(--bg2);color:var(--muted);}
+.tc-waiter-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:wpulse 1.5s infinite;flex-shrink:0;}
+@keyframes wpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.85);}}
+.tc-chevron{font-size:0.7rem;color:var(--muted2);transition:transform 0.3s;margin-left:0.2rem;}
+.table-card.open .tc-chevron{transform:rotate(180deg);}
+
+/* Summary strip — always visible under header */
+.tc-summary{
+  padding:0.65rem 1rem;
+  font-size:0.78rem;color:var(--muted);
+  border-bottom:1px solid rgba(224,213,197,0.4);
+  min-height:42px;display:flex;align-items:center;gap:0.5rem;
+  background:white;
+}
+.tc-summary-empty{font-style:italic;}
+
+/* Expandable order detail panel */
+.tc-detail{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+  background:white;
+}
+.table-card.open .tc-detail{max-height:800px;}
+.tc-detail-inner{padding:0.9rem 1rem 1rem;}
+
+/* Per-order bubble inside expanded card */
+.order-bubble{
+  background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  padding:0.75rem 0.9rem;margin-bottom:0.65rem;
+}
+.order-bubble:last-of-type{margin-bottom:0.9rem;}
+.ob-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;}
+.ob-id{font-size:0.7rem;font-weight:600;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;}
+.ob-status-pill{font-size:0.62rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.18rem 0.5rem;border-radius:20px;}
+.osp-pending{background:#fef3c7;color:#92400e;}
+.osp-confirmed{background:var(--slate-pale);color:var(--slate);}
+.osp-ready{background:var(--green-pale);color:var(--green);animation:rpulse 1.5s infinite;}
+@keyframes rpulse{0%,100%{opacity:1;}50%{opacity:0.6;}}
+.osp-paid{background:var(--bg2);color:var(--muted);}
+.ob-items{font-size:0.79rem;color:var(--ink2);line-height:1.65;margin-bottom:0.6rem;}
+.ob-item-line{display:flex;justify-content:space-between;padding:0.12rem 0;}
+.ob-item-line span:first-child{color:var(--ink2);}
+.ob-item-line span:last-child{color:var(--muted);font-size:0.75rem;}
+.ob-subtotal{display:flex;justify-content:space-between;font-size:0.8rem;font-weight:600;color:var(--ink);border-top:1px solid var(--border);padding-top:0.4rem;margin-top:0.3rem;}
+.ob-subtotal span:last-child{color:var(--terra);font-family:var(--ff-head);}
+.ob-note{font-size:0.72rem;color:var(--muted);font-style:italic;margin-top:0.35rem;}
+.ob-actions{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.6rem;}
+.ob-btn{padding:0.3rem 0.7rem;font-size:0.72rem;font-weight:600;border-radius:6px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;font-family:var(--ff-body);}
+.ob-btn:hover,.ob-btn:active{border-color:var(--terra);color:var(--terra);background:var(--terra-pale);}
+.ob-btn.success{background:var(--green);border-color:var(--green);color:white;}
+.ob-btn.success:hover{background:#256139;}
+.ob-btn.primary{background:var(--terra);border-color:var(--terra);color:white;}
+.ob-btn.primary:hover{background:var(--terra-hover);}
+.ob-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
+
+/* Table total footer */
+.tc-total-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.6rem 0.9rem;background:var(--bg2);border-radius:8px;
+  margin-bottom:0.75rem;
+}
+.tc-total-label{font-size:0.75rem;font-weight:600;color:var(--muted);}
+.tc-total-val{font-family:var(--ff-head);font-size:1.05rem;font-weight:700;color:var(--terra);}
+
+/* Table-level action buttons */
+.tc-actions{display:flex;gap:0.4rem;flex-wrap:wrap;}
+.tc-btn{padding:0.35rem 0.8rem;font-size:0.73rem;font-weight:600;border-radius:7px;border:1.5px solid var(--border);background:white;color:var(--muted);cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;font-family:var(--ff-body);}
+.tc-btn:hover{border-color:var(--terra);color:var(--terra);background:var(--terra-pale);}
+.tc-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
+
+/* Presence indicator */
+.tc-presence{font-size:0.67rem;color:var(--muted2);display:flex;align-items:center;gap:0.3rem;}
+.tc-presence-dot{width:5px;height:5px;border-radius:50%;background:var(--green);}
 
 /* ─── CARD ─── */
 .card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
@@ -179,8 +262,8 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .wcall-table{font-size:0.88rem;font-weight:600;color:var(--ink);}
 .wcall-reason{font-size:0.74rem;color:var(--muted);margin-top:0.1rem;}
 .wcall-time{font-size:0.68rem;color:var(--muted2);margin-top:0.1rem;}
-.wcall-badge{font-size:0.63rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:20px;background:#fef3c7;color:#92400e;animation:wpulse 2s infinite;}
-@keyframes wpulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+.wcall-badge{font-size:0.63rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:20px;background:#fef3c7;color:#92400e;animation:wpulse2 2s infinite;}
+@keyframes wpulse2{0%,100%{opacity:1;}50%{opacity:0.5;}}
 
 /* ─── MISC ─── */
 .toast{position:fixed;bottom:calc(var(--bottom-nav-h) + 0.75rem);right:1rem;left:1rem;background:var(--ink);color:white;padding:0.75rem 1rem;border-radius:10px;font-size:0.82rem;font-weight:500;z-index:300;opacity:0;transform:translateY(8px);transition:all 0.3s;box-shadow:0 8px 24px rgba(30,24,16,0.2);text-align:center;}
@@ -191,7 +274,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .refresh-btn{display:flex;align-items:center;gap:0.35rem;padding:0.35rem 0.7rem;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.75rem;font-weight:500;cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;}
 .refresh-btn:hover,.refresh-btn:active{border-color:var(--terra);color:var(--terra);}
 
-/* ─── DESKTOP overrides (≥900px) ─── */
+/* ─── DESKTOP overrides ─── */
 @media(min-width:900px){
   :root{--nav-h:64px;}
   .topnav{padding:0 1.5rem 0 0;}
@@ -199,46 +282,32 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   .logo-mark{width:34px;height:34px;font-size:1.1rem;}
   .logo-name{font-size:1.3rem;}
   .user-avatar{width:34px;height:34px;font-size:0.8rem;}
-  .user-name{font-size:0.85rem;}
-  .user-role{font-size:0.72rem;}
-  .btn-logout{font-size:0.78rem;}
-  .topnav-clock{font-size:0.78rem;}
   .sidebar{display:block!important;}
   .bottom-nav{display:none!important;}
   .main{padding:2rem;}
   .stat-grid{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem;}
   .stat-card{padding:1.2rem 1.4rem;}
-  .stat-icon{width:34px;height:34px;font-size:1rem;}
   .stat-val{font-size:1.9rem;}
-  .tables-grid{grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;margin-bottom:2rem;}
+  .tables-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.1rem;margin-bottom:2rem;}
   .modal-overlay{align-items:center;justify-content:center;padding:1.5rem;}
-  .modal{border-radius:16px;padding:2rem;max-width:480px;max-height:90vh;}
+  .modal{border-radius:16px;padding:2rem;max-width:480px;}
   .toast{bottom:1.5rem;right:1.5rem;left:auto;text-align:left;}
   .page-title{font-size:1.5rem;}
   .page-header{margin-bottom:1.8rem;}
-  .sec-header{margin-bottom:1.2rem;}
-  .sec-title{font-size:1rem;}
 }
 
-/* ─── MOBILE (<900px) ─── */
 @media(max-width:899px){
   .sidebar{display:none!important;}
   .bottom-nav{display:block!important;}
   .layout{padding-bottom:var(--bottom-nav-h);}
   .main{padding:1rem;}
-  /* hide clock & user-name text on very small screens */
   .user-name,.user-role{display:none;}
-  /* make orders table scrollable */
   .orders-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
   .data-table{min-width:580px;}
-  /* tighter form rows on mobile */
   .form-row{grid-template-columns:1fr;}
-  /* hide desktop-only staff note */
   .staff-note{display:none;}
-  /* waiter calls full width */
   .wcall-row{flex-wrap:wrap;}
 }
-
 @media(max-width:400px){
   .stat-grid{grid-template-columns:1fr 1fr;}
   .stat-val{font-size:1.4rem;}
@@ -248,10 +317,9 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 </head>
 <body>
 
-<!-- TOP NAV -->
 <nav class="topnav">
   <div class="topnav-left">
-    <a class="topnav-logo" href="#"><div class="logo-mark">A</div><span class="logo-name">Rest<em>oran</em></span></a>
+    <a class="topnav-logo" href="#"><div class="logo-mark">A</div><span class="logo-name">Arm<em>ood</em></span></a>
   </div>
   <div class="topnav-right">
     <span class="topnav-clock" id="clock">--:--:--</span>
@@ -263,26 +331,23 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   </div>
 </nav>
 
-<!-- LAYOUT -->
 <div class="layout">
-  <!-- DESKTOP SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-section">
       <div class="sidebar-label">Overview</div>
-      <div class="nav-item active" data-page="dashboard"><span class="nav-item-icon">📊</span> Dashboard</div>
-      <div class="nav-item" data-page="tables"><span class="nav-item-icon">🍽️</span> Tables</div>
-      <div class="nav-item" data-page="orders"><span class="nav-item-icon">📋</span> Orders <span class="nav-badge" id="pendingBadge" style="display:none">0</span></div>
-      <div class="nav-item" data-page="waiter"><span class="nav-item-icon">🔔</span> Waiter Calls <span class="nav-badge" id="waiterNavBadge" style="display:none">0</span></div>
+      <div class="nav-item active" data-page="dashboard"><span class="nav-item-icon">📊</span>Dashboard</div>
+      <div class="nav-item" data-page="tables"><span class="nav-item-icon">🍽️</span>Tables</div>
+      <div class="nav-item" data-page="orders"><span class="nav-item-icon">📋</span>Orders <span class="nav-badge" id="pendingBadge" style="display:none">0</span></div>
+      <div class="nav-item" data-page="waiter"><span class="nav-item-icon">🔔</span>Waiter Calls <span class="nav-badge" id="waiterNavBadge" style="display:none">0</span></div>
     </div>
     <div class="sidebar-section" style="margin-top:0.5rem;">
       <div class="sidebar-label">Management</div>
-      <div class="nav-item" data-page="menu"><span class="nav-item-icon">🗒️</span> Menu</div>
-      <div class="nav-item" data-page="qr"><span class="nav-item-icon">📱</span> QR Codes</div>
-      <div class="nav-item director-only" data-page="staff" style="display:none"><span class="nav-item-icon">👥</span> Staff</div>
+      <div class="nav-item" data-page="menu"><span class="nav-item-icon">🗒️</span>Menu</div>
+      <div class="nav-item" data-page="qr"><span class="nav-item-icon">📱</span>QR Codes</div>
+      <div class="nav-item director-only" data-page="staff" style="display:none"><span class="nav-item-icon">👥</span>Staff</div>
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <main class="main">
 
     <!-- DASHBOARD -->
@@ -305,7 +370,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
     <!-- TABLES -->
     <div class="page" id="page-tables">
-      <div class="page-header"><div class="page-title">Tables</div><div class="page-sub">Manage table status and orders</div></div>
+      <div class="page-header"><div class="page-title">Tables</div><div class="page-sub">Click any table to see orders and take actions</div></div>
       <div class="tables-grid" id="tablesGrid"><div class="loading-state">Loading...</div></div>
     </div>
 
@@ -366,40 +431,22 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 <!-- MOBILE BOTTOM NAV -->
 <nav class="bottom-nav" id="bottomNav">
   <div class="bottom-nav-inner">
-    <div class="bnav-item active" data-page="dashboard">
-      <span class="bnav-dot" id="bdot-dashboard"></span>
-      <span class="bnav-icon">📊</span>
-      <span class="bnav-label">Home</span>
-    </div>
-    <div class="bnav-item" data-page="tables">
-      <span class="bnav-icon">🍽️</span>
-      <span class="bnav-label">Tables</span>
-    </div>
-    <div class="bnav-item" data-page="orders">
-      <span class="bnav-dot" id="bdot-orders"></span>
-      <span class="bnav-icon">📋</span>
-      <span class="bnav-label">Orders</span>
-    </div>
-    <div class="bnav-item" data-page="waiter">
-      <span class="bnav-dot" id="bdot-waiter"></span>
-      <span class="bnav-icon">🔔</span>
-      <span class="bnav-label">Calls</span>
-    </div>
-    <div class="bnav-item" id="bnavMore" data-page="__more__">
-      <span class="bnav-icon">⋯</span>
-      <span class="bnav-label">More</span>
-    </div>
+    <div class="bnav-item active" data-page="dashboard"><span class="bnav-icon">📊</span><span class="bnav-label">Home</span></div>
+    <div class="bnav-item" data-page="tables"><span class="bnav-icon">🍽️</span><span class="bnav-label">Tables</span></div>
+    <div class="bnav-item" data-page="orders"><span class="bnav-dot" id="bdot-orders"></span><span class="bnav-icon">📋</span><span class="bnav-label">Orders</span></div>
+    <div class="bnav-item" data-page="waiter"><span class="bnav-dot" id="bdot-waiter"></span><span class="bnav-icon">🔔</span><span class="bnav-label">Calls</span></div>
+    <div class="bnav-item" id="bnavMore" data-page="__more__"><span class="bnav-icon">⋯</span><span class="bnav-label">More</span></div>
   </div>
 </nav>
 
-<!-- MORE SHEET (mobile) -->
+<!-- MORE SHEET -->
 <div class="more-menu-overlay" id="moreMenuOverlay" onclick="closeMoreMenu(event)">
   <div class="more-menu-sheet" id="moreMenuSheet">
     <div class="more-menu-handle"></div>
     <div class="more-menu-title">Management</div>
-    <div class="more-menu-item" data-page="menu"><span class="more-menu-item-icon">🗒️</span> Menu</div>
-    <div class="more-menu-item" data-page="qr"><span class="more-menu-item-icon">📱</span> QR Codes</div>
-    <div class="more-menu-item director-only" data-page="staff" style="display:none"><span class="more-menu-item-icon">👥</span> Staff</div>
+    <div class="more-menu-item" data-page="menu"><span class="more-menu-item-icon">🗒️</span>Menu</div>
+    <div class="more-menu-item" data-page="qr"><span class="more-menu-item-icon">📱</span>QR Codes</div>
+    <div class="more-menu-item director-only" data-page="staff" style="display:none"><span class="more-menu-item-icon">👥</span>Staff</div>
   </div>
 </div>
 
@@ -430,7 +477,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   <div class="modal">
     <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
     <h3>Add Admin</h3>
-    <p class="staff-note" style="font-size:0.75rem;color:var(--muted);margin-bottom:0.9rem;margin-top:-0.7rem;">Creates a login and grants admin access. Requires email confirmation OFF in Supabase.</p>
+    <p class="staff-note" style="font-size:0.75rem;color:var(--muted);margin-bottom:0.9rem;margin-top:-0.7rem;">Requires email confirmation OFF in Supabase Auth settings.</p>
     <div class="form-group"><label>Full Name</label><input type="text" id="staffName" placeholder="Full name"></div>
     <div class="form-group"><label>Email</label><input type="email" id="staffEmail" placeholder="email@restoran.az"></div>
     <div class="form-group"><label>Password</label><input type="password" id="staffPassword" placeholder="Min 6 characters"></div>
@@ -448,225 +495,310 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 var SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 
-/* ── SESSION ── */
-var currentUser = null;
-var authToken = SUPABASE_ANON;
-var refreshToken = null;
-var _refreshing = false;
-var _refreshQueue = [];
+// ─── SESSION ───
+var currentUser = null, authToken = SUPABASE_ANON, refreshToken = null, _refreshing = false, _refreshQueue = [];
 
-(function() {
+(function(){
   var raw = localStorage.getItem('armood_session');
-  if (!raw) { window.location.href = 'admin-login.html'; return; }
-  var s;
-  try { s = JSON.parse(raw); } catch(e) { window.location.href = 'admin-login.html'; return; }
-  currentUser = s.user || null;
-  authToken = s.token || SUPABASE_ANON;
-  refreshToken = s.refresh_token || null;
-  if (!currentUser) { window.location.href = 'admin-login.html'; return; }
-  var role = currentUser.role || 'manager';
-  var uname = currentUser.full_name || currentUser.email || 'Admin';
-  document.getElementById('adminName').textContent = uname;
-  document.getElementById('adminRole').textContent = role === 'director' ? 'Director' : 'Manager';
-  document.getElementById('userInitials').textContent = uname.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
-  if (role === 'director') document.querySelectorAll('.director-only').forEach(function(el){el.style.display='flex';});
+  if (!raw) { window.location.href='admin-login.html'; return; }
+  var s; try { s=JSON.parse(raw); } catch(e){ window.location.href='admin-login.html'; return; }
+  currentUser=s.user||null; authToken=s.token||SUPABASE_ANON; refreshToken=s.refresh_token||null;
+  if(!currentUser){ window.location.href='admin-login.html'; return; }
+  var role=currentUser.role||'manager', uname=currentUser.full_name||currentUser.email||'Admin';
+  document.getElementById('adminName').textContent=uname;
+  document.getElementById('adminRole').textContent=role==='director'?'Director':'Manager';
+  document.getElementById('userInitials').textContent=uname.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  if(role==='director') document.querySelectorAll('.director-only').forEach(function(el){el.style.display='flex';});
 })();
 
-async function _doRefresh() {
-  if (!refreshToken) { localStorage.removeItem('armood_session'); window.location.href='admin-login.html'; return false; }
-  try {
-    var r = await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=refresh_token',{
-      method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
-      body:JSON.stringify({refresh_token:refreshToken})
-    });
-    var d = await r.json();
-    if (!d.access_token) { localStorage.removeItem('armood_session'); window.location.href='admin-login.html'; return false; }
-    authToken = d.access_token;
-    refreshToken = d.refresh_token || refreshToken;
-    var s = JSON.parse(localStorage.getItem('armood_session')||'{}');
-    s.token = authToken; s.refresh_token = refreshToken;
-    localStorage.setItem('armood_session', JSON.stringify(s));
-    return true;
-  } catch(e) { localStorage.removeItem('armood_session'); window.location.href='admin-login.html'; return false; }
+async function _doRefresh(){
+  if(!refreshToken){localStorage.removeItem('armood_session');window.location.href='admin-login.html';return false;}
+  try{
+    var r=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:refreshToken})});
+    var d=await r.json();
+    if(!d.access_token){localStorage.removeItem('armood_session');window.location.href='admin-login.html';return false;}
+    authToken=d.access_token; refreshToken=d.refresh_token||refreshToken;
+    var s=JSON.parse(localStorage.getItem('armood_session')||'{}'); s.token=authToken; s.refresh_token=refreshToken;
+    localStorage.setItem('armood_session',JSON.stringify(s)); return true;
+  }catch(e){localStorage.removeItem('armood_session');window.location.href='admin-login.html';return false;}
 }
 
-async function api(path, opts) {
-  opts = opts || {};
-  var method = opts.method || 'GET';
-  async function go(tok) {
-    var r = await fetch(SUPABASE_URL+'/rest/v1/'+path, {
-      method: method,
-      headers: Object.assign({'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tok,'Content-Type':'application/json','Prefer':'return=representation'}, opts.headers||{}),
-      body: opts.body
-    });
-    var data = await r.json();
-    return {status:r.status, data:data};
+async function api(path,opts){
+  opts=opts||{}; var method=opts.method||'GET';
+  async function go(tok){
+    var r=await fetch(SUPABASE_URL+'/rest/v1/'+path,{method:method,headers:Object.assign({'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tok,'Content-Type':'application/json','Prefer':'return=representation'},opts.headers||{}),body:opts.body});
+    return {status:r.status,data:await r.json()};
   }
-  try {
-    var res = await go(authToken);
-    if (res.data && res.data.message && res.data.message.indexOf('JWT expired') >= 0) {
-      if (_refreshing) {
-        await new Promise(function(resolve){_refreshQueue.push(resolve);});
-      } else {
-        _refreshing = true;
-        var ok = await _doRefresh();
-        _refreshing = false;
-        _refreshQueue.forEach(function(fn){fn();}); _refreshQueue=[];
-        if (!ok) return null;
-      }
-      res = await go(authToken);
+  try{
+    var res=await go(authToken);
+    if(res.data&&res.data.message&&res.data.message.indexOf('JWT expired')>=0){
+      if(_refreshing){await new Promise(function(resolve){_refreshQueue.push(resolve);});}
+      else{_refreshing=true;var ok=await _doRefresh();_refreshing=false;_refreshQueue.forEach(function(fn){fn();});_refreshQueue=[];if(!ok)return null;}
+      res=await go(authToken);
     }
-    var data = res.data;
-    if (!data) return null;
-    return data;
-  } catch(e) { return null; }
+    return res.data||null;
+  }catch(e){return null;}
 }
 
-/* ── CLOCK ── */
+// ─── CLOCK ───
 function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
 updateClock(); setInterval(updateClock,1000);
 
-/* ── LOGOUT ── */
 document.getElementById('btnLogout').addEventListener('click',function(){localStorage.removeItem('armood_session');window.location.href='admin-login.html';});
 
-/* ── NAVIGATION ── */
-function navigateTo(pg) {
-  // desktop sidebar
+// ─── NAVIGATION ───
+function navigateTo(pg){
   document.querySelectorAll('.nav-item[data-page]').forEach(function(i){i.classList.remove('active');});
-  var sitem = document.querySelector('.nav-item[data-page="'+pg+'"]');
-  if (sitem) sitem.classList.add('active');
-  // bottom nav
+  var sitem=document.querySelector('.nav-item[data-page="'+pg+'"]'); if(sitem)sitem.classList.add('active');
   document.querySelectorAll('.bnav-item[data-page]').forEach(function(i){i.classList.remove('active');});
-  var bitem = document.querySelector('.bnav-item[data-page="'+pg+'"]');
-  if (bitem) bitem.classList.add('active');
-  // more menu items
+  var bitem=document.querySelector('.bnav-item[data-page="'+pg+'"]'); if(bitem)bitem.classList.add('active');
   document.querySelectorAll('.more-menu-item[data-page]').forEach(function(i){i.classList.remove('active');});
-  var mitem = document.querySelector('.more-menu-item[data-page="'+pg+'"]');
-  if (mitem) mitem.classList.add('active');
-  // pages
+  var mitem=document.querySelector('.more-menu-item[data-page="'+pg+'"]'); if(mitem)mitem.classList.add('active');
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.getElementById('page-'+pg).classList.add('active');
-  loadPage(pg);
-  // scroll to top on mobile
-  window.scrollTo(0,0);
+  loadPage(pg); window.scrollTo(0,0);
 }
-
-// Desktop sidebar clicks
-document.querySelectorAll('.nav-item[data-page]').forEach(function(item){
-  item.addEventListener('click',function(){ navigateTo(item.dataset.page); });
-});
-
-// Mobile bottom nav clicks
+document.querySelectorAll('.nav-item[data-page]').forEach(function(item){item.addEventListener('click',function(){navigateTo(item.dataset.page);});});
 document.querySelectorAll('.bnav-item[data-page]').forEach(function(item){
-  item.addEventListener('click',function(){
-    if (item.dataset.page === '__more__') { openMoreMenu(); return; }
-    navigateTo(item.dataset.page);
-  });
+  item.addEventListener('click',function(){if(item.dataset.page==='__more__'){openMoreMenu();return;}navigateTo(item.dataset.page);});
 });
-
-// More sheet items
 document.querySelectorAll('.more-menu-item[data-page]').forEach(function(item){
-  item.addEventListener('click',function(){
-    closeMoreMenu(null);
-    navigateTo(item.dataset.page);
-    // highlight "more" button
-    document.querySelectorAll('.bnav-item').forEach(function(i){i.classList.remove('active');});
-    document.getElementById('bnavMore').classList.add('active');
-  });
+  item.addEventListener('click',function(){closeMoreMenu(null);navigateTo(item.dataset.page);document.querySelectorAll('.bnav-item').forEach(function(i){i.classList.remove('active');});document.getElementById('bnavMore').classList.add('active');});
 });
-
-function openMoreMenu(){
-  document.getElementById('moreMenuOverlay').classList.add('open');
-}
-function closeMoreMenu(e){
-  if (!e || e.target === document.getElementById('moreMenuOverlay')) {
-    document.getElementById('moreMenuOverlay').classList.remove('open');
-  }
-}
-
+function openMoreMenu(){document.getElementById('moreMenuOverlay').classList.add('open');}
+function closeMoreMenu(e){if(!e||e.target===document.getElementById('moreMenuOverlay'))document.getElementById('moreMenuOverlay').classList.remove('open');}
 function loadPage(p){
-  if(p==='dashboard') loadDashboard();
-  else if(p==='tables') loadTables();
-  else if(p==='orders') loadOrders();
-  else if(p==='waiter') loadWaiterCalls();
-  else if(p==='menu') loadMenu();
-  else if(p==='qr') loadQR();
-  else if(p==='staff') loadStaff();
+  if(p==='dashboard')loadDashboard();
+  else if(p==='tables')loadTables();
+  else if(p==='orders')loadOrders();
+  else if(p==='waiter')loadWaiterCalls();
+  else if(p==='menu')loadMenu();
+  else if(p==='qr')loadQR();
+  else if(p==='staff')loadStaff();
 }
 
-var allOrders=[];
+var allOrders=[], allTables=[];
 
-/* ── DASHBOARD ── */
+// ─── PRESENCE AUTO-CLEANUP ───
+// If a table is 'active' but last_seen_at is >5 minutes ago, reset to 'empty'
+// This runs every time we load dashboard/tables data
+async function autoCleanupStalePresence(tables){
+  var now=Date.now();
+  var STALE_MS=5*60*1000; // 5 minutes
+  var stale=tables.filter(function(t){
+    if(t.status!=='active')return false;
+    if(!t.last_seen_at)return true; // no heartbeat at all
+    return (now - new Date(t.last_seen_at).getTime()) > STALE_MS;
+  });
+  if(!stale.length)return;
+  // Batch reset — one PATCH per stale table
+  await Promise.all(stale.map(function(t){
+    return api('restaurant_tables?id=eq.'+t.id,{method:'PATCH',body:JSON.stringify({status:'empty'})});
+  }));
+}
+
+// ─── DASHBOARD ───
 async function loadDashboard(){
   document.getElementById('dashDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  var res = await Promise.all([
+  var res=await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
-    api('orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc')
+    api('orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc&limit=200')
   ]);
-  var tables = Array.isArray(res[0])?res[0]:[];
-  allOrders = Array.isArray(res[1])?res[1]:[];
+  allTables=Array.isArray(res[0])?res[0]:[];
+  allOrders=Array.isArray(res[1])?res[1]:[];
+
+  // Auto-cleanup stale 'active' tables before rendering
+  await autoCleanupStalePresence(allTables);
+  // Re-fetch after cleanup so badges are accurate
+  allTables=await api('restaurant_tables?select=*&order=table_number');
+  if(!Array.isArray(allTables))allTables=[];
+
   var today=new Date().toDateString();
   var todayO=allOrders.filter(function(o){return new Date(o.created_at).toDateString()===today;});
   var rev=todayO.filter(function(o){return o.status==='paid';}).reduce(function(s,o){return s+Number(o.total);},0);
   var active=allOrders.filter(function(o){return ['pending','confirmed','ready'].indexOf(o.status)>=0;}).length;
-  var empty=tables.filter(function(t){return t.status==='empty';}).length;
+  var empty=allTables.filter(function(t){return t.status==='empty';}).length;
   var pending=allOrders.filter(function(o){return o.status==='pending';}).length;
   document.getElementById('statRevenue').textContent='₼'+rev.toFixed(2);
   document.getElementById('statActive').textContent=active;
   document.getElementById('statToday').textContent=todayO.length;
   document.getElementById('statEmpty').textContent=empty;
-  var b=document.getElementById('pendingBadge'); b.textContent=pending; b.style.display=pending?'inline-block':'none';
-  // mobile orders dot
-  var bd=document.getElementById('bdot-orders'); if(bd){bd.textContent=pending;bd.style.display=pending?'block':'none';}
-  renderTableCards(tables,document.getElementById('dashTables'));
+  var b=document.getElementById('pendingBadge');b.textContent=pending;b.style.display=pending?'inline-block':'none';
+  var bd=document.getElementById('bdot-orders');if(bd){bd.textContent=pending;bd.style.display=pending?'block':'none';}
+  renderTableCards(allTables,document.getElementById('dashTables'));
   loadWaiterCalls();
 }
 
-function renderTableCards(tables,container){
+async function loadTables(){
+  var res=await Promise.all([
+    api('restaurant_tables?select=*&order=table_number'),
+    api('orders?select=*,order_items(*,menu_items(name))&status=in.(pending,confirmed,ready)&order=created_at.desc')
+  ]);
+  allTables=Array.isArray(res[0])?res[0]:[];
+  allOrders=Array.isArray(res[1])?res[1]:[];
+  await autoCleanupStalePresence(allTables);
+  allTables=await api('restaurant_tables?select=*&order=table_number');
+  if(!Array.isArray(allTables))allTables=[];
+  renderTableCards(allTables,document.getElementById('tablesGrid'));
+}
+
+// ─── TABLE CARDS (ADVANCED) ───
+var openTableId = null; // which table card is expanded
+
+function renderTableCards(tables, container){
   if(!tables.length){container.innerHTML='<div class="loading-state">No tables found</div>';return;}
+  var waiterCalls=window._waiterCallsByTable||{};
+
   container.innerHTML=tables.map(function(t){
     var tOrders=allOrders.filter(function(o){return o.table_id===t.id&&['pending','confirmed','ready'].indexOf(o.status)>=0;});
-    var summary=tOrders.length
-      ?tOrders.map(function(o){
-          var items=(o.order_items||[]).map(function(i){return i.quantity+'x '+(i.menu_items?i.menu_items.name:'?');}).join(', ');
-          return '<span class="badge b-'+o.status+'">'+statusLabel(o.status)+'</span> '+items;
-        }).join('<br>')
-      :'No active orders';
-    var sc=t.status==='empty'?'':'s-'+t.status;
-    var bm={empty:'tbl-empty',active:'tbl-active',ordered:'tbl-ordered',paid:'tbl-paid'};
-    var bc=bm[t.status]||'tbl-empty';
-    var acts=tOrders.map(function(o){
-      var b='';
-      if(o.status==='pending') b+='<button class="btn-xs success" onclick="updateOrderStatus(\''+o.id+'\',\'confirmed\')">Confirm</button>';
-      if(o.status==='confirmed') b+='<button class="btn-xs success" onclick="updateOrderStatus(\''+o.id+'\',\'ready\')">Ready</button>';
-      if(o.status==='ready') b+='<button class="btn-xs primary" onclick="updateOrderStatus(\''+o.id+'\',\'paid\')">Paid</button>';
-      return b;
-    }).join('');
-    if(t.status!=='empty') acts+='<button class="btn-xs danger" onclick="clearTable(\''+t.id+'\')">Clear</button>';
-    return '<div class="table-card '+sc+'"><div class="table-card-top"><span class="table-num">Table '+t.table_number+'</span><span class="tbl-badge '+bc+'">'+tableStatusLabel(t.status)+'</span></div><div class="table-orders-text">'+summary+'</div><div class="table-actions">'+acts+'</div></div>';
+    var hasWaiter=!!waiterCalls[t.id];
+    var isOpen=(openTableId===t.id);
+
+    // Status pill class
+    var scMap={empty:'tsp-empty',active:'tsp-active',ordered:'tsp-ordered',paid:'tsp-paid'};
+    var scLabel={empty:'Empty',active:'Browsing',ordered:'Ordered',paid:'Paid'};
+    var sc=scMap[t.status]||'tsp-empty';
+    var cardClass='table-card'+(t.status!=='empty'?' s-'+t.status:'')+(isOpen?' open':'');
+
+    // Presence indicator
+    var presenceHtml='';
+    if(t.status==='active'&&t.last_seen_at){
+      var mins=Math.floor((Date.now()-new Date(t.last_seen_at).getTime())/60000);
+      presenceHtml='<div class="tc-presence"><div class="tc-presence-dot"></div>Active '+mins+'m ago</div>';
+    }
+
+    // Summary (collapsed view)
+    var summaryHtml='';
+    if(tOrders.length){
+      var totalItems=tOrders.reduce(function(s,o){return s+(o.order_items||[]).reduce(function(a,i){return a+i.quantity;},0);},0);
+      var tableTotal=tOrders.reduce(function(s,o){return s+Number(o.total);},0);
+      summaryHtml=totalItems+' item'+(totalItems!==1?'s':'')+' across '+tOrders.length+' order'+(tOrders.length!==1?'s':'')+' · <strong style="color:var(--terra)">₼'+tableTotal.toFixed(2)+'</strong>';
+    } else if(t.status==='active'){
+      summaryHtml='<span class="tc-summary-empty">Customer is browsing the menu...</span>';
+    } else {
+      summaryHtml='<span class="tc-summary-empty">No active orders</span>';
+    }
+
+    // Expanded detail
+    var detailHtml='';
+    if(isOpen){
+      var innerHtml='<div class="tc-detail-inner">';
+      if(tOrders.length){
+        // Table total row
+        var tableTotal=tOrders.reduce(function(s,o){return s+Number(o.total);},0);
+        innerHtml+='<div class="tc-total-row"><span class="tc-total-label">Table Total</span><span class="tc-total-val">₼'+tableTotal.toFixed(2)+'</span></div>';
+
+        // Per-order bubbles
+        tOrders.forEach(function(o){
+          var spMap={pending:'osp-pending',confirmed:'osp-confirmed',ready:'osp-ready',paid:'osp-paid'};
+          var slMap={pending:'Pending',confirmed:'Confirmed',ready:'Ready!',paid:'Paid'};
+          var items=(o.order_items||[]);
+          var sub=items.reduce(function(s,i){return s+Number(i.price_at_order||0)*i.quantity;},0);
+          // Parse note field: name|phone|payment|note|type
+          var parts=(o.notes||'').split('|');
+          var guestName=parts[0]||'';
+          var guestNote=parts[3]||'';
+          var payMethod=parts[2]||'';
+
+          innerHtml+='<div class="order-bubble">';
+          innerHtml+='<div class="ob-header">';
+          innerHtml+='<span class="ob-id">Order #'+o.id.toString().slice(-4)+(guestName?' · '+guestName:'')+'</span>';
+          innerHtml+='<span class="ob-status-pill '+(spMap[o.status]||'osp-pending')+'">'+slMap[o.status]+'</span>';
+          innerHtml+='</div>';
+          // Item lines
+          innerHtml+='<div class="ob-items">';
+          items.forEach(function(i){
+            innerHtml+='<div class="ob-item-line"><span>'+i.quantity+'× '+(i.menu_items?i.menu_items.name:'?')+'</span><span>₼'+(Number(i.price_at_order||0)*i.quantity).toFixed(2)+'</span></div>';
+          });
+          innerHtml+='</div>';
+          // Subtotal
+          innerHtml+='<div class="ob-subtotal"><span>Subtotal</span><span>₼'+sub.toFixed(2)+'</span></div>';
+          // Notes
+          if(guestNote) innerHtml+='<div class="ob-note">📝 '+guestNote+'</div>';
+          if(payMethod) innerHtml+='<div class="ob-note">💳 '+payMethod+'</div>';
+          // Action buttons per order
+          innerHtml+='<div class="ob-actions">';
+          if(o.status==='pending') innerHtml+='<button class="ob-btn success" onclick="updateOrderStatus(\''+o.id+'\',\'confirmed\',event)">✓ Confirm</button>';
+          if(o.status==='confirmed') innerHtml+='<button class="ob-btn success" onclick="updateOrderStatus(\''+o.id+'\',\'ready\',event)">🍽 Ready</button>';
+          if(o.status==='ready') innerHtml+='<button class="ob-btn primary" onclick="updateOrderStatus(\''+o.id+'\',\'paid\',event)">💳 Paid</button>';
+          innerHtml+='<button class="ob-btn danger" onclick="updateOrderStatus(\''+o.id+'\',\'cancelled\',event)">✕ Cancel</button>';
+          innerHtml+='</div>';
+          innerHtml+='</div>';
+        });
+      } else {
+        innerHtml+='<div style="text-align:center;padding:1rem;color:var(--muted);font-size:0.82rem;">No active orders for this table.</div>';
+      }
+
+      // Table-level actions
+      innerHtml+='<div class="tc-actions">';
+      if(t.status!=='empty'){
+        innerHtml+='<button class="tc-btn danger" onclick="clearTable(\''+t.id+'\',event)">🗑 Clear Table</button>';
+      }
+      innerHtml+='<button class="tc-btn" onclick="markTableEmpty(\''+t.id+'\',event)">↩ Reset to Empty</button>';
+      innerHtml+='</div>';
+      innerHtml+='</div>';
+      detailHtml=innerHtml;
+    }
+
+    return '<div class="'+cardClass+'" id="tc-'+t.id+'" onclick="toggleTableCard(\''+t.id+'\')">'
+      +'<div class="tc-header">'
+        +'<div class="tc-num">🍽 Table '+t.table_number+(hasWaiter?'<div class="tc-waiter-dot" title="Waiter call pending"></div>':'')+'</div>'
+        +'<div class="tc-right">'
+          +'<span class="tc-status-pill '+sc+'">'+scLabel[t.status]+'</span>'
+          +'<span class="tc-chevron">▾</span>'
+        +'</div>'
+      +'</div>'
+      +'<div class="tc-summary">'+summaryHtml+'</div>'
+      +(presenceHtml?'<div style="padding:0.35rem 1rem;border-bottom:1px solid rgba(224,213,197,0.4);background:white;">'+presenceHtml+'</div>':'')
+      +'<div class="tc-detail">'+detailHtml+'</div>'
+    +'</div>';
   }).join('');
 }
 
-async function loadTables(){
-  var res=await Promise.all([api('restaurant_tables?select=*&order=table_number'),api('orders?select=*,order_items(*,menu_items(name))&status=neq.paid')]);
-  allOrders=Array.isArray(res[1])?res[1]:[];
-  renderTableCards(Array.isArray(res[0])?res[0]:[],document.getElementById('tablesGrid'));
+function toggleTableCard(tableId){
+  if(openTableId===tableId){openTableId=null;}else{openTableId=tableId;}
+  // Re-render the active tables grid
+  var dashEl=document.getElementById('dashTables');
+  var tablesEl=document.getElementById('tablesGrid');
+  if(dashEl&&dashEl.children.length)renderTableCards(allTables,dashEl);
+  if(tablesEl&&tablesEl.children.length)renderTableCards(allTables,tablesEl);
 }
 
-async function updateOrderStatus(orderId,status){
+async function updateOrderStatus(orderId,status,e){
+  if(e)e.stopPropagation(); // Don't toggle the card
   await api('orders?id=eq.'+orderId,{method:'PATCH',body:JSON.stringify({status:status})});
-  showToast('Order '+statusLabel(status));
+  showToast('Order → '+statusLabel(status));
+  // If paid, check if all orders for table are done and reset table
+  if(status==='paid'||status==='cancelled'){
+    var ord=allOrders.find(function(o){return o.id==orderId;});
+    if(ord){
+      var remaining=allOrders.filter(function(o){return o.table_id===ord.table_id&&o.id!==ord.id&&['pending','confirmed','ready'].indexOf(o.status)>=0;});
+      if(!remaining.length){
+        await api('restaurant_tables?id=eq.'+ord.table_id,{method:'PATCH',body:JSON.stringify({status:'empty'})});
+      }
+    }
+  }
   loadDashboard();
-  if(document.getElementById('page-tables').classList.contains('active')) loadTables();
+  if(document.getElementById('page-tables').classList.contains('active'))loadTables();
 }
 
-async function clearTable(tableId){
-  if(!confirm('Clear all active orders for this table?')) return;
+async function clearTable(tableId,e){
+  if(e)e.stopPropagation();
+  if(!confirm('Mark all active orders as cancelled and clear this table?'))return;
   await api('orders?table_id=eq.'+tableId+'&status=in.(pending,confirmed,ready)',{method:'PATCH',body:JSON.stringify({status:'cancelled'})});
   await api('restaurant_tables?id=eq.'+tableId,{method:'PATCH',body:JSON.stringify({status:'empty'})});
-  showToast('Table cleared'); loadDashboard();
+  openTableId=null;
+  showToast('Table cleared');loadDashboard();
 }
 
+async function markTableEmpty(tableId,e){
+  if(e)e.stopPropagation();
+  await api('restaurant_tables?id=eq.'+tableId,{method:'PATCH',body:JSON.stringify({status:'empty'})});
+  openTableId=null;
+  showToast('Table reset to empty');loadDashboard();
+}
+
+// ─── ORDERS TABLE ───
 var ordersFilter='all';
 async function loadOrders(){
   var path=ordersFilter==='all'
@@ -680,160 +812,104 @@ async function loadOrders(){
     var date=new Date(o.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
     var tl=(o.restaurant_tables&&o.restaurant_tables.table_number)?'Table '+o.restaurant_tables.table_number:'<span style="color:var(--terra);font-size:0.7rem;font-weight:600;">WEBSITE</span>';
     var opts=['pending','confirmed','ready','paid','cancelled'].map(function(s){return '<option value="'+s+'"'+(o.status===s?' selected':'')+'>'+statusLabel(s)+'</option>';}).join('');
-    return '<tr><td style="color:var(--muted);font-size:0.7rem;">#'+o.id.toString().slice(-4)+'</td><td>'+tl+'</td><td style="max-width:180px;font-size:0.76rem;color:var(--muted);">'+items+'</td><td style="font-weight:700;color:var(--terra);white-space:nowrap;">₼'+Number(o.total).toFixed(2)+'</td><td style="max-width:100px;font-size:0.73rem;color:var(--muted);">'+(o.notes||'—')+'</td><td><span class="badge b-'+o.status+'">'+statusLabel(o.status)+'</span></td><td style="font-size:0.73rem;color:var(--muted);white-space:nowrap;">'+date+'</td><td><select style="border:1.5px solid var(--border);border-radius:6px;padding:0.22rem 0.45rem;font-size:0.73rem;background:white;cursor:pointer;outline:none;" onchange="updateOrderStatus(\''+o.id+'\',this.value)">'+opts+'</select></td></tr>';
+    return '<tr><td style="color:var(--muted);font-size:0.7rem;">#'+o.id.toString().slice(-4)+'</td><td>'+tl+'</td><td style="max-width:180px;font-size:0.76rem;color:var(--muted);">'+items+'</td><td style="font-weight:700;color:var(--terra);white-space:nowrap;">₼'+Number(o.total).toFixed(2)+'</td><td style="max-width:100px;font-size:0.73rem;color:var(--muted);">'+(o.notes||'—')+'</td><td><span class="badge b-'+o.status+'">'+statusLabel(o.status)+'</span></td><td style="font-size:0.73rem;color:var(--muted);white-space:nowrap;">'+date+'</td><td><select style="border:1.5px solid var(--border);border-radius:6px;padding:0.22rem 0.45rem;font-size:0.73rem;background:white;cursor:pointer;outline:none;" onchange="updateOrderStatus(\''+o.id+'\',this.value,null)">'+opts+'</select></td></tr>';
   }).join('');
 }
 
-function filterOrders(s,btn){
-  ordersFilter=s;
-  document.querySelectorAll('.ftab').forEach(function(b){b.classList.remove('active');});
-  btn.classList.add('active'); loadOrders();
-}
+function filterOrders(s,btn){ordersFilter=s;document.querySelectorAll('.ftab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');loadOrders();}
 
-/* ── WAITER CALLS ── */
+// ─── WAITER CALLS ───
+window._waiterCallsByTable={};
 async function loadWaiterCalls(){
-  try {
+  try{
     var calls=await api('waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc');
-    if(!Array.isArray(calls)) calls=[];
+    if(!Array.isArray(calls))calls=[];
+    // Build lookup for table card waiter dots
+    window._waiterCallsByTable={};
+    calls.forEach(function(c){if(c.table_id)window._waiterCallsByTable[c.table_id]=true;});
     var count=calls.length;
-    ['waiterNavBadge','waiterDashBadge'].forEach(function(id){
-      var el=document.getElementById(id); if(!el)return;
-      el.textContent=count; el.style.display=count?'inline-block':'none';
-    });
-    // mobile dot
-    var bd=document.getElementById('bdot-waiter'); if(bd){bd.textContent=count;bd.style.display=count?'block':'none';}
+    ['waiterNavBadge','waiterDashBadge'].forEach(function(id){var el=document.getElementById(id);if(!el)return;el.textContent=count;el.style.display=count?'inline-block':'none';});
+    var bd=document.getElementById('bdot-waiter');if(bd){bd.textContent=count;bd.style.display=count?'block':'none';}
     var html=count
       ?calls.map(function(c){
           var tn=(c.restaurant_tables&&c.restaurant_tables.table_number)?c.restaurant_tables.table_number:'?';
           var time=new Date(c.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-          return '<div class="wcall-row"><div><div class="wcall-table">Table '+tn+'</div><div class="wcall-reason">'+c.reason+'</div><div class="wcall-time">'+time+'</div></div><div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0;"><span class="wcall-badge">Waiting</span><button class="btn-xs success" onclick="dismissWaiterCall(\''+c.id+'\')">Done</button></div></div>';
+          return '<div class="wcall-row"><div><div class="wcall-table">Table '+tn+'</div><div class="wcall-reason">'+c.reason+'</div><div class="wcall-time">'+time+'</div></div><div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0;"><span class="wcall-badge">Waiting</span><button class="refresh-btn" onclick="dismissWaiterCall(\''+c.id+'\')">✓ Done</button></div></div>';
         }).join('')
       :'<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
-    var d=document.getElementById('waiterCallsDash'); if(d) d.innerHTML=html;
-    var p=document.getElementById('waiterCallsPage'); if(p) p.innerHTML=html;
-  } catch(e){}
+    var d=document.getElementById('waiterCallsDash');if(d)d.innerHTML=html;
+    var p=document.getElementById('waiterCallsPage');if(p)p.innerHTML=html;
+  }catch(e){}
 }
 
 async function dismissWaiterCall(id){
   await api('waiter_calls?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:'seen'})});
-  showToast('Dismissed'); loadWaiterCalls();
+  showToast('Dismissed');loadWaiterCalls();
 }
 
-/* ── MENU ── */
-/* ── UPDATED MENU FUNCTIONS ── */
-
-var menuItems = [];
-
-async function loadMenu() {
-  // Added &is_active=eq.true to filter out deleted items
-  var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
-  
-  menuItems = Array.isArray(items) ? items : [];
-  document.getElementById('menuCount').textContent = menuItems.length;
-  
-  var grid = document.getElementById('menuManageGrid');
-  if (!menuItems.length) {
-    grid.innerHTML = '<div class="loading-state">Menu is empty</div>';
-    return;
-  }
-  
-  grid.innerHTML = menuItems.map(function(item) {
-    return '<div class="menu-item-row">' +
-      '<span class="menu-emoji">' + (item.emoji || '🍽️') + '</span>' +
-      '<div class="menu-info">' +
-        '<div class="menu-name">' + item.name + '</div>' +
-        '<div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div>' +
-      '</div>' +
-      '<button class="toggle ' + (item.available ? 'on' : '') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>' +
-      '<button class="btn-xs" onclick=\'openEditMenu(' + JSON.stringify(item) + ')\'>Edit</button>' +
-      '<button class="btn-xs danger" onclick="deleteMenuItem(\'' + item.id + '\')">Del</button>' +
-    '</div>';
+// ─── MENU ───
+var menuItems=[];
+async function loadMenu(){
+  var items=await api('menu_items?select=*&is_active=eq.true&order=category,name');
+  menuItems=Array.isArray(items)?items:[];
+  document.getElementById('menuCount').textContent=menuItems.length;
+  var grid=document.getElementById('menuManageGrid');
+  if(!menuItems.length){grid.innerHTML='<div class="loading-state">Menu is empty</div>';return;}
+  grid.innerHTML=menuItems.map(function(item){
+    return '<div class="menu-item-row">'
+      +'<span class="menu-emoji">'+(item.emoji||'🍽️')+'</span>'
+      +'<div class="menu-info"><div class="menu-name">'+item.name+'</div><div class="menu-meta">'+catLabel(item.category)+' · ₼'+Number(item.price).toFixed(2)+'</div></div>'
+      +'<button class="toggle '+(item.available?'on':'')+'" onclick="toggleItem(\''+item.id+'\','+item.available+')"></button>'
+      +'<button class="refresh-btn" onclick=\'openEditMenu('+JSON.stringify(item)+')\'>Edit</button>'
+      +'<button class="refresh-btn" style="border-color:var(--red-light);color:var(--red);" onclick="deleteMenuItem(\''+item.id+'\')">Del</button>'
+    +'</div>';
   }).join('');
 }
 
-async function toggleItem(id, cur) {
-  await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ available: !cur }) });
-  showToast(cur ? 'Disabled' : 'Enabled');
-  loadMenu();
+async function toggleItem(id,cur){
+  await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({available:!cur})});
+  showToast(cur?'Disabled':'Enabled');loadMenu();
 }
-
-async function deleteMenuItem(id) {
-  var item = menuItems.find(function(m) { return String(m.id) === String(id); });
-  var name = item ? item.name : 'this item';
-  
-  if (!confirm('Delete "' + name + '"?')) return;
-
-  try {
-    // Soft delete: sets is_active to false instead of removing the row
-    await api('menu_items?id=eq.' + id, {
-      method: 'PATCH',
-      body: JSON.stringify({ is_active: false })
-    });
-    showToast('Item deleted');
-    loadMenu();
-  } catch (e) {
-    showToast('Delete failed');
-  }
+async function deleteMenuItem(id){
+  var item=menuItems.find(function(m){return String(m.id)===String(id);});
+  if(!confirm('Delete "'+(item?item.name:'this item')+'"?'))return;
+  await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({is_active:false})});
+  showToast('Item deleted');loadMenu();
 }
-
-async function saveMenuItem() {
-  var id = document.getElementById('menuEditId').value;
-  var data = {
-    name: document.getElementById('menuName').value.trim(),
-    emoji: document.getElementById('menuEmoji').value.trim() || '🍽️',
-    description: document.getElementById('menuDesc').value.trim(),
-    price: parseFloat(document.getElementById('menuPrice').value),
-    category: document.getElementById('menuCat').value,
-    available: true,
-    is_active: true // Ensure new items are marked as active
-  };
-  
-  if (!data.name || !data.price) { showToast('Name and price required'); return; }
-  
-  if (id) await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify(data) });
-  else await api('menu_items', { method: 'POST', body: JSON.stringify(data) });
-  
-  showToast(id ? 'Updated' : 'Added');
-  closeModal('menuModal');
-  loadMenu();
-}
-
-function openAddMenu() {
-  document.getElementById('menuModalTitle').textContent = 'Add Menu Item';
-  document.getElementById('menuEditId').value = '';
-  ['menuName', 'menuEmoji', 'menuDesc', 'menuPrice'].forEach(function(id) { document.getElementById(id).value = ''; });
-  document.getElementById('menuCat').value = 'ana';
+function openAddMenu(){
+  document.getElementById('menuModalTitle').textContent='Add Menu Item';
+  document.getElementById('menuEditId').value='';
+  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('menuCat').value='ana';
   document.getElementById('menuModal').classList.add('open');
 }
-
-function openEditMenu(item) {
-  document.getElementById('menuModalTitle').textContent = 'Edit Item';
-  document.getElementById('menuEditId').value = item.id;
-  document.getElementById('menuName').value = item.name;
-  document.getElementById('menuEmoji').value = item.emoji || '';
-  document.getElementById('menuDesc').value = item.description || '';
-  document.getElementById('menuPrice').value = item.price;
-  document.getElementById('menuCat').value = item.category;
+function openEditMenu(item){
+  document.getElementById('menuModalTitle').textContent='Edit Item';
+  document.getElementById('menuEditId').value=item.id;
+  document.getElementById('menuName').value=item.name;
+  document.getElementById('menuEmoji').value=item.emoji||'';
+  document.getElementById('menuDesc').value=item.description||'';
+  document.getElementById('menuPrice').value=item.price;
+  document.getElementById('menuCat').value=item.category;
   document.getElementById('menuModal').classList.add('open');
 }
 async function saveMenuItem(){
   var id=document.getElementById('menuEditId').value;
-  var data={name:document.getElementById('menuName').value.trim(),emoji:document.getElementById('menuEmoji').value.trim()||'🍽️',description:document.getElementById('menuDesc').value.trim(),price:parseFloat(document.getElementById('menuPrice').value),category:document.getElementById('menuCat').value,available:true};
+  var data={name:document.getElementById('menuName').value.trim(),emoji:document.getElementById('menuEmoji').value.trim()||'🍽️',description:document.getElementById('menuDesc').value.trim(),price:parseFloat(document.getElementById('menuPrice').value),category:document.getElementById('menuCat').value,available:true,is_active:true};
   if(!data.name||!data.price){showToast('Name and price required');return;}
-  if(id) await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify(data)});
+  if(id)await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify(data)});
   else await api('menu_items',{method:'POST',body:JSON.stringify(data)});
-  showToast(id?'Updated':'Added'); closeModal('menuModal'); loadMenu();
+  showToast(id?'Updated':'Added');closeModal('menuModal');loadMenu();
 }
 
-/* ── QR (embedded — pre-made from qr-code-generator.com) ── */
-var STATIC_QR = [null,
+// ─── QR ───
+var STATIC_QR=[null,
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable1.png',
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable2.png',
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable3.png',
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable4.png',
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable5.png',
-]; /* index 0 unused; STATIC_QR[1]=Table1 ... STATIC_QR[5]=Table5 */
-
+];
 async function loadQR(){
   var tables=await api('restaurant_tables?select=id,table_number,token&order=table_number');
   var grid=document.getElementById('qrGrid');
@@ -846,29 +922,22 @@ async function loadQR(){
     var pageUrl='https://restoranlayout.vercel.app/table.html?t='+encodeURIComponent(tok);
     var hasSrc=(num>=1&&num<=5&&STATIC_QR[num]);
     html+='<div class="qr-card" id="qrc-'+t.id+'">';
-    if(hasSrc){
-      html+='<img id="qrimg-'+t.id+'" src="'+STATIC_QR[num]+'" width="220" height="220" style="display:block;margin:0 auto 0.7rem;border-radius:4px;">';
-    } else {
-      html+='<div style="height:220px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.8rem;">No QR for Masa '+num+'</div>';
-    }
-    html+='<div class="qr-table-label">Masa '+num+'</div>';
+    if(hasSrc){html+='<img src="'+STATIC_QR[num]+'" width="220" height="220" style="display:block;margin:0 auto 0.7rem;border-radius:4px;">';}
+    else{html+='<div style="height:220px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.8rem;">No QR for Table '+num+'</div>';}
+    html+='<div class="qr-table-label">Table '+num+'</div>';
     html+='<div class="qr-url">'+pageUrl+'</div>';
-    html+='<button class="btn-xs" onclick="downloadQR('+num+')">&#11015; Download</button>';
+    html+='<button class="refresh-btn" style="width:100%;justify-content:center;" onclick="downloadQR('+num+')">⬇ Download</button>';
     html+='</div>';
   }
   grid.innerHTML=html;
 }
-
 function downloadQR(num){
   if(!STATIC_QR[num]){showToast('QR not ready');return;}
-  var link=document.createElement('a');
-  link.download='armood-masa-'+num+'.png';
-  link.href=STATIC_QR[num];
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
-  showToast('Downloading QR for Masa '+num);
+  var link=document.createElement('a');link.download='armood-masa-'+num+'.png';link.href=STATIC_QR[num];document.body.appendChild(link);link.click();document.body.removeChild(link);
+  showToast('Downloading QR for Table '+num);
 }
 
-/* ── STAFF ── */
+// ─── STAFF ───
 async function loadStaff(){
   if(currentUser.role!=='director'){document.getElementById('staffList').innerHTML='<div class="loading-state">Directors only</div>';return;}
   var staff=await api('admins?select=*&order=created_at');
@@ -876,76 +945,41 @@ async function loadStaff(){
   if(!Array.isArray(staff)||!staff.length){list.innerHTML='<div class="loading-state">No admins found</div>';return;}
   list.innerHTML=staff.map(function(s){
     var ini=(s.full_name||s.email).split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
-    return '<div class="staff-row"><div class="staff-av">'+ini+'</div><div class="staff-info"><div class="staff-name-t">'+(s.full_name||'—')+'</div><div class="staff-email-t">'+s.email+'</div></div><span class="role-pill role-'+s.role+'">'+(s.role==='director'?'Director':'Manager')+'</span>'+(s.id!==currentUser.id?'<button class="btn-xs danger" onclick="removeStaff(\''+s.id+'\')">Remove</button>':'')+'</div>';
+    return '<div class="staff-row"><div class="staff-av">'+ini+'</div><div class="staff-info"><div class="staff-name-t">'+(s.full_name||'—')+'</div><div class="staff-email-t">'+s.email+'</div></div><span class="role-pill role-'+s.role+'">'+(s.role==='director'?'Director':'Manager')+'</span>'+(s.id!==currentUser.id?'<button class="refresh-btn" style="border-color:var(--red-light);color:var(--red);" onclick="removeStaff(\''+s.id+'\')">Remove</button>':'')+'</div>';
   }).join('');
 }
-
-function openAddStaff(){
-  ['staffName','staffEmail','staffPassword'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('staffRole').value='manager';
-  document.getElementById('staffModal').classList.add('open');
-}
-
+function openAddStaff(){['staffName','staffEmail','staffPassword'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('staffRole').value='manager';document.getElementById('staffModal').classList.add('open');}
 async function saveStaff(){
-  var name=document.getElementById('staffName').value.trim();
-  var email=document.getElementById('staffEmail').value.trim();
-  var pass=document.getElementById('staffPassword').value;
-  var role=document.getElementById('staffRole').value;
+  var name=document.getElementById('staffName').value.trim(),email=document.getElementById('staffEmail').value.trim(),pass=document.getElementById('staffPassword').value,role=document.getElementById('staffRole').value;
   if(!name||!email||!pass){showToast('Fill all fields');return;}
   if(pass.length<6){showToast('Password min 6 chars');return;}
-  try {
-    var sr=await fetch(SUPABASE_URL+'/auth/v1/signup',{
-      method:'POST',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
-      body:JSON.stringify({email:email,password:pass})
-    });
+  try{
+    var sr=await fetch(SUPABASE_URL+'/auth/v1/signup',{method:'POST',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},body:JSON.stringify({email:email,password:pass})});
     var sd=await sr.json();
     var uid=sd.id||(sd.user&&sd.user.id)||null;
-    if(sd.error){
-      var em=sd.error.message||'';
-      if(em.toLowerCase().indexOf('already')>=0||em.toLowerCase().indexOf('registered')>=0){
-        var lr=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=password',{
-          method:'POST',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
-          body:JSON.stringify({email:email,password:pass})
-        });
-        var ld=await lr.json();
-        if(ld.error||!ld.user){showToast('User exists but signin failed: '+((ld.error&&ld.error.message)||'check password'));return;}
-        uid=ld.user.id;
-      } else { showToast('Signup error: '+em); return; }
-    }
-    if(!uid){ showToast('Could not get user ID — turn off email confirmation in Supabase Auth settings'); return; }
-    var ex=await api('admins?id=eq.'+uid+'&select=id');
-    if(Array.isArray(ex)&&ex.length){showToast('Already an admin');closeModal('staffModal');return;}
+    if(sd.error){var em=sd.error.message||'';if(em.toLowerCase().indexOf('already')>=0||em.toLowerCase().indexOf('registered')>=0){var lr=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},body:JSON.stringify({email:email,password:pass})});var ld=await lr.json();if(ld.error||!ld.user){showToast('User exists but signin failed');return;}uid=ld.user.id;}else{showToast('Signup error: '+em);return;}}
+    if(!uid){showToast('Could not get user ID — turn off email confirmation in Supabase');return;}
+    var ex=await api('admins?id=eq.'+uid+'&select=id');if(Array.isArray(ex)&&ex.length){showToast('Already an admin');closeModal('staffModal');return;}
     var ins=await api('admins',{method:'POST',body:JSON.stringify({id:uid,email:email,full_name:name,role:role})});
-    if(ins&&(ins.code||ins.error)){showToast('Admin record failed: '+(ins.message||ins.code));return;}
-    showToast('Admin added! They can now sign in.');
-    closeModal('staffModal'); loadStaff();
-  } catch(e){showToast('Error: '+e.message);}
+    if(ins&&(ins.code||ins.error)){showToast('Admin record failed');return;}
+    showToast('Admin added!');closeModal('staffModal');loadStaff();
+  }catch(e){showToast('Error: '+e.message);}
 }
+async function removeStaff(id){if(!confirm('Remove this admin?'))return;await api('admins?id=eq.'+id,{method:'DELETE'});showToast('Removed');loadStaff();}
 
-async function removeStaff(id){
-  if(!confirm('Remove this admin?')) return;
-  await api('admins?id=eq.'+id,{method:'DELETE'});
-  showToast('Removed'); loadStaff();
-}
-
-/* ── HELPERS ── */
-function statusLabel(s){return {pending:'Pending',confirmed:'Confirmed',ready:'Ready',paid:'Paid',cancelled:'Cancelled'}[s]||s;}
-function tableStatusLabel(s){return {empty:'Empty',active:'Active',ordered:'Ordered',paid:'Paid'}[s]||s;}
-function catLabel(c){return {seheri:'Breakfast',ana:'Main',salatlar:'Salads',icecekler:'Drinks'}[c]||c;}
+// ─── HELPERS ───
+function statusLabel(s){return{pending:'Pending',confirmed:'Confirmed',ready:'Ready',paid:'Paid',cancelled:'Cancelled'}[s]||s;}
+function catLabel(c){return{seheri:'Breakfast',ana:'Main',salatlar:'Salads',icecekler:'Drinks'}[c]||c;}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
+document.querySelectorAll('.modal-overlay').forEach(function(ov){ov.addEventListener('click',function(e){if(e.target===ov)ov.classList.remove('open');});});
 
-/* Close modals on overlay click */
-document.querySelectorAll('.modal-overlay').forEach(function(ov){
-  ov.addEventListener('click',function(e){if(e.target===ov)ov.classList.remove('open');});
-});
-
-/* ── AUTO REFRESH ── */
+// ─── AUTO REFRESH ───
 setInterval(function(){
-  if(document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
-  if(document.getElementById('page-tables').classList.contains('active')) loadTables();
-  if(document.getElementById('page-orders').classList.contains('active')) loadOrders();
-  if(document.getElementById('page-waiter').classList.contains('active')) loadWaiterCalls();
+  if(document.getElementById('page-dashboard').classList.contains('active'))loadDashboard();
+  else if(document.getElementById('page-tables').classList.contains('active'))loadTables();
+  else if(document.getElementById('page-orders').classList.contains('active'))loadOrders();
+  else if(document.getElementById('page-waiter').classList.contains('active'))loadWaiterCalls();
 },30000);
 setInterval(loadWaiterCalls,15000);
 
@@ -953,3 +987,5 @@ loadDashboard();
 </script>
 </body>
 </html>
+HTMLEOF
+echo "Done"
