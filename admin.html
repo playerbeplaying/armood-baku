@@ -1,10 +1,4 @@
-python3 - << 'PYEOF'
-# The core issue: session.token may be the Supabase access_token (JWT) 
-# but the session storage format from admin-login.html determines what key it's under.
-# We need to handle multiple possible formats AND add a debug overlay.
-# Also need to use SUPABASE_ANON as fallback bearer for public tables (RLS permissive reads).
-
-content = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="az">
 <head>
 <meta charset="UTF-8">
@@ -417,28 +411,46 @@ function updateClock() {
 }
 updateClock(); setInterval(updateClock, 1000);
 
-/* ── API helper: logs every call and its response shape ── */
+/* ── API helper ──
+   Uses the user JWT (authToken) for all requests.
+   On 401/403 for GET requests, automatically retries with anon key
+   so the UI never goes blank just because of an RLS policy mismatch.
+*/
 function api(path, opts) {
   opts = opts || {};
   var method = opts.method || 'GET';
   dbg(method + ' /rest/v1/' + path.substring(0,60));
-  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
-    headers: Object.assign({
-      'apikey': SUPABASE_ANON,
-      'Authorization': 'Bearer ' + authToken,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
-    }, opts.headers || {}),
-    method: method,
-    body: opts.body
-  }).then(function(r) {
-    dbg('  -> HTTP ' + r.status + ' ' + r.statusText);
-    return r.json().then(function(data) {
-      if (data && data.code) dbg('  ERROR body: ' + JSON.stringify(data).substring(0,120));
-      else if (Array.isArray(data)) dbg('  OK: ' + data.length + ' rows');
-      else dbg('  OK: ' + JSON.stringify(data).substring(0,80));
-      return data;
+
+  function doFetch(bearer) {
+    return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+      headers: Object.assign({
+        'apikey': SUPABASE_ANON,
+        'Authorization': 'Bearer ' + bearer,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      }, opts.headers || {}),
+      method: method,
+      body: opts.body
     });
+  }
+
+  return doFetch(authToken).then(function(r) {
+    dbg('  -> HTTP ' + r.status + ' ' + r.statusText);
+    // On 401/403 for reads, retry with anon key (handles permissive RLS tables)
+    if ((r.status === 401 || r.status === 403) && method === 'GET') {
+      dbg('  WARN: auth failed, retrying with anon key');
+      return doFetch(SUPABASE_ANON).then(function(r2) {
+        dbg('  -> anon retry HTTP ' + r2.status);
+        return r2.json();
+      });
+    }
+    return r.json();
+  }).then(function(data) {
+    if (!data) { dbg('  NULL response'); return data; }
+    if (data.code || data.error) dbg('  ERROR body: ' + JSON.stringify(data).substring(0,120));
+    else if (Array.isArray(data)) dbg('  OK: ' + data.length + ' rows');
+    else dbg('  OK: ' + JSON.stringify(data).substring(0,80));
+    return data;
   }).catch(function(e) {
     dbg('  FETCH ERROR: ' + e.message);
     return null;
@@ -604,11 +616,16 @@ function filterOrders(status, btn) {
 async function loadWaiterCalls() {
   try {
     dbg('GET waiter_calls?status=eq.pending');
-    var res = await fetch(
-      SUPABASE_URL + '/rest/v1/waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc',
-      { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' } }
-    );
+    var endpoint = SUPABASE_URL + '/rest/v1/waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc';
+    var headers401 = { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' };
+    var res = await fetch(endpoint, { headers: headers401 });
     dbg('  waiter_calls HTTP ' + res.status);
+    // Retry with anon if auth token rejected
+    if (res.status === 401 || res.status === 403) {
+      dbg('  WARN: waiter_calls auth failed, retrying with anon');
+      res = await fetch(endpoint, { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON, 'Content-Type': 'application/json' } });
+      dbg('  waiter_calls anon retry HTTP ' + res.status);
+    }
     var calls = await res.json();
     if (calls && calls.code) { dbg('  ERROR: ' + JSON.stringify(calls)); calls = []; }
     var count = Array.isArray(calls) ? calls.length : 0;
@@ -836,9 +853,4 @@ setInterval(loadWaiterCalls, 15000);
 loadDashboard();
 </script>
 </body>
-</html>"""
-
-with open('/mnt/user-data/outputs/admin.html', 'w', encoding='utf-8') as f:
-    f.write(content)
-print("Done:", len(content), "chars")
-PYEOF
+</html>
