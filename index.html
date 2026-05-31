@@ -103,14 +103,6 @@ nav.scrolled{
 .btn-prim:hover{background:var(--terra-hover);transform:translateY(-2px);}
 .btn-sec{display:inline-flex;align-items:center;gap:0.5rem;border:1.5px solid rgba(250,248,244,0.3);color:var(--bg);padding:0.85rem 2rem;font-family:var(--ff-body);font-size:0.82rem;font-weight:400;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;cursor:pointer;background:none;border-radius:6px;transition:border-color 0.2s,color 0.2s,transform 0.15s;}
 .btn-sec:hover{border-color:var(--terra-light);color:var(--terra-light);transform:translateY(-2px);}
-.hero-scroll{
-  position:absolute;bottom:2rem;left:calc(50% - 0.4em);transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:0.4rem;
-  font-size:0.65rem;letter-spacing:0.18em;
-  text-transform:uppercase;color:rgba(250,248,244,0.25);
-  animation:fadeUp 0.7s var(--ease) 1.5s both;
-}
-.scroll-line{width:1px;height:42px;background:linear-gradient(to bottom,var(--terra),transparent);animation:pulse 2.2s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
 
