@@ -342,62 +342,29 @@ function toggleDebug() {
   bar.classList.toggle('show');
 }
 
-/* ── SESSION: handle multiple possible storage formats ──
-   admin-login.html may store as:
-     { user, token }              <- our format
-     { user, access_token }       <- supabase sdk v1
-     { session: { access_token }} <- supabase sdk v2
-   We try all three and fall back to SUPABASE_ANON so reads still work.
-*/
 var currentUser = null;
-var authToken = SUPABASE_ANON; // safe default — allows anon reads
+var authToken = SUPABASE_ANON;
+var refreshToken = null;
+var isRefreshing = false;
+var refreshQueue = []; // queued api calls waiting for token refresh
 
 (function initSession() {
   var raw = localStorage.getItem('armood_session');
-  dbg('localStorage armood_session: ' + (raw ? raw.substring(0,80) + '...' : 'NULL'));
-
-  if (!raw) {
-    dbg('ERROR: No session found — redirecting to login');
-    window.location.href = 'admin-login.html';
-    return;
-  }
-
+  dbg('Session: ' + (raw ? raw.substring(0,80) + '...' : 'NULL'));
+  if (!raw) { window.location.href = 'admin-login.html'; return; }
   var s;
-  try { s = JSON.parse(raw); } catch(e) {
-    dbg('ERROR: Session JSON parse failed: ' + e.message);
-    window.location.href = 'admin-login.html';
-    return;
-  }
+  try { s = JSON.parse(raw); } catch(e) { window.location.href = 'admin-login.html'; return; }
 
-  // Extract user — try multiple shapes
-  currentUser = s.user || s.data || null;
-  if (currentUser && currentUser.user) currentUser = currentUser.user; // nested
+  currentUser = s.user || null;
+  authToken   = s.token || s.access_token || SUPABASE_ANON;
+  refreshToken = s.refresh_token || null;
 
-  // Extract token — try every known key
-  var tok = s.token || s.access_token ||
-    (s.session && s.session.access_token) ||
-    (s.data && s.data.session && s.data.session.access_token) ||
-    null;
+  if (!currentUser) { window.location.href = 'admin-login.html'; return; }
 
-  if (tok) {
-    authToken = tok;
-    dbg('OK: token found, length=' + tok.length + ', starts=' + tok.substring(0,20));
-  } else {
-    dbg('WARN: No token in session — using anon key. Writes may fail.');
-  }
+  dbg('OK: user=' + currentUser.email + ' token=' + authToken.substring(0,20) + '...' + (refreshToken ? ' refresh=YES' : ' refresh=MISSING'));
 
-  if (!currentUser) {
-    dbg('ERROR: No user object in session');
-    window.location.href = 'admin-login.html';
-    return;
-  }
-
-  dbg('OK: user=' + (currentUser.email || currentUser.id || '?') + ' role=' + (currentUser.role || currentUser.user_metadata?.role || '?'));
-
-  // Populate UI
-  var role = currentUser.role || (currentUser.user_metadata && currentUser.user_metadata.role) || 'manager';
-  currentUser.role = role; // normalise
-  var uname = currentUser.full_name || (currentUser.user_metadata && currentUser.user_metadata.full_name) || currentUser.email || 'Admin';
+  var role  = currentUser.role || 'manager';
+  var uname = currentUser.full_name || currentUser.email || 'Admin';
   document.getElementById('adminName').textContent = uname;
   document.getElementById('adminRole').textContent = role === 'director' ? 'Director' : 'Manager';
   document.getElementById('userInitials').textContent = uname.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
@@ -406,23 +373,67 @@ var authToken = SUPABASE_ANON; // safe default — allows anon reads
   }
 })();
 
+/* ── TOKEN REFRESH ──
+   Called when any request returns JWT expired.
+   Uses refresh_token to get a new access_token from Supabase,
+   saves it back to localStorage, and retries all queued requests.
+*/
+async function doTokenRefresh() {
+  if (!refreshToken) {
+    dbg('ERROR: JWT expired but no refresh_token — redirecting to login');
+    localStorage.removeItem('armood_session');
+    window.location.href = 'admin-login.html';
+    return false;
+  }
+  dbg('Refreshing JWT via refresh_token...');
+  try {
+    var res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken })
+    });
+    var data = await res.json();
+    if (data.error || !data.access_token) {
+      dbg('ERROR: Token refresh failed: ' + JSON.stringify(data));
+      localStorage.removeItem('armood_session');
+      window.location.href = 'admin-login.html';
+      return false;
+    }
+    authToken = data.access_token;
+    refreshToken = data.refresh_token || refreshToken;
+    // Persist updated tokens
+    var raw = localStorage.getItem('armood_session');
+    var s = raw ? JSON.parse(raw) : {};
+    s.token = authToken;
+    s.refresh_token = refreshToken;
+    localStorage.setItem('armood_session', JSON.stringify(s));
+    dbg('OK: Token refreshed successfully');
+    return true;
+  } catch(e) {
+    dbg('ERROR: Token refresh exception: ' + e.message);
+    localStorage.removeItem('armood_session');
+    window.location.href = 'admin-login.html';
+    return false;
+  }
+}
+
 function updateClock() {
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
 updateClock(); setInterval(updateClock, 1000);
 
 /* ── API helper ──
-   Uses the user JWT (authToken) for all requests.
-   On 401/403 for GET requests, automatically retries with anon key
-   so the UI never goes blank just because of an RLS policy mismatch.
+   1. Tries with current authToken
+   2. If response body contains "JWT expired", refreshes token and retries once
+   3. Never silently swallows errors — logs everything to debug panel
 */
-function api(path, opts) {
+async function api(path, opts) {
   opts = opts || {};
   var method = opts.method || 'GET';
-  dbg(method + ' /rest/v1/' + path.substring(0,60));
+  dbg(method + ' ' + path.substring(0,70));
 
-  function doFetch(bearer) {
-    return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+  async function doFetch(bearer) {
+    var r = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
       headers: Object.assign({
         'apikey': SUPABASE_ANON,
         'Authorization': 'Bearer ' + bearer,
@@ -432,29 +443,43 @@ function api(path, opts) {
       method: method,
       body: opts.body
     });
+    var data = await r.json();
+    return { status: r.status, data: data };
   }
 
-  return doFetch(authToken).then(function(r) {
-    dbg('  -> HTTP ' + r.status + ' ' + r.statusText);
-    // On 401/403 for reads, retry with anon key (handles permissive RLS tables)
-    if ((r.status === 401 || r.status === 403) && method === 'GET') {
-      dbg('  WARN: auth failed, retrying with anon key');
-      return doFetch(SUPABASE_ANON).then(function(r2) {
-        dbg('  -> anon retry HTTP ' + r2.status);
-        return r2.json();
-      });
+  try {
+    var result = await doFetch(authToken);
+    dbg('  -> HTTP ' + result.status);
+
+    // JWT expired — refresh and retry
+    if (result.data && result.data.message && result.data.message.includes('JWT expired')) {
+      dbg('  JWT expired — refreshing token');
+      if (isRefreshing) {
+        // Another refresh already in progress — wait for it
+        await new Promise(function(resolve) { refreshQueue.push(resolve); });
+      } else {
+        isRefreshing = true;
+        var ok = await doTokenRefresh();
+        isRefreshing = false;
+        refreshQueue.forEach(function(r) { r(); });
+        refreshQueue = [];
+        if (!ok) return null;
+      }
+      // Retry with new token
+      result = await doFetch(authToken);
+      dbg('  -> retry HTTP ' + result.status);
     }
-    return r.json();
-  }).then(function(data) {
-    if (!data) { dbg('  NULL response'); return data; }
-    if (data.code || data.error) dbg('  ERROR body: ' + JSON.stringify(data).substring(0,120));
+
+    var data = result.data;
+    if (!data) { dbg('  NULL response'); return null; }
+    if (data.code || (data.message && !Array.isArray(data))) dbg('  ERROR: ' + JSON.stringify(data).substring(0,120));
     else if (Array.isArray(data)) dbg('  OK: ' + data.length + ' rows');
     else dbg('  OK: ' + JSON.stringify(data).substring(0,80));
     return data;
-  }).catch(function(e) {
+  } catch(e) {
     dbg('  FETCH ERROR: ' + e.message);
     return null;
-  });
+  }
 }
 
 document.getElementById('btnLogout').addEventListener('click', function() {
@@ -616,18 +641,9 @@ function filterOrders(status, btn) {
 async function loadWaiterCalls() {
   try {
     dbg('GET waiter_calls?status=eq.pending');
-    var endpoint = SUPABASE_URL + '/rest/v1/waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc';
-    var headers401 = { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' };
-    var res = await fetch(endpoint, { headers: headers401 });
-    dbg('  waiter_calls HTTP ' + res.status);
-    // Retry with anon if auth token rejected
-    if (res.status === 401 || res.status === 403) {
-      dbg('  WARN: waiter_calls auth failed, retrying with anon');
-      res = await fetch(endpoint, { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON, 'Content-Type': 'application/json' } });
-      dbg('  waiter_calls anon retry HTTP ' + res.status);
-    }
-    var calls = await res.json();
-    if (calls && calls.code) { dbg('  ERROR: ' + JSON.stringify(calls)); calls = []; }
+    /* Use the same api() helper so JWT refresh works here too */
+    var calls = await api('waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc');
+    if (!Array.isArray(calls)) { dbg('  waiter_calls non-array: ' + JSON.stringify(calls||'null').substring(0,80)); calls = []; }
     var count = Array.isArray(calls) ? calls.length : 0;
     dbg('  waiter_calls: ' + count + ' pending');
 
@@ -750,13 +766,20 @@ async function loadQR() {
     '</div>';
   }).join('');
 
-  /* Render QR codes after DOM is updated */
-  setTimeout(function() {
+  /* Wait for QRCode library to be available, then render */
+  function renderQRCodes(tables, attempt) {
+    attempt = attempt || 0;
+    if (typeof QRCode === 'undefined') {
+      if (attempt > 20) { dbg('ERROR: QRCode library never loaded'); return; }
+      dbg('Waiting for QRCode lib... attempt ' + attempt);
+      setTimeout(function() { renderQRCodes(tables, attempt + 1); }, 200);
+      return;
+    }
     tables.forEach(function(t) {
       var tok = (t.token || '').trim();
-      if (!tok) { dbg('WARN: table ' + t.table_number + ' has no token, skipping QR'); return; }
+      if (!tok) { dbg('WARN: table ' + t.table_number + ' no token'); return; }
       var canvas = document.getElementById('qr-canvas-' + t.id);
-      if (!canvas) { dbg('WARN: canvas not found for table ' + t.table_number); return; }
+      if (!canvas) { dbg('WARN: canvas missing for table ' + t.table_number); return; }
       var url = 'https://armood-baku.vercel.app/table.html?t=' + tok;
       QRCode.toCanvas(canvas, url, {
         width: 220, margin: 3,
@@ -767,7 +790,8 @@ async function loadQR() {
         else dbg('OK QR table ' + t.table_number);
       });
     });
-  }, 50);
+  }
+  renderQRCodes(tables);
 }
 
 function downloadQR(id, num) {
