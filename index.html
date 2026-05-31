@@ -711,7 +711,7 @@ let currentOrderCat = 'all';
 async function loadMenuItems() {
   try {
     // 1. Fetch the items
-    var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
+    var items = await sbApi('menu_items?select=*&is_active=eq.true&order=category,name');
     
     // 2. Use 'items' instead of 'dawdnnnnawd  wakdpiadata'
     // Also, ensure your 'available' check matches how you store it in Supabase
