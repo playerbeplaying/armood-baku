@@ -1,10 +1,10 @@
-cat > /home/claude/admin.html << 'ENDOFFILE'
+cat > /tmp/admin_fixed.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="az">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Armood — Admin Panel</title>
+<title>Armood Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -26,14 +26,12 @@ cat > /home/claude/admin.html << 'ENDOFFILE'
 }
 html{scroll-behavior:smooth;}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
 .topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem 0 0;z-index:100;box-shadow:0 1px 3px rgba(30,24,16,0.05);}
 .topnav-left{display:flex;align-items:center;width:var(--sidebar-w);padding:0 1.5rem;border-right:1px solid var(--border);height:100%;}
 .topnav-logo{display:flex;align-items:center;gap:0.7rem;text-decoration:none;}
 .logo-mark{width:34px;height:34px;background:var(--terra);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-size:1.1rem;color:white;font-style:italic;}
-.logo-name{font-family:var(--ff-head);font-size:1.3rem;color:var(--ink);letter-spacing:0.01em;font-weight:700;}
+.logo-name{font-family:var(--ff-head);font-size:1.3rem;color:var(--ink);font-weight:700;}
 .logo-name em{color:var(--terra-light);font-style:italic;}
 .topnav-right{display:flex;align-items:center;gap:1rem;}
 .topnav-user{display:flex;align-items:center;gap:0.7rem;}
@@ -53,8 +51,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .nav-item-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
 .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:0.65rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;min-width:18px;text-align:center;}
 .main{flex:1;padding:2rem;overflow-x:hidden;background:var(--bg);}
-.page{display:none;}
-.page.active{display:block;}
+.page{display:none;}.page.active{display:block;}
 .page-header{margin-bottom:1.8rem;}
 .page-title{font-family:var(--ff-head);font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:0.2rem;}
 .page-sub{font-size:0.85rem;color:var(--muted);}
@@ -64,24 +61,18 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .stat-card-top{display:flex;align-items:center;justify-content:space-between;}
 .stat-label{font-size:0.78rem;font-weight:500;color:var(--muted);}
 .stat-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;}
-.stat-icon.terra{background:var(--terra-pale);}
-.stat-icon.green{background:var(--green-pale);}
-.stat-icon.amber{background:var(--amber-light);}
-.stat-icon.purple{background:var(--purple-light);}
+.stat-icon.terra{background:var(--terra-pale);}.stat-icon.green{background:var(--green-pale);}.stat-icon.amber{background:var(--amber-light);}.stat-icon.purple{background:var(--purple-light);}
 .stat-val{font-size:1.9rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;}
 .stat-trend{font-size:0.75rem;color:var(--muted);}
 .tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;margin-bottom:2rem;}
-.table-card{background:white;border:1.5px solid var(--border);border-radius:12px;padding:1.2rem;transition:all 0.2s;cursor:default;}
+.table-card{background:white;border:1.5px solid var(--border);border-radius:12px;padding:1.2rem;transition:all 0.2s;}
 .table-card:hover{box-shadow:0 4px 16px rgba(30,24,16,0.07);}
-.table-card.s-active{border-color:rgba(61,80,104,0.3);}
-.table-card.s-ordered{border-color:rgba(46,107,69,0.3);}
+.table-card.s-active{border-color:rgba(61,80,104,0.3);}.table-card.s-ordered{border-color:rgba(46,107,69,0.3);}
 .table-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;}
 .table-num{font-family:var(--ff-head);font-size:1.1rem;font-weight:700;color:var(--ink);}
 .tbl-badge{font-size:0.67rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:20px;}
-.tbl-empty{background:var(--bg2);color:var(--muted);}
-.tbl-active{background:var(--slate-pale);color:var(--slate);}
-.tbl-ordered{background:var(--green-pale);color:var(--green);}
-.tbl-paid{background:var(--bg2);color:var(--muted);}
+.tbl-empty{background:var(--bg2);color:var(--muted);}.tbl-active{background:var(--slate-pale);color:var(--slate);}
+.tbl-ordered{background:var(--green-pale);color:var(--green);}.tbl-paid{background:var(--bg2);color:var(--muted);}
 .table-orders-text{font-size:0.78rem;color:var(--muted);min-height:36px;line-height:1.6;margin-bottom:0.8rem;}
 .table-actions{display:flex;gap:0.5rem;flex-wrap:wrap;}
 .btn-xs{padding:0.3rem 0.65rem;font-size:0.72rem;font-weight:500;border-radius:6px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
@@ -93,17 +84,13 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-xs.primary:hover{background:var(--terra-hover);}
 .card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .card-header{padding:1rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.card-header h3{font-size:0.95rem;font-weight:600;color:var(--ink);}
 .data-table{width:100%;border-collapse:collapse;font-size:0.83rem;}
 .data-table th{text-align:left;padding:0.75rem 1rem;font-size:0.7rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);font-weight:600;background:var(--bg);}
 .data-table td{padding:0.85rem 1rem;border-bottom:1px solid rgba(224,213,197,0.5);color:var(--ink2);vertical-align:top;}
-.data-table tr:last-child td{border-bottom:none;}
-.data-table tr:hover td{background:var(--bg);}
-.badge{font-size:0.67rem;font-weight:600;letter-spacing:0.04em;padding:0.2rem 0.6rem;border-radius:20px;}
-.b-pending{background:var(--amber-light);color:#7a5c00;}
-.b-confirmed{background:var(--slate-pale);color:var(--slate);}
-.b-ready{background:var(--green-pale);color:var(--green);}
-.b-paid{background:var(--bg2);color:var(--muted);}
+.data-table tr:last-child td{border-bottom:none;}.data-table tr:hover td{background:var(--bg);}
+.badge{font-size:0.67rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:20px;}
+.b-pending{background:var(--amber-light);color:#7a5c00;}.b-confirmed{background:var(--slate-pale);color:var(--slate);}
+.b-ready{background:var(--green-pale);color:var(--green);}.b-paid{background:var(--bg2);color:var(--muted);}
 .b-cancelled{background:var(--red-light);color:var(--red);}
 .filter-tabs{display:flex;gap:0.4rem;flex-wrap:wrap;}
 .ftab{padding:0.35rem 0.8rem;font-size:0.78rem;font-weight:500;border-radius:7px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
@@ -114,27 +101,25 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .menu-info{flex:1;}
 .menu-name{font-size:0.9rem;font-weight:600;color:var(--ink);}
 .menu-meta{font-size:0.75rem;color:var(--muted);margin-top:0.1rem;}
-.menu-price{font-size:1rem;font-weight:700;color:var(--terra);flex-shrink:0;min-width:50px;text-align:right;}
 .toggle{position:relative;width:38px;height:21px;background:var(--border2);border:none;border-radius:11px;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
 .toggle::after{content:'';position:absolute;top:2.5px;left:2.5px;width:16px;height:16px;border-radius:50%;background:white;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
-.toggle.on{background:var(--terra);}
-.toggle.on::after{transform:translateX(17px);}
+.toggle.on{background:var(--terra);}.toggle.on::after{transform:translateX(17px);}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.5);z-index:200;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px);}
 .modal-overlay.open{display:flex;}
 .modal{background:white;border-radius:16px;padding:2rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(30,24,16,0.18);}
 .modal h3{font-family:var(--ff-head);font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:1.5rem;}
-.modal-close{position:absolute;top:1.2rem;right:1.2rem;background:var(--bg);border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;transition:all 0.2s;width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.modal-close{position:absolute;top:1.2rem;right:1.2rem;background:var(--bg);border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;}
 .modal-close:hover{background:var(--border);color:var(--ink);}
 .form-group{display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1rem;}
 .form-group label{font-size:0.72rem;font-weight:600;color:var(--ink2);letter-spacing:0.04em;text-transform:uppercase;}
-.form-group input,.form-group select,.form-group textarea{padding:0.7rem 0.9rem;border:1.5px solid var(--border);border-radius:8px;font-family:var(--ff-body);font-size:0.88rem;color:var(--ink);background:white;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-appearance:none;}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--terra);box-shadow:0 0 0 3px rgba(191,78,30,0.1);}
+.form-group input,.form-group select,.form-group textarea{padding:0.7rem 0.9rem;border:1.5px solid var(--border);border-radius:8px;font-family:var(--ff-body);font-size:0.88rem;color:var(--ink);background:white;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--terra);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
 .btn-primary{background:var(--terra);color:white;border:none;border-radius:8px;cursor:pointer;font-family:var(--ff-body);font-size:0.85rem;font-weight:600;padding:0.75rem 1.5rem;transition:background 0.2s;}
 .btn-primary:hover{background:var(--terra-hover);}
 .btn-outline-sm{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;cursor:pointer;font-family:var(--ff-body);font-size:0.85rem;font-weight:500;padding:0.75rem 1.5rem;transition:all 0.2s;}
 .btn-outline-sm:hover{border-color:var(--ink2);color:var(--ink);}
-.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.5rem;}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem;}
 .qr-card{background:white;border:1px solid var(--border);border-radius:12px;padding:1.5rem;text-align:center;transition:box-shadow 0.2s;}
 .qr-card:hover{box-shadow:0 4px 16px rgba(30,24,16,0.08);}
 .qr-table-label{font-family:var(--ff-head);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.3rem;}
@@ -146,16 +131,14 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .staff-name-t{font-size:0.9rem;font-weight:600;color:var(--ink);}
 .staff-email-t{font-size:0.75rem;color:var(--muted);}
 .role-pill{font-size:0.67rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:20px;}
-.role-director{background:var(--terra-pale);color:var(--terra);}
-.role-manager{background:var(--slate-pale);color:var(--slate);}
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:white;padding:0.75rem 1.2rem;border-radius:10px;font-size:0.83rem;font-weight:500;z-index:300;opacity:0;transform:translateY(8px);transition:all 0.3s;box-shadow:0 8px 24px rgba(30,24,16,0.2);display:flex;align-items:center;gap:0.5rem;}
+.role-director{background:var(--terra-pale);color:var(--terra);}.role-manager{background:var(--slate-pale);color:var(--slate);}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:white;padding:0.75rem 1.2rem;border-radius:10px;font-size:0.83rem;font-weight:500;z-index:300;opacity:0;transform:translateY(8px);transition:all 0.3s;box-shadow:0 8px 24px rgba(30,24,16,0.2);}
 .toast.show{opacity:1;transform:translateY(0);}
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.7rem;}
 .sec-title{font-size:1rem;font-weight:700;color:var(--ink);}
 .loading-state{text-align:center;padding:3rem;color:var(--muted);font-size:0.85rem;}
 .refresh-btn{display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.8rem;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.15s;}
 .refresh-btn:hover{border-color:var(--terra);color:var(--terra);}
-/* WAITER CALL ROW */
 .wcall-row{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1.2rem;border-bottom:1px solid rgba(224,213,197,0.5);}
 .wcall-row:last-child{border-bottom:none;}
 .wcall-table{font-size:0.88rem;font-weight:600;color:var(--ink);}
@@ -163,11 +146,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .wcall-time{font-size:0.7rem;color:var(--muted2);margin-top:0.1rem;}
 .wcall-badge{font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:20px;background:#fef3c7;color:#92400e;animation:wpulse 2s infinite;}
 @keyframes wpulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
-@media(max-width:900px){
-  .sidebar{display:none;}
-  .topnav-left{width:auto;border-right:none;}
-  .main{padding:1rem;}
-}
+@media(max-width:900px){.sidebar{display:none;}.topnav-left{width:auto;border-right:none;}.main{padding:1rem;}}
 </style>
 </head>
 <body>
@@ -180,12 +159,12 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     </a>
   </div>
   <div class="topnav-right">
-    <span class="topnav-clock" id="clock">—</span>
+    <span class="topnav-clock" id="clock">--:--:--</span>
     <div class="topnav-user">
-      <div class="user-avatar" id="userInitials">—</div>
+      <div class="user-avatar" id="userInitials">--</div>
       <div>
-        <div class="user-name" id="adminName">—</div>
-        <div class="user-role" id="adminRole">—</div>
+        <div class="user-name" id="adminName">--</div>
+        <div class="user-role" id="adminRole">--</div>
       </div>
     </div>
     <button class="btn-logout" id="btnLogout">Sign out</button>
@@ -211,44 +190,22 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
   <main class="main">
 
-    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="page-header">
         <div class="page-title">Dashboard</div>
         <div class="page-sub" id="dashDate">Loading...</div>
       </div>
       <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-card-top"><span class="stat-label">Today's Revenue</span><div class="stat-icon terra">💰</div></div>
-          <div class="stat-val" id="statRevenue">₼0</div>
-          <div class="stat-trend">Paid orders today</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-top"><span class="stat-label">Active Orders</span><div class="stat-icon green">🔥</div></div>
-          <div class="stat-val" id="statActive">0</div>
-          <div class="stat-trend">Pending + confirmed + ready</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-top"><span class="stat-label">Today's Orders</span><div class="stat-icon amber">📦</div></div>
-          <div class="stat-val" id="statToday">0</div>
-          <div class="stat-trend">Total orders placed today</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card-top"><span class="stat-label">Empty Tables</span><div class="stat-icon purple">🪑</div></div>
-          <div class="stat-val" id="statEmpty">0</div>
-          <div class="stat-trend">Available right now</div>
-        </div>
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-label">Today's Revenue</span><div class="stat-icon terra">💰</div></div><div class="stat-val" id="statRevenue">₼0</div><div class="stat-trend">Paid orders today</div></div>
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-label">Active Orders</span><div class="stat-icon green">🔥</div></div><div class="stat-val" id="statActive">0</div><div class="stat-trend">Pending + confirmed + ready</div></div>
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-label">Today's Orders</span><div class="stat-icon amber">📦</div></div><div class="stat-val" id="statToday">0</div><div class="stat-trend">Total orders today</div></div>
+        <div class="stat-card"><div class="stat-card-top"><span class="stat-label">Empty Tables</span><div class="stat-icon purple">🪑</div></div><div class="stat-val" id="statEmpty">0</div><div class="stat-trend">Available right now</div></div>
       </div>
-
-      <!-- WAITER CALLS ON DASHBOARD -->
       <div class="sec-header">
         <span class="sec-title">🔔 Waiter Calls <span id="waiterDashBadge" style="display:none;background:var(--red);color:white;font-size:0.65rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:10px;margin-left:0.3rem;vertical-align:middle;">0</span></span>
         <button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button>
       </div>
-      <div class="card" style="margin-bottom:2rem;">
-        <div id="waiterCallsDash"><div class="loading-state">Loading...</div></div>
-      </div>
-
+      <div class="card" style="margin-bottom:2rem;"><div id="waiterCallsDash"><div class="loading-state">Loading...</div></div></div>
       <div class="sec-header">
         <span class="sec-title">Live Tables</span>
         <button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button>
@@ -256,13 +213,11 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="tables-grid" id="dashTables"><div class="loading-state">Loading tables...</div></div>
     </div>
 
-    <!-- TABLES -->
     <div class="page" id="page-tables">
       <div class="page-header"><div class="page-title">Tables</div><div class="page-sub">Manage table status and orders</div></div>
       <div class="tables-grid" id="tablesGrid"><div class="loading-state">Loading...</div></div>
     </div>
 
-    <!-- ORDERS -->
     <div class="page" id="page-orders">
       <div class="page-header"><div class="page-title">Orders</div><div class="page-sub">All orders across all tables</div></div>
       <div class="card">
@@ -285,9 +240,8 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       </div>
     </div>
 
-    <!-- WAITER CALLS PAGE -->
     <div class="page" id="page-waiter">
-      <div class="page-header"><div class="page-title">Waiter Calls</div><div class="page-sub">Customers requesting assistance at their table</div></div>
+      <div class="page-header"><div class="page-title">Waiter Calls</div><div class="page-sub">Customers requesting assistance</div></div>
       <div class="sec-header">
         <span class="sec-title">Active Calls</span>
         <button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button>
@@ -295,7 +249,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="card" id="waiterCallsPage"><div class="loading-state">Loading...</div></div>
     </div>
 
-    <!-- MENU -->
     <div class="page" id="page-menu">
       <div class="page-header"><div class="page-title">Menu</div><div class="page-sub">Add, edit and manage menu items</div></div>
       <div class="sec-header">
@@ -305,16 +258,12 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="card" id="menuManageGrid"><div class="loading-state">Loading...</div></div>
     </div>
 
-    <!-- QR CODES -->
     <div class="page" id="page-qr">
-      <div class="page-header"><div class="page-title">QR Codes</div><div class="page-sub">Print one per table and place it on the table — customers scan to order</div></div>
-      <div style="margin-bottom:1.5rem;display:flex;gap:0.8rem;">
-        <button class="btn-primary" onclick="window.print()">🖨️ Print All</button>
-      </div>
+      <div class="page-header"><div class="page-title">QR Codes</div><div class="page-sub">Print one per table — customers scan to order</div></div>
+      <div style="margin-bottom:1.5rem;"><button class="btn-primary" onclick="window.print()">🖨️ Print All</button></div>
       <div class="qr-grid" id="qrGrid"><div class="loading-state">Loading...</div></div>
     </div>
 
-    <!-- STAFF -->
     <div class="page" id="page-staff">
       <div class="page-header"><div class="page-title">Staff</div><div class="page-sub">Manage admin accounts</div></div>
       <div class="sec-header">
@@ -327,7 +276,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   </main>
 </div>
 
-<!-- ADD MENU MODAL -->
+<!-- MENU MODAL -->
 <div class="modal-overlay" id="menuModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('menuModal')">✕</button>
@@ -340,15 +289,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <div class="form-group"><label>Description</label><textarea id="menuDesc" placeholder="Short description..." style="min-height:60px;resize:vertical;"></textarea></div>
     <div class="form-row">
       <div class="form-group"><label>Price (₼)</label><input type="number" id="menuPrice" placeholder="0.00" step="0.50" min="0"></div>
-      <div class="form-group">
-        <label>Category</label>
-        <select id="menuCat">
-          <option value="seheri">Breakfast</option>
-          <option value="ana">Main Dishes</option>
-          <option value="salatlar">Salads</option>
-          <option value="icecekler">Drinks</option>
-        </select>
-      </div>
+      <div class="form-group"><label>Category</label><select id="menuCat"><option value="seheri">Breakfast</option><option value="ana">Main Dishes</option><option value="salatlar">Salads</option><option value="icecekler">Drinks</option></select></div>
     </div>
     <div style="display:flex;gap:0.7rem;margin-top:0.5rem;">
       <button class="btn-primary" onclick="saveMenuItem()">Save</button>
@@ -357,7 +298,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   </div>
 </div>
 
-<!-- ADD STAFF MODAL -->
+<!-- STAFF MODAL -->
 <div class="modal-overlay" id="staffModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
@@ -373,276 +314,276 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   </div>
 </div>
 
-<div class="toast" id="toast">✓ Done</div>
+<div class="toast" id="toast">Done</div>
 
-<!-- QR library that actually works -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <script>
-const SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
+var SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
+var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 
-const sessionRaw = localStorage.getItem('armood_session');
+var sessionRaw = localStorage.getItem('armood_session');
 if (!sessionRaw) { window.location.href = 'admin-login.html'; }
-const session = JSON.parse(sessionRaw || '{}');
-const currentUser = session.user;
-const authToken = session.token;
+var session = JSON.parse(sessionRaw || '{}');
+var currentUser = session.user;
+var authToken = session.token;
 if (!currentUser || !authToken) { window.location.href = 'admin-login.html'; }
 
-const name = currentUser.full_name || currentUser.email;
-document.getElementById('adminName').textContent = name;
+var uname = currentUser.full_name || currentUser.email;
+document.getElementById('adminName').textContent = uname;
 document.getElementById('adminRole').textContent = currentUser.role === 'director' ? 'Director' : 'Manager';
-document.getElementById('userInitials').textContent = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+document.getElementById('userInitials').textContent = uname.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
 
 if (currentUser.role === 'director') {
-  document.querySelectorAll('.director-only').forEach(el => el.style.display = 'flex');
+  document.querySelectorAll('.director-only').forEach(function(el){ el.style.display = 'flex'; });
 }
 
-function updateClock(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
-updateClock(); setInterval(updateClock,1000);
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+updateClock();
+setInterval(updateClock, 1000);
 
-const api = (path, opts={}) => fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-  headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${authToken}`,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})},
-  ...opts
-}).then(r => r.json());
+function api(path, opts) {
+  opts = opts || {};
+  return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: Object.assign({
+      'apikey': SUPABASE_ANON,
+      'Authorization': 'Bearer ' + authToken,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    }, opts.headers || {}),
+    method: opts.method || 'GET',
+    body: opts.body
+  }).then(function(r){ return r.json(); });
+}
 
-document.getElementById('btnLogout').addEventListener('click', () => {
+document.getElementById('btnLogout').addEventListener('click', function() {
   localStorage.removeItem('armood_session');
   window.location.href = 'admin-login.html';
 });
 
-document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+document.querySelectorAll('.nav-item[data-page]').forEach(function(item) {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(function(i){ i.classList.remove('active'); });
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
     item.classList.add('active');
-    const page = item.dataset.page;
-    document.getElementById(`page-${page}`).classList.add('active');
+    var page = item.dataset.page;
+    document.getElementById('page-' + page).classList.add('active');
     loadPage(page);
   });
 });
 
 function loadPage(page) {
-  if (page==='dashboard') loadDashboard();
-  else if (page==='tables') loadTables();
-  else if (page==='orders') loadOrders();
-  else if (page==='waiter') loadWaiterCalls();
-  else if (page==='menu') loadMenu();
-  else if (page==='qr') loadQR();
-  else if (page==='staff') loadStaff();
+  if (page === 'dashboard') loadDashboard();
+  else if (page === 'tables') loadTables();
+  else if (page === 'orders') loadOrders();
+  else if (page === 'waiter') loadWaiterCalls();
+  else if (page === 'menu') loadMenu();
+  else if (page === 'qr') loadQR();
+  else if (page === 'staff') loadStaff();
 }
 
-let allOrders = [];
+var allOrders = [];
 
 async function loadDashboard() {
-  const now = new Date();
-  document.getElementById('dashDate').textContent = now.toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const [tables, orders] = await Promise.all([
+  var now = new Date();
+  document.getElementById('dashDate').textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var results = await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
     api('orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc')
   ]);
+  var tables = results[0];
+  var orders = results[1];
   allOrders = Array.isArray(orders) ? orders : [];
-  const today = new Date().toDateString();
-  const todayOrders = allOrders.filter(o => new Date(o.created_at).toDateString() === today);
-  const revenue = todayOrders.filter(o=>o.status==='paid').reduce((s,o)=>s+Number(o.total),0);
-  const active = allOrders.filter(o=>['pending','confirmed','ready'].includes(o.status)).length;
-  const empty = Array.isArray(tables) ? tables.filter(t=>t.status==='empty').length : 0;
-  const pending = allOrders.filter(o=>o.status==='pending').length;
+  var today = new Date().toDateString();
+  var todayOrders = allOrders.filter(function(o){ return new Date(o.created_at).toDateString() === today; });
+  var revenue = todayOrders.filter(function(o){ return o.status === 'paid'; }).reduce(function(s,o){ return s + Number(o.total); }, 0);
+  var active = allOrders.filter(function(o){ return ['pending','confirmed','ready'].includes(o.status); }).length;
+  var empty = Array.isArray(tables) ? tables.filter(function(t){ return t.status === 'empty'; }).length : 0;
+  var pending = allOrders.filter(function(o){ return o.status === 'pending'; }).length;
 
-  document.getElementById('statRevenue').textContent = `₼${revenue.toFixed(2)}`;
+  document.getElementById('statRevenue').textContent = '₼' + revenue.toFixed(2);
   document.getElementById('statActive').textContent = active;
   document.getElementById('statToday').textContent = todayOrders.length;
   document.getElementById('statEmpty').textContent = empty;
 
-  const badge = document.getElementById('pendingBadge');
-  if (pending > 0) { badge.textContent = pending; badge.style.display = 'inline-block'; }
-  else { badge.style.display = 'none'; }
+  var badge = document.getElementById('pendingBadge');
+  badge.textContent = pending;
+  badge.style.display = pending > 0 ? 'inline-block' : 'none';
 
   renderTableCards(tables, document.getElementById('dashTables'));
   loadWaiterCalls();
 }
 
 function renderTableCards(tables, container) {
-  if (!Array.isArray(tables) || !tables.length) { container.innerHTML='<div class="loading-state">No tables found</div>'; return; }
-  container.innerHTML = tables.map(t => {
-    const tableOrders = allOrders.filter(o => o.table_id === t.id && ['pending','confirmed','ready'].includes(o.status));
-    const summary = tableOrders.length
-      ? tableOrders.map(o => {
-          const items = (o.order_items||[]).map(i=>`${i.quantity}× ${i.menu_items?.name||'?'}`).join(', ');
-          return `<span class="badge b-${o.status}">${statusLabel(o.status)}</span> ${items}`;
+  if (!Array.isArray(tables) || !tables.length) {
+    container.innerHTML = '<div class="loading-state">No tables found</div>';
+    return;
+  }
+  container.innerHTML = tables.map(function(t) {
+    var tableOrders = allOrders.filter(function(o){ return o.table_id === t.id && ['pending','confirmed','ready'].includes(o.status); });
+    var summary = tableOrders.length
+      ? tableOrders.map(function(o){
+          var items = (o.order_items||[]).map(function(i){ return i.quantity + 'x ' + (i.menu_items ? i.menu_items.name : '?'); }).join(', ');
+          return '<span class="badge b-' + o.status + '">' + statusLabel(o.status) + '</span> ' + items;
         }).join('<br>')
       : 'No active orders';
-    const sc = t.status==='empty' ? '' : `s-${t.status}`;
-    const badge = {empty:'tbl-empty',active:'tbl-active',ordered:'tbl-ordered',paid:'tbl-paid'}[t.status]||'tbl-empty';
-    return `<div class="table-card ${sc}">
-      <div class="table-card-top">
-        <span class="table-num">Table ${t.table_number}</span>
-        <span class="tbl-badge ${badge}">${tableStatusLabel(t.status)}</span>
-      </div>
-      <div class="table-orders-text">${summary}</div>
-      <div class="table-actions">
-        ${tableOrders.map(o => `
-          ${o.status==='pending' ? `<button class="btn-xs success" onclick="updateOrderStatus('${o.id}','confirmed')">✓ Confirm</button>` : ''}
-          ${o.status==='confirmed' ? `<button class="btn-xs success" onclick="updateOrderStatus('${o.id}','ready')">✓ Ready</button>` : ''}
-          ${o.status==='ready' ? `<button class="btn-xs primary" onclick="updateOrderStatus('${o.id}','paid')">₼ Paid</button>` : ''}
-        `).join('')}
-        ${t.status !== 'empty' ? `<button class="btn-xs danger" onclick="clearTable('${t.id}')">Clear</button>` : ''}
-      </div>
-    </div>`;
+    var sc = t.status === 'empty' ? '' : 's-' + t.status;
+    var badgeMap = {empty:'tbl-empty',active:'tbl-active',ordered:'tbl-ordered',paid:'tbl-paid'};
+    var badgeCls = badgeMap[t.status] || 'tbl-empty';
+    var actions = tableOrders.map(function(o){
+      var btns = '';
+      if (o.status === 'pending') btns += '<button class="btn-xs success" onclick="updateOrderStatus(\'' + o.id + '\',\'confirmed\')">Confirm</button>';
+      if (o.status === 'confirmed') btns += '<button class="btn-xs success" onclick="updateOrderStatus(\'' + o.id + '\',\'ready\')">Ready</button>';
+      if (o.status === 'ready') btns += '<button class="btn-xs primary" onclick="updateOrderStatus(\'' + o.id + '\',\'paid\')">Paid</button>';
+      return btns;
+    }).join('');
+    if (t.status !== 'empty') actions += '<button class="btn-xs danger" onclick="clearTable(\'' + t.id + '\')">Clear</button>';
+    return '<div class="table-card ' + sc + '">' +
+      '<div class="table-card-top"><span class="table-num">Table ' + t.table_number + '</span><span class="tbl-badge ' + badgeCls + '">' + tableStatusLabel(t.status) + '</span></div>' +
+      '<div class="table-orders-text">' + summary + '</div>' +
+      '<div class="table-actions">' + actions + '</div>' +
+    '</div>';
   }).join('');
 }
 
 async function loadTables() {
-  const [tables, orders] = await Promise.all([
+  var results = await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
     api('orders?select=*,order_items(*,menu_items(name))&status=neq.paid')
   ]);
-  allOrders = Array.isArray(orders) ? orders : [];
-  renderTableCards(Array.isArray(tables) ? tables : [], document.getElementById('tablesGrid'));
+  allOrders = Array.isArray(results[1]) ? results[1] : [];
+  renderTableCards(Array.isArray(results[0]) ? results[0] : [], document.getElementById('tablesGrid'));
 }
 
 async function updateOrderStatus(orderId, status) {
-  await api(`orders?id=eq.${orderId}`, {method:'PATCH', body:JSON.stringify({status})});
-  showToast(`✓ Order ${statusLabel(status)}`);
+  await api('orders?id=eq.' + orderId, {method:'PATCH', body:JSON.stringify({status:status})});
+  showToast('Order ' + statusLabel(status));
   loadDashboard();
   if (document.getElementById('page-tables').classList.contains('active')) loadTables();
 }
 
 async function clearTable(tableId) {
   if (!confirm('Clear all active orders for this table?')) return;
-  await api(`orders?table_id=eq.${tableId}&status=in.(pending,confirmed,ready)`, {method:'PATCH', body:JSON.stringify({status:'cancelled'})});
-  await api(`restaurant_tables?id=eq.${tableId}`, {method:'PATCH', body:JSON.stringify({status:'empty'})});
+  await api('orders?table_id=eq.' + tableId + '&status=in.(pending,confirmed,ready)', {method:'PATCH', body:JSON.stringify({status:'cancelled'})});
+  await api('restaurant_tables?id=eq.' + tableId, {method:'PATCH', body:JSON.stringify({status:'empty'})});
   showToast('Table cleared');
   loadDashboard();
 }
 
-let ordersFilter = 'all';
+var ordersFilter = 'all';
 async function loadOrders() {
-  const path = ordersFilter === 'all'
+  var path = ordersFilter === 'all'
     ? 'orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc&limit=100'
-    : `orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&status=eq.${ordersFilter}&order=created_at.desc&limit=100`;
-  const orders = await api(path);
-  const tbody = document.getElementById('ordersBody');
+    : 'orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&status=eq.' + ordersFilter + '&order=created_at.desc&limit=100';
+  var orders = await api(path);
+  var tbody = document.getElementById('ordersBody');
   if (!Array.isArray(orders) || !orders.length) {
     tbody.innerHTML = '<tr><td colspan="8" class="loading-state">No orders found</td></tr>';
     return;
   }
-  tbody.innerHTML = orders.map(o => {
-    const items = (o.order_items||[]).map(i=>`${i.quantity}× ${i.menu_items?.name||'?'}`).join(', ');
-    const date = new Date(o.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    const tableLabel = o.restaurant_tables?.table_number ? `Table ${o.restaurant_tables.table_number}` : '<span style="color:var(--terra);font-size:0.72rem;font-weight:600;">WEBSITE</span>';
-    const opts = ['pending','confirmed','ready','paid','cancelled'].map(s =>
-      `<option value="${s}" ${o.status===s?'selected':''}>${statusLabel(s)}</option>`).join('');
-    return `<tr>
-      <td style="color:var(--muted);font-size:0.72rem;font-family:monospace;">#${o.id.toString().slice(-4)}</td>
-      <td style="font-weight:600;">${tableLabel}</td>
-      <td style="max-width:200px;font-size:0.78rem;color:var(--muted);">${items}</td>
-      <td style="font-weight:700;color:var(--terra);">₼${Number(o.total).toFixed(2)}</td>
-      <td style="max-width:120px;font-size:0.75rem;color:var(--muted);">${o.notes||'—'}</td>
-      <td><span class="badge b-${o.status}">${statusLabel(o.status)}</span></td>
-      <td style="font-size:0.75rem;color:var(--muted);">${date}</td>
-      <td><select style="border:1.5px solid var(--border);border-radius:6px;padding:0.25rem 0.5rem;font-size:0.75rem;background:white;color:var(--ink);cursor:pointer;outline:none;" onchange="updateOrderStatus('${o.id}',this.value)">${opts}</select></td>
-    </tr>`;
+  tbody.innerHTML = orders.map(function(o) {
+    var items = (o.order_items||[]).map(function(i){ return i.quantity + 'x ' + (i.menu_items ? i.menu_items.name : '?'); }).join(', ');
+    var date = new Date(o.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    var tableLabel = (o.restaurant_tables && o.restaurant_tables.table_number)
+      ? 'Table ' + o.restaurant_tables.table_number
+      : '<span style="color:var(--terra);font-size:0.72rem;font-weight:600;">WEBSITE</span>';
+    var opts = ['pending','confirmed','ready','paid','cancelled'].map(function(s){
+      return '<option value="' + s + '"' + (o.status===s?' selected':'') + '>' + statusLabel(s) + '</option>';
+    }).join('');
+    return '<tr>' +
+      '<td style="color:var(--muted);font-size:0.72rem;">#' + o.id.toString().slice(-4) + '</td>' +
+      '<td>' + tableLabel + '</td>' +
+      '<td style="max-width:200px;font-size:0.78rem;color:var(--muted);">' + items + '</td>' +
+      '<td style="font-weight:700;color:var(--terra);">₼' + Number(o.total).toFixed(2) + '</td>' +
+      '<td style="max-width:120px;font-size:0.75rem;color:var(--muted);">' + (o.notes||'—') + '</td>' +
+      '<td><span class="badge b-' + o.status + '">' + statusLabel(o.status) + '</span></td>' +
+      '<td style="font-size:0.75rem;color:var(--muted);">' + date + '</td>' +
+      '<td><select style="border:1.5px solid var(--border);border-radius:6px;padding:0.25rem 0.5rem;font-size:0.75rem;background:white;cursor:pointer;outline:none;" onchange="updateOrderStatus(\'' + o.id + '\',this.value)">' + opts + '</select></td>' +
+    '</tr>';
   }).join('');
 }
 
 function filterOrders(status, btn) {
   ordersFilter = status;
-  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.ftab').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
   loadOrders();
 }
 
-// ── WAITER CALLS ──
 async function loadWaiterCalls() {
   try {
-    // Use anon key directly — SELECT policy is open (using: true)
-    // so we don't need the admin JWT for reads
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc`,
-      {
-        headers: {
-          'apikey': SUPABASE_ANON,
-          'Authorization': `Bearer ${SUPABASE_ANON}`,
-          'Content-Type': 'application/json'
-        }
-      }
+    var res = await fetch(
+      SUPABASE_URL + '/rest/v1/waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc',
+      { headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + SUPABASE_ANON, 'Content-Type': 'application/json' } }
     );
-    const calls = await res.json();
-    const count = Array.isArray(calls) ? calls.length : 0;
- 
-    // Update nav badge (sidebar)
-    const navBadge = document.getElementById('waiterNavBadge');
-    if (navBadge) {
-      if (count > 0) { navBadge.textContent = count; navBadge.style.display = 'inline-block'; }
-      else { navBadge.style.display = 'none'; }
-    }
- 
-    // Update dashboard badge
-    const dashBadge = document.getElementById('waiterDashBadge');
-    if (dashBadge) {
-      if (count > 0) { dashBadge.textContent = count; dashBadge.style.display = 'inline-block'; }
-      else { dashBadge.style.display = 'none'; }
-    }
- 
-    const html = count
-      ? calls.map(c => `
-          <div class="wcall-row">
-            <div>
-              <div class="wcall-table">Table ${c.restaurant_tables?.table_number ?? '?'}</div>
-              <div class="wcall-reason">${c.reason}</div>
-              <div class="wcall-time">${new Date(c.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:0.6rem;">
-              <span class="wcall-badge">Waiting</span>
-              <button class="btn-xs success" onclick="dismissWaiterCall('${c.id}')">✓ Done</button>
-            </div>
-          </div>`).join('')
+    var calls = await res.json();
+    var count = Array.isArray(calls) ? calls.length : 0;
+
+    ['waiterNavBadge','waiterDashBadge'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = count;
+      el.style.display = count > 0 ? 'inline-block' : 'none';
+    });
+
+    var html = count
+      ? calls.map(function(c) {
+          var tableNum = (c.restaurant_tables && c.restaurant_tables.table_number) ? c.restaurant_tables.table_number : '?';
+          var time = new Date(c.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+          return '<div class="wcall-row">' +
+            '<div><div class="wcall-table">Table ' + tableNum + '</div><div class="wcall-reason">' + c.reason + '</div><div class="wcall-time">' + time + '</div></div>' +
+            '<div style="display:flex;align-items:center;gap:0.6rem;"><span class="wcall-badge">Waiting</span><button class="btn-xs success" onclick="dismissWaiterCall(\'' + c.id + '\')">Done</button></div>' +
+          '</div>';
+        }).join('')
       : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
- 
-    const dash = document.getElementById('waiterCallsDash');
-    const page = document.getElementById('waiterCallsPage');
+
+    var dash = document.getElementById('waiterCallsDash');
+    var page = document.getElementById('waiterCallsPage');
     if (dash) dash.innerHTML = html;
     if (page) page.innerHTML = html;
- 
   } catch(e) {
     console.error('Waiter calls error:', e);
-    const msg = '<div class="loading-state">Could not load waiter calls</div>';
-    const dash = document.getElementById('waiterCallsDash');
-    const page = document.getElementById('waiterCallsPage');
-    if (dash) dash.innerHTML = msg;
-    if (page) page.innerHTML = msg;
   }
 }
-// ── MENU ──
-let menuItems = [];
+
+async function dismissWaiterCall(id) {
+  await fetch(SUPABASE_URL + '/rest/v1/waiter_calls?id=eq.' + id, {
+    method: 'PATCH',
+    headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+    body: JSON.stringify({status: 'seen'})
+  });
+  showToast('Waiter call dismissed');
+  loadWaiterCalls();
+}
+
+var menuItems = [];
 async function loadMenu() {
-  const items = await api('menu_items?select=*&order=category,name');
+  var items = await api('menu_items?select=*&order=category,name');
   menuItems = Array.isArray(items) ? items : [];
   document.getElementById('menuCount').textContent = menuItems.length;
-  const grid = document.getElementById('menuManageGrid');
-  if (!menuItems.length) { grid.innerHTML='<div class="loading-state">Menu is empty</div>'; return; }
-  grid.innerHTML = menuItems.map(item => `
-    <div class="menu-item-row">
-      <span class="menu-emoji">${item.emoji||'🍽️'}</span>
-      <div class="menu-info">
-        <div class="menu-name">${item.name}</div>
-        <div class="menu-meta">${catLabel(item.category)} · ₼${Number(item.price).toFixed(2)}</div>
-      </div>
-      <button class="toggle ${item.available?'on':''}" onclick="toggleItem('${item.id}',${item.available})" title="${item.available?'Disable':'Enable'}"></button>
-      <button class="btn-xs" onclick="openEditMenu(${JSON.stringify(item).replace(/"/g,'&quot;')})">Edit</button>
-      <button class="btn-xs danger" onclick="deleteMenuItem('${item.id}')">Delete</button>
-    </div>`).join('');
+  var grid = document.getElementById('menuManageGrid');
+  if (!menuItems.length) { grid.innerHTML = '<div class="loading-state">Menu is empty</div>'; return; }
+  grid.innerHTML = menuItems.map(function(item) {
+    return '<div class="menu-item-row">' +
+      '<span class="menu-emoji">' + (item.emoji||'🍽️') + '</span>' +
+      '<div class="menu-info"><div class="menu-name">' + item.name + '</div><div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div></div>' +
+      '<button class="toggle ' + (item.available?'on':'') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>' +
+      '<button class="btn-xs" onclick=\'openEditMenu(' + JSON.stringify(item) + ')\'>Edit</button>' +
+      '<button class="btn-xs danger" onclick="deleteMenuItem(\'' + item.id + '\')">Delete</button>' +
+    '</div>';
+  }).join('');
 }
 
 async function toggleItem(id, current) {
-  await api(`menu_items?id=eq.${id}`, {method:'PATCH', body:JSON.stringify({available:!current})});
+  await api('menu_items?id=eq.' + id, {method:'PATCH', body:JSON.stringify({available:!current})});
   showToast(current ? 'Item disabled' : 'Item enabled');
   loadMenu();
 }
 
 async function deleteMenuItem(id) {
   if (!confirm('Delete this menu item?')) return;
-  await api(`menu_items?id=eq.${id}`, {method:'DELETE'});
+  await api('menu_items?id=eq.' + id, {method:'DELETE'});
   showToast('Item deleted');
   loadMenu();
 }
@@ -650,7 +591,7 @@ async function deleteMenuItem(id) {
 function openAddMenu() {
   document.getElementById('menuModalTitle').textContent = 'Add Menu Item';
   document.getElementById('menuEditId').value = '';
-  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(id=>document.getElementById(id).value='');
+  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(function(id){ document.getElementById(id).value = ''; });
   document.getElementById('menuCat').value = 'ana';
   document.getElementById('menuModal').classList.add('open');
 }
@@ -659,16 +600,16 @@ function openEditMenu(item) {
   document.getElementById('menuModalTitle').textContent = 'Edit Item';
   document.getElementById('menuEditId').value = item.id;
   document.getElementById('menuName').value = item.name;
-  document.getElementById('menuEmoji').value = item.emoji||'';
-  document.getElementById('menuDesc').value = item.description||'';
+  document.getElementById('menuEmoji').value = item.emoji || '';
+  document.getElementById('menuDesc').value = item.description || '';
   document.getElementById('menuPrice').value = item.price;
   document.getElementById('menuCat').value = item.category;
   document.getElementById('menuModal').classList.add('open');
 }
 
 async function saveMenuItem() {
-  const id = document.getElementById('menuEditId').value;
-  const data = {
+  var id = document.getElementById('menuEditId').value;
+  var data = {
     name: document.getElementById('menuName').value.trim(),
     emoji: document.getElementById('menuEmoji').value.trim() || '🍽️',
     description: document.getElementById('menuDesc').value.trim(),
@@ -678,130 +619,137 @@ async function saveMenuItem() {
   };
   if (!data.name || !data.price) { showToast('Name and price are required'); return; }
   if (id) {
-    await api(`menu_items?id=eq.${id}`, {method:'PATCH', body:JSON.stringify(data)});
-    showToast('✓ Item updated');
+    await api('menu_items?id=eq.' + id, {method:'PATCH', body:JSON.stringify(data)});
+    showToast('Item updated');
   } else {
     await api('menu_items', {method:'POST', body:JSON.stringify(data)});
-    showToast('✓ Item added');
+    showToast('Item added');
   }
   closeModal('menuModal');
   loadMenu();
 }
 
-// ── QR CODES (uses qrcode npm library via CDN — renders proper canvas) ──
 async function loadQR() {
-  const tables = await api('restaurant_tables?select=*&order=table_number');
-  const grid = document.getElementById('qrGrid');
-  if (!Array.isArray(tables)) { grid.innerHTML='<div class="loading-state">Error loading tables</div>'; return; }
+  var tables = await api('restaurant_tables?select=*&order=table_number');
+  var grid = document.getElementById('qrGrid');
+  if (!Array.isArray(tables) || !tables.length) {
+    grid.innerHTML = '<div class="loading-state">No tables found</div>';
+    return;
+  }
+  grid.innerHTML = tables.map(function(t) {
+    return '<div class="qr-card">' +
+      '<canvas id="qr-canvas-' + t.id + '" style="display:block;margin:0 auto 0.8rem;border-radius:4px;"></canvas>' +
+      '<div class="qr-table-label">Masa ' + t.table_number + '</div>' +
+      '<div class="qr-url">https://armood-baku.vercel.app/table.html?t=' + t.token.trim() + '</div>' +
+      '<button class="btn-xs" onclick="downloadQR(\'' + t.id + '\',' + t.table_number + ')">Download</button>' +
+    '</div>';
+  }).join('');
 
-  grid.innerHTML = tables.map(t => `
-    <div class="qr-card">
-      <canvas id="qr-canvas-${t.id}" style="display:block;margin:0 auto 0.8rem;border-radius:4px;"></canvas>
-      <div class="qr-table-label">Masa ${t.table_number}</div>
-      <div class="qr-url">https://armood-baku.vercel.app/table.html?t=${t.token.trim()}</div>
-
-  tables.forEach(t => {
-    const url = `https://armood-baku.vercel.app/table.html?t=${t.token.trim()}`;
-    const canvas = document.getElementById(`qr-canvas-${t.id}`);
-     QRCode.toCanvas(canvas, url, {
-    width: 220,      // larger = easier for cameras to scan
-    margin: 3,       // quiet zone helps detection
-    color: { dark: '#000000', light: '#ffffff' },
-    errorCorrectionLevel: 'M'  // M is enough and keeps it less dense
-  }, err => { if (err) console.error('QR error:', err); });
+  tables.forEach(function(t) {
+    var url = 'https://armood-baku.vercel.app/table.html?t=' + t.token.trim();
+    var canvas = document.getElementById('qr-canvas-' + t.id);
+    if (!canvas) return;
+    QRCode.toCanvas(canvas, url, {
+      width: 220,
+      margin: 3,
+      color: { dark: '#000000', light: '#ffffff' },
+      errorCorrectionLevel: 'M'
+    }, function(err) { if (err) console.error('QR error:', err); });
   });
 }
 
 function downloadQR(id, num) {
-  const canvas = document.getElementById(`qr-canvas-${id}`);
-  if (!canvas) { showToast('QR not ready yet'); return; }
-  const link = document.createElement('a');
-  link.download = `armood-masa-${num}.png`;
+  var canvas = document.getElementById('qr-canvas-' + id);
+  if (!canvas) { showToast('QR not ready'); return; }
+  var link = document.createElement('a');
+  link.download = 'armood-masa-' + num + '.png';
   link.href = canvas.toDataURL('image/png');
   link.click();
   showToast('QR downloaded');
 }
 
-// ── STAFF ──
 async function loadStaff() {
   if (currentUser.role !== 'director') {
     document.getElementById('staffList').innerHTML = '<div class="loading-state">Access restricted to directors</div>';
     return;
   }
-  const staff = await api('admins?select=*&order=created_at');
-  const list = document.getElementById('staffList');
-  if (!Array.isArray(staff) || !staff.length) { list.innerHTML='<div class="loading-state">No admins found</div>'; return; }
-  list.innerHTML = staff.map(s => {
-    const initials = (s.full_name||s.email).split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-    return `<div class="staff-row">
-      <div class="staff-av">${initials}</div>
-      <div class="staff-info">
-        <div class="staff-name-t">${s.full_name||'—'}</div>
-        <div class="staff-email-t">${s.email}</div>
-      </div>
-      <span class="role-pill role-${s.role}">${s.role==='director'?'Director':'Manager'}</span>
-      ${s.id !== currentUser.id ? `<button class="btn-xs danger" onclick="removeStaff('${s.id}')">Remove</button>` : ''}
-    </div>`;
+  var staff = await api('admins?select=*&order=created_at');
+  var list = document.getElementById('staffList');
+  if (!Array.isArray(staff) || !staff.length) { list.innerHTML = '<div class="loading-state">No admins found</div>'; return; }
+  list.innerHTML = staff.map(function(s) {
+    var initials = (s.full_name||s.email).split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
+    return '<div class="staff-row">' +
+      '<div class="staff-av">' + initials + '</div>' +
+      '<div class="staff-info"><div class="staff-name-t">' + (s.full_name||'—') + '</div><div class="staff-email-t">' + s.email + '</div></div>' +
+      '<span class="role-pill role-' + s.role + '">' + (s.role==='director'?'Director':'Manager') + '</span>' +
+      (s.id !== currentUser.id ? '<button class="btn-xs danger" onclick="removeStaff(\'' + s.id + '\')">Remove</button>' : '') +
+    '</div>';
   }).join('');
 }
 
 function openAddStaff() {
-  ['staffName','staffEmail','staffPassword'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('staffRole').value='manager';
+  ['staffName','staffEmail','staffPassword'].forEach(function(id){ document.getElementById(id).value = ''; });
+  document.getElementById('staffRole').value = 'manager';
   document.getElementById('staffModal').classList.add('open');
 }
 
 async function saveStaff() {
-  const name = document.getElementById('staffName').value.trim();
-  const email = document.getElementById('staffEmail').value.trim();
-  const password = document.getElementById('staffPassword').value;
-  const role = document.getElementById('staffRole').value;
-  if (!name||!email||!password){showToast('Fill in all fields');return;}
-  if (password.length<6){showToast('Password min 6 characters');return;}
+  var name = document.getElementById('staffName').value.trim();
+  var email = document.getElementById('staffEmail').value.trim();
+  var password = document.getElementById('staffPassword').value;
+  var role = document.getElementById('staffRole').value;
+  if (!name||!email||!password) { showToast('Fill in all fields'); return; }
+  if (password.length < 6) { showToast('Password min 6 chars'); return; }
   try {
-    const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users`,{
-      method:'POST',
-      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${authToken}`,'Content-Type':'application/json'},
-      body:JSON.stringify({email,password,email_confirm:true})
+    var res = await fetch(SUPABASE_URL + '/auth/v1/admin/users', {
+      method: 'POST',
+      headers: {'apikey':SUPABASE_ANON,'Authorization':'Bearer '+authToken,'Content-Type':'application/json'},
+      body: JSON.stringify({email:email, password:password, email_confirm:true})
     });
-    const userData = await res.json();
-    if (userData.error||!userData.id){showToast('Error: '+(userData.error?.message||'Unknown'));return;}
-    await api('admins',{method:'POST',body:JSON.stringify({id:userData.id,email,full_name:name,role})});
-    showToast('✓ Admin added');
+    var userData = await res.json();
+    if (userData.error || !userData.id) { showToast('Error: ' + (userData.error ? userData.error.message : 'Unknown')); return; }
+    await api('admins', {method:'POST', body:JSON.stringify({id:userData.id, email:email, full_name:name, role:role})});
+    showToast('Admin added');
     closeModal('staffModal');
     loadStaff();
-  } catch(e){ showToast('Error occurred'); }
+  } catch(e) { showToast('Error occurred'); }
 }
 
 async function removeStaff(id) {
   if (!confirm('Remove this admin?')) return;
-  await api(`admins?id=eq.${id}`,{method:'DELETE'});
+  await api('admins?id=eq.' + id, {method:'DELETE'});
   showToast('Admin removed');
   loadStaff();
 }
 
-function statusLabel(s){return{pending:'Pending',confirmed:'Confirmed',ready:'Ready',paid:'Paid',cancelled:'Cancelled'}[s]||s;}
-function tableStatusLabel(s){return{empty:'Empty',active:'Active',ordered:'Ordered',paid:'Paid'}[s]||s;}
-function catLabel(c){return{seheri:'Breakfast',ana:'Main',salatlar:'Salads',icecekler:'Drinks'}[c]||c;}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+function statusLabel(s) {
+  return {pending:'Pending',confirmed:'Confirmed',ready:'Ready',paid:'Paid',cancelled:'Cancelled'}[s] || s;
+}
+function tableStatusLabel(s) {
+  return {empty:'Empty',active:'Active',ordered:'Ordered',paid:'Paid'}[s] || s;
+}
+function catLabel(c) {
+  return {seheri:'Breakfast',ana:'Main',salatlar:'Salads',icecekler:'Drinks'}[c] || c;
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
-document.querySelectorAll('.modal-overlay').forEach(overlay=>{
-  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});
+document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) overlay.classList.remove('open'); });
 });
 
-setInterval(() => {
+setInterval(function() {
   if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
   if (document.getElementById('page-tables').classList.contains('active')) loadTables();
   if (document.getElementById('page-orders').classList.contains('active')) loadOrders();
   if (document.getElementById('page-waiter').classList.contains('active')) loadWaiterCalls();
 }, 30000);
- 
-// Poll waiter calls every 15s no matter which page is open (keeps badge fresh)
+
 setInterval(loadWaiterCalls, 15000);
 
 loadDashboard();
@@ -809,4 +757,4 @@ loadDashboard();
 </body>
 </html>
 ENDOFFILE
-echo "Done"
+echo "Written: $(wc -l < /tmp/admin_fixed.html) lines"
