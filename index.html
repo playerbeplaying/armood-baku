@@ -710,7 +710,7 @@ let currentOrderCat = 'all';
 ══════════════════════════════════════════ */
 async function loadMenuItems() {
   try {
-    const data = await sbApi('menu_items?select=*&order=category,name');
+    var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
     liveMenuItems = Array.isArray(data) ? data.filter(i => i.available !== false) : [];
   } catch (e) {
     liveMenuItems = [];
