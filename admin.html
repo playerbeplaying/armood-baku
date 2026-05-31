@@ -720,63 +720,100 @@ async function dismissWaiterCall(id){
 }
 
 /* ── MENU ── */
-var menuItems=[];
-async function loadMenu(){
-  var items=await api('menu_items?select=*&order=category,name');
-  menuItems=Array.isArray(items)?items:[];
-  document.getElementById('menuCount').textContent=menuItems.length;
-  var grid=document.getElementById('menuManageGrid');
-  if(!menuItems.length){grid.innerHTML='<div class="loading-state">Menu is empty</div>';return;}
-  grid.innerHTML=menuItems.map(function(item){
-    return '<div class="menu-item-row"><span class="menu-emoji">'+(item.emoji||'🍽️')+'</span><div class="menu-info"><div class="menu-name">'+item.name+'</div><div class="menu-meta">'+catLabel(item.category)+' · ₼'+Number(item.price).toFixed(2)+'</div></div><button class="toggle '+(item.available?'on':'')+'" onclick="toggleItem(\''+item.id+'\','+item.available+')"></button><button class="btn-xs" onclick=\'openEditMenu('+JSON.stringify(item)+')\'>Edit</button><button class="btn-xs danger" onclick="deleteMenuItem(\''+item.id+'\')">Del</button></div>';
+/* ── UPDATED MENU FUNCTIONS ── */
+
+var menuItems = [];
+
+async function loadMenu() {
+  // Added &is_active=eq.true to filter out deleted items
+  var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
+  
+  menuItems = Array.isArray(items) ? items : [];
+  document.getElementById('menuCount').textContent = menuItems.length;
+  
+  var grid = document.getElementById('menuManageGrid');
+  if (!menuItems.length) {
+    grid.innerHTML = '<div class="loading-state">Menu is empty</div>';
+    return;
+  }
+  
+  grid.innerHTML = menuItems.map(function(item) {
+    return '<div class="menu-item-row">' +
+      '<span class="menu-emoji">' + (item.emoji || '🍽️') + '</span>' +
+      '<div class="menu-info">' +
+        '<div class="menu-name">' + item.name + '</div>' +
+        '<div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div>' +
+      '</div>' +
+      '<button class="toggle ' + (item.available ? 'on' : '') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>' +
+      '<button class="btn-xs" onclick=\'openEditMenu(' + JSON.stringify(item) + ')\'>Edit</button>' +
+      '<button class="btn-xs danger" onclick="deleteMenuItem(\'' + item.id + '\')">Del</button>' +
+    '</div>';
   }).join('');
 }
 
-async function toggleItem(id,cur){
-  await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({available:!cur})});
-  showToast(cur?'Disabled':'Enabled'); loadMenu();
-}
-
-async function deleteMenuItem(id){
-  var item=menuItems.find(function(m){return String(m.id)===String(id);});
-  var name=item?item.name:'this item';
-  if(!confirm('Delete "'+name+'"?')) return;
-  var r=await fetch(`${SUPABASE_URL}/rest/v1/menu?id=eq.${id}`, {
-  method: 'PATCH', // Use PATCH to update specific columns
-  headers: {
-    'apikey': SUPABASE_ANON,
-    'Authorization': `Bearer ${authToken}`,
-    'Content-Type': 'application/json',
-    'Prefer': 'return=representation'
-  },
-  body: JSON.stringify({ is_active: false })
-});
-  if(r.status===409){
-    await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({available:false,name:'[Removed] '+name})});
-    showToast('Item hidden (referenced in orders)');
-  } else if(r.status===200||r.status===204){
-    showToast('Item deleted');
-  } else {
-    showToast('Delete failed ('+r.status+')');
-  }
+async function toggleItem(id, cur) {
+  await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ available: !cur }) });
+  showToast(cur ? 'Disabled' : 'Enabled');
   loadMenu();
 }
 
-function openAddMenu(){
-  document.getElementById('menuModalTitle').textContent='Add Menu Item';
-  document.getElementById('menuEditId').value='';
-  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('menuCat').value='ana';
+async function deleteMenuItem(id) {
+  var item = menuItems.find(function(m) { return String(m.id) === String(id); });
+  var name = item ? item.name : 'this item';
+  
+  if (!confirm('Delete "' + name + '"?')) return;
+
+  try {
+    // Soft delete: sets is_active to false instead of removing the row
+    await api('menu_items?id=eq.' + id, {
+      method: 'PATCH',
+      body: JSON.stringify({ is_active: false })
+    });
+    showToast('Item deleted');
+    loadMenu();
+  } catch (e) {
+    showToast('Delete failed');
+  }
+}
+
+async function saveMenuItem() {
+  var id = document.getElementById('menuEditId').value;
+  var data = {
+    name: document.getElementById('menuName').value.trim(),
+    emoji: document.getElementById('menuEmoji').value.trim() || '🍽️',
+    description: document.getElementById('menuDesc').value.trim(),
+    price: parseFloat(document.getElementById('menuPrice').value),
+    category: document.getElementById('menuCat').value,
+    available: true,
+    is_active: true // Ensure new items are marked as active
+  };
+  
+  if (!data.name || !data.price) { showToast('Name and price required'); return; }
+  
+  if (id) await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify(data) });
+  else await api('menu_items', { method: 'POST', body: JSON.stringify(data) });
+  
+  showToast(id ? 'Updated' : 'Added');
+  closeModal('menuModal');
+  loadMenu();
+}
+
+function openAddMenu() {
+  document.getElementById('menuModalTitle').textContent = 'Add Menu Item';
+  document.getElementById('menuEditId').value = '';
+  ['menuName', 'menuEmoji', 'menuDesc', 'menuPrice'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('menuCat').value = 'ana';
   document.getElementById('menuModal').classList.add('open');
 }
-function openEditMenu(item){
-  document.getElementById('menuModalTitle').textContent='Edit Item';
-  document.getElementById('menuEditId').value=item.id;
-  document.getElementById('menuName').value=item.name;
-  document.getElementById('menuEmoji').value=item.emoji||'';
-  document.getElementById('menuDesc').value=item.description||'';
-  document.getElementById('menuPrice').value=item.price;
-  document.getElementById('menuCat').value=item.category;
+
+function openEditMenu(item) {
+  document.getElementById('menuModalTitle').textContent = 'Edit Item';
+  document.getElementById('menuEditId').value = item.id;
+  document.getElementById('menuName').value = item.name;
+  document.getElementById('menuEmoji').value = item.emoji || '';
+  document.getElementById('menuDesc').value = item.description || '';
+  document.getElementById('menuPrice').value = item.price;
+  document.getElementById('menuCat').value = item.category;
   document.getElementById('menuModal').classList.add('open');
 }
 async function saveMenuItem(){
