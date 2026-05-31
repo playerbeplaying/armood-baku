@@ -662,44 +662,52 @@ async function loadQR() {
   const tables = await api('restaurant_tables?select=*&order=table_number');
   const grid = document.getElementById('qrGrid');
   if (!Array.isArray(tables)) { grid.innerHTML='<div class="loading-state">Error loading tables</div>'; return; }
-  
+
   grid.innerHTML = tables.map(t => `
     <div class="qr-card">
       <div id="qr-${t.id}" style="display:flex; justify-content:center; padding: 10px; background: white;"></div>
       <div class="qr-table-label" style="margin-top:10px; font-weight: bold; color: #120f0b;">Masa ${t.table_number}</div>
-      <div class="qr-url" style="font-size: 0.65rem; color: #888; margin-bottom:10px;">Click scan to open link</div>
+      <div class="qr-url" style="font-size: 0.65rem; color: #888; margin-bottom:10px; word-break:break-all;">armood-baku.vercel.app/table.html?t=${t.token.trim()}</div>
       <button class="btn-xs" onclick="downloadQR('${t.id}','${t.table_number}')">⬇ Download QR</button>
     </div>`).join('');
 
   tables.forEach(t => {
-    const qrContainer = document.getElementById(`qr-${t.id}`);
-    qrContainer.innerHTML = ""; 
+    const container = document.getElementById(`qr-${t.id}`);
+    container.innerHTML = '';
+    const url = `https://armood-baku.vercel.app/table.html?t=${encodeURIComponent(t.token.trim())}`;
 
-    // 1. We encode the token to handle any spaces or special characters
-    // 2. We trim the entire string to ensure NO hidden spaces at the start or end
-    const finalURL = `https://armood-baku.vercel.app/table.html?t=${encodeURIComponent(t.token.trim())}`.trim();
+    // Use Google Charts API — guaranteed scannable by all phones
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.width = 180;
+    img.height = 180;
+    img.style.display = 'block';
+    img.src = `https://chart.googleapis.com/chart?chs=180x180&cht=qr&chl=${encodeURIComponent(url)}&choe=UTF-8&chld=H|1`;
 
-    new QRCode(qrContainer, {
-      text: finalURL, 
-      width: 180,
-      height: 180,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-    
-    // Debugging: This will show you exactly what is inside the QR in your browser console (F12)
-    console.log("Generated QR for Table " + t.table_number + ":", finalURL);
+    // Also draw to hidden canvas so download works
+    const canvas = document.createElement('canvas');
+    canvas.width = 180;
+    canvas.height = 180;
+    canvas.style.display = 'none';
+    canvas.id = `qr-canvas-${t.id}`;
+
+    img.onload = () => {
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, 180, 180);
+    };
+
+    container.appendChild(img);
+    container.appendChild(canvas);
   });
 }
-
 function downloadQR(id, num) {
-  const canvas = document.querySelector(`#qr-${id} canvas`);
+  const canvas = document.getElementById(`qr-canvas-${id}`);
   if (!canvas) { showToast('QR not ready yet'); return; }
   const link = document.createElement('a');
-  link.download = `armood-table-${num}.png`;
-  link.href = canvas.toDataURL();
+  link.download = `armood-masa-${num}.png`;
+  link.href = canvas.toDataURL('image/png');
   link.click();
+  showToast('QR downloaded');
 }
 
 async function loadStaff() {
