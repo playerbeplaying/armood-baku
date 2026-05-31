@@ -555,22 +555,40 @@ function filterOrders(status, btn) {
 // ── WAITER CALLS ──
 async function loadWaiterCalls() {
   try {
-    const calls = await api('waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc');
+    // Use anon key directly — SELECT policy is open (using: true)
+    // so we don't need the admin JWT for reads
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': SUPABASE_ANON,
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    const calls = await res.json();
     const count = Array.isArray(calls) ? calls.length : 0;
-
-    // Update badges
-    ['waiterDashBadge','waiterNavBadge'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (count > 0) { el.textContent = count; el.style.display = 'inline-block'; }
-      else { el.style.display = 'none'; }
-    });
-
+ 
+    // Update nav badge (sidebar)
+    const navBadge = document.getElementById('waiterNavBadge');
+    if (navBadge) {
+      if (count > 0) { navBadge.textContent = count; navBadge.style.display = 'inline-block'; }
+      else { navBadge.style.display = 'none'; }
+    }
+ 
+    // Update dashboard badge
+    const dashBadge = document.getElementById('waiterDashBadge');
+    if (dashBadge) {
+      if (count > 0) { dashBadge.textContent = count; dashBadge.style.display = 'inline-block'; }
+      else { dashBadge.style.display = 'none'; }
+    }
+ 
     const html = count
       ? calls.map(c => `
           <div class="wcall-row">
             <div>
-              <div class="wcall-table">Table ${c.restaurant_tables?.table_number || '?'}</div>
+              <div class="wcall-table">Table ${c.restaurant_tables?.table_number ?? '?'}</div>
               <div class="wcall-reason">${c.reason}</div>
               <div class="wcall-time">${new Date(c.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}</div>
             </div>
@@ -580,27 +598,21 @@ async function loadWaiterCalls() {
             </div>
           </div>`).join('')
       : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
-
+ 
     const dash = document.getElementById('waiterCallsDash');
     const page = document.getElementById('waiterCallsPage');
     if (dash) dash.innerHTML = html;
     if (page) page.innerHTML = html;
-
+ 
   } catch(e) {
-    const msg = '<div class="loading-state">Run the waiter_calls SQL setup first</div>';
+    console.error('Waiter calls error:', e);
+    const msg = '<div class="loading-state">Could not load waiter calls</div>';
     const dash = document.getElementById('waiterCallsDash');
     const page = document.getElementById('waiterCallsPage');
     if (dash) dash.innerHTML = msg;
     if (page) page.innerHTML = msg;
   }
 }
-
-async function dismissWaiterCall(id) {
-  await api(`waiter_calls?id=eq.${id}`, {method:'PATCH', body:JSON.stringify({status:'seen'})});
-  showToast('✓ Waiter call dismissed');
-  loadWaiterCalls();
-}
-
 // ── MENU ──
 let menuItems = [];
 async function loadMenu() {
