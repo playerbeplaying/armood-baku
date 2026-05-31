@@ -698,19 +698,17 @@ async function loadQR() {
     <div class="qr-card">
       <canvas id="qr-canvas-${t.id}" style="display:block;margin:0 auto 0.8rem;border-radius:4px;"></canvas>
       <div class="qr-table-label">Masa ${t.table_number}</div>
-      <div class="qr-url">armood-baku.vercel.app/table.html?t=${t.token.trim()}</div>
-      <button class="btn-xs" onclick="downloadQR('${t.id}','${t.table_number}')">⬇ Download QR</button>
-    </div>`).join('');
+      <div class="qr-url">https://armood-baku.vercel.app/table.html?t=${t.token.trim()}</div>
 
   tables.forEach(t => {
     const url = `https://armood-baku.vercel.app/table.html?t=${t.token.trim()}`;
     const canvas = document.getElementById(`qr-canvas-${t.id}`);
-    QRCode.toCanvas(canvas, url, {
-      width: 180,
-      margin: 2,
-      color: { dark: '#000000', light: '#ffffff' },
-      errorCorrectionLevel: 'H'
-    }, err => { if (err) console.error('QR error:', err); });
+     QRCode.toCanvas(canvas, url, {
+    width: 220,      // larger = easier for cameras to scan
+    margin: 3,       // quiet zone helps detection
+    color: { dark: '#000000', light: '#ffffff' },
+    errorCorrectionLevel: 'M'  // M is enough and keeps it less dense
+  }, err => { if (err) console.error('QR error:', err); });
   });
 }
 
@@ -796,11 +794,15 @@ document.querySelectorAll('.modal-overlay').forEach(overlay=>{
   overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open');});
 });
 
-setInterval(()=>{
-  if(document.getElementById('page-dashboard').classList.contains('active')) { loadDashboard(); }
-  if(document.getElementById('page-tables').classList.contains('active')) loadTables();
-  if(document.getElementById('page-waiter').classList.contains('active')) loadWaiterCalls();
-},30000);
+setInterval(() => {
+  if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
+  if (document.getElementById('page-tables').classList.contains('active')) loadTables();
+  if (document.getElementById('page-orders').classList.contains('active')) loadOrders();
+  if (document.getElementById('page-waiter').classList.contains('active')) loadWaiterCalls();
+}, 30000);
+ 
+// Poll waiter calls every 15s no matter which page is open (keeps badge fresh)
+setInterval(loadWaiterCalls, 15000);
 
 loadDashboard();
 </script>
