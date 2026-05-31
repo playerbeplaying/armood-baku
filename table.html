@@ -1,3 +1,4 @@
+cat > /home/claude/table_updated.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -9,51 +10,22 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  /* ── BRAND PALETTE (shared) ── */
-  --bg:#faf8f4;
-  --bg2:#f3ede2;
-  --bg3:#e9e0d0;
-  --white:#ffffff;
-  --ink:#1e1810;
-  --ink2:#3a2d1e;
-  --muted:#8a7560;
-  --muted2:#b89f85;
-  --border:#e0d5c5;
-  --border2:#cdbfa9;
-
-  --terra:#bf4e1e;
-  --terra-hover:#a84218;
-  --terra-light:#d97040;
-  --terra-pale:#fdf0e8;
-  --terra-mid:#e8825a;
-
-  --slate:#3d5068;
-  --slate-light:#6a8aaa;
-  --slate-pale:#eaf0f6;
-  --gold:#c49a3a;
-  --gold-pale:#fdf5e0;
-  --green:#2e6b45;
-  --green-pale:#e5f2eb;
-  --red:#b83232;
-  --red-pale:#fdeaea;
-  --ff-head:'Lora',Georgia,serif;
-  --ff-body:'Inter',system-ui,sans-serif;
-  --nav-h:60px;
-  --cart-h:66px;
-  --ease:cubic-bezier(0.4,0,0.2,1);
+  --bg:#faf8f4;--bg2:#f3ede2;--bg3:#e9e0d0;--white:#ffffff;
+  --ink:#1e1810;--ink2:#3a2d1e;--muted:#8a7560;--muted2:#b89f85;
+  --border:#e0d5c5;--border2:#cdbfa9;
+  --terra:#bf4e1e;--terra-hover:#a84218;--terra-light:#d97040;
+  --terra-pale:#fdf0e8;--terra-mid:#e8825a;
+  --slate:#3d5068;--slate-light:#6a8aaa;--slate-pale:#eaf0f6;
+  --gold:#c49a3a;--gold-pale:#fdf5e0;
+  --green:#2e6b45;--green-pale:#e5f2eb;
+  --red:#b83232;--red-pale:#fdeaea;
+  --ff-head:'Lora',Georgia,serif;--ff-body:'Inter',system-ui,sans-serif;
+  --nav-h:60px;--cart-h:66px;--ease:cubic-bezier(0.4,0,0.2,1);
 }
 html{scroll-behavior:smooth;}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
 
-/* ── TOP BAR ── */
-.topbar{
-  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
-  background:rgba(250,248,244,0.97);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 1.25rem;z-index:100;
-}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(250,248,244,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;z-index:100;}
 .topbar-logo{font-family:var(--ff-head);font-size:1.45rem;font-weight:700;color:var(--terra);letter-spacing:0.01em;}
 .topbar-logo em{color:var(--terra-light);font-style:italic;}
 .topbar-right{display:flex;align-items:center;gap:0.6rem;}
@@ -61,19 +33,20 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .waiter-btn{display:flex;align-items:center;gap:0.35rem;background:var(--terra-pale);color:var(--terra);border:1px solid rgba(191,78,30,0.2);padding:0.3rem 0.75rem;border-radius:20px;font-size:0.75rem;font-weight:500;cursor:pointer;font-family:var(--ff-body);transition:all 0.2s;}
 .waiter-btn:hover{background:var(--terra);color:white;}
 
-/* ── STATE SCREENS ── */
 .state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;text-align:center;padding:2rem;}
 .state h2{font-family:var(--ff-head);font-size:1.8rem;color:var(--ink);}
 .state p{font-size:0.9rem;color:var(--muted);line-height:1.7;max-width:280px;}
 .spinner{width:36px;height:36px;border:2.5px solid var(--border2);border-top-color:var(--terra);border-radius:50%;animation:spin 0.75s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ── LIVE BAR ── */
-.livebar{margin-top:var(--nav-h);background:var(--green-pale);border-bottom:1px solid rgba(46,107,69,0.15);padding:0.45rem 1.25rem;display:flex;align-items:center;gap:0.55rem;font-size:0.72rem;color:var(--green);font-weight:500;letter-spacing:0.01em;}
+.livebar{margin-top:var(--nav-h);background:var(--green-pale);border-bottom:1px solid rgba(46,107,69,0.15);padding:0.45rem 1.25rem;display:flex;align-items:center;gap:0.55rem;font-size:0.72rem;color:var(--green);font-weight:500;}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 
-/* ── ORDERS SECTION ── */
+/* presence indicator strip */
+.presence-bar{background:var(--terra-pale);border-bottom:1px solid rgba(191,78,30,0.15);padding:0.35rem 1.25rem;display:flex;align-items:center;gap:0.55rem;font-size:0.7rem;color:var(--terra);font-weight:500;}
+.presence-dot{width:5px;height:5px;border-radius:50%;background:var(--terra);animation:pulse 1.5s infinite;}
+
 .orders-section{padding:1rem 1.1rem 0;}
 .orders-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:0.6rem;}
 .order-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:0.85rem 1rem;margin-bottom:0.5rem;display:flex;align-items:center;justify-content:space-between;gap:0.8rem;}
@@ -87,13 +60,11 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.65;}}
 .pill-paid{background:var(--bg2);color:var(--muted);}
 
-/* ── CATEGORY TABS ── */
 .cat-wrap{overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;padding:0.9rem 1.1rem 0.55rem;display:flex;gap:0.45rem;}
 .cat-wrap::-webkit-scrollbar{display:none;}
 .cat-tab{flex-shrink:0;padding:0.42rem 1.05rem;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.79rem;font-weight:500;cursor:pointer;transition:all 0.18s;}
 .cat-tab.active,.cat-tab:hover{background:var(--ink);border-color:var(--ink);color:var(--bg);}
 
-/* ── MENU CARDS ── */
 .menu-list{padding:0.4rem 1.1rem calc(var(--cart-h) + 90px);display:flex;flex-direction:column;gap:0.55rem;}
 .menu-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:0.95rem;display:flex;align-items:center;gap:0.85rem;transition:border-color 0.2s,box-shadow 0.2s;-webkit-tap-highlight-color:transparent;}
 .menu-card:active{transform:scale(0.99);}
@@ -113,7 +84,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .q-btn:hover{background:var(--terra);color:white;border-color:var(--terra);}
 .q-num{font-size:0.95rem;font-weight:600;color:var(--ink);min-width:18px;text-align:center;}
 
-/* ── CART BAR ── */
 .cart-bar{position:fixed;bottom:0;left:0;right:0;z-index:90;background:var(--white);border-top:1px solid var(--border);box-shadow:0 -4px 24px rgba(30,24,16,0.08);transition:max-height 0.35s var(--ease);}
 .cart-bar-top{display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;height:var(--cart-h);cursor:pointer;}
 .cart-bar-left{display:flex;align-items:center;gap:0.75rem;}
@@ -149,7 +119,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-clear{width:100%;margin-top:0.5rem;background:transparent;border:1px solid var(--border2);color:var(--muted);border-radius:8px;font-family:var(--ff-body);font-size:0.75rem;padding:0.5rem;cursor:pointer;transition:all 0.15s;}
 .btn-clear:hover{border-color:var(--red);color:var(--red);}
 
-/* ── CHECKOUT SHEET ── */
 .sheet-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.55);z-index:150;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
 .sheet-overlay.open{display:flex;}
 .sheet{background:var(--bg);border-radius:22px 22px 0 0;padding:1.5rem 1.3rem 2.5rem;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;position:relative;}
@@ -175,7 +144,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-submit:hover{background:var(--terra-hover);}
 .btn-submit:active{transform:scale(0.98);}
 
-/* ── SUCCESS VIEW ── */
 .success-view{text-align:center;padding:2.5rem 1rem;}
 .success-icon{font-size:3.5rem;display:block;margin-bottom:1.2rem;animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);}
 @keyframes pop{from{transform:scale(0);}to{transform:scale(1);}}
@@ -185,7 +153,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .success-btn{display:block;width:calc(100% - 2rem);margin:1.5rem auto 0;background:var(--ink);color:white;border:none;border-radius:10px;font-family:var(--ff-body);font-size:0.85rem;font-weight:600;padding:0.85rem;cursor:pointer;transition:background 0.2s;}
 .success-btn:hover{background:var(--terra);}
 
-/* ── WAITER MODAL ── */
 .waiter-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.5);z-index:200;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
 .waiter-overlay.open{display:flex;}
 .waiter-modal{background:var(--white);border-radius:18px;padding:2rem 1.5rem;width:100%;max-width:380px;text-align:center;}
@@ -197,7 +164,10 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .waiter-opt:hover{border-color:var(--terra);background:var(--terra-pale);color:var(--terra);}
 .waiter-close{background:transparent;border:none;color:var(--muted);font-size:0.8rem;cursor:pointer;font-family:var(--ff-body);text-decoration:underline;}
 
-/* ── TOAST ── */
+/* idle warning */
+.idle-banner{position:fixed;top:calc(var(--nav-h) + 0px);left:0;right:0;background:#fef3c7;border-bottom:1px solid #f59e0b;padding:0.6rem 1.25rem;font-size:0.78rem;color:#92400e;font-weight:500;z-index:95;display:none;text-align:center;}
+.idle-banner.show{display:block;}
+
 .toast{position:fixed;top:calc(var(--nav-h) + 0.7rem);left:50%;transform:translateX(-50%) translateY(-12px);background:var(--ink);color:var(--bg);padding:0.6rem 1.15rem;border-radius:20px;font-size:0.81rem;font-weight:500;z-index:300;opacity:0;transition:all 0.3s;white-space:nowrap;box-shadow:0 4px 16px rgba(30,24,16,0.18);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.success{background:var(--green);}
@@ -206,7 +176,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-logo">Arm<em>ood</em></div>
   <div class="topbar-right">
@@ -215,20 +184,19 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   </div>
 </div>
 
-<!-- LOADING -->
+<div class="idle-banner" id="idleBanner">⏱ Hələ sifariş vermədiniz — səhifəni bağlasanız masa sıfırlanacaq</div>
+
 <div class="state" id="loadScreen">
   <div class="spinner"></div>
   <p style="color:var(--muted);margin-top:0.5rem;">Yüklənir...</p>
 </div>
 
-<!-- ERROR -->
 <div class="state" id="errScreen" style="display:none;">
   <div style="font-size:2.5rem;">🔍</div>
   <h2>Masa Tapılmadı</h2>
   <p>Bu QR kod etibarsızdır və ya müddəti keçmişdir. Zəhmət olmasa, heyətimizə müraciət edin.</p>
 </div>
 
-<!-- MAIN -->
 <div id="mainContent" style="display:none;">
   <div class="livebar">
     <div class="live-dot"></div>
@@ -251,7 +219,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   <div class="menu-list" id="menuList"></div>
 </div>
 
-<!-- CART BAR -->
 <div class="cart-bar" id="cartBar">
   <div class="cart-bar-top" id="cartBarTop">
     <div class="cart-bar-left">
@@ -289,7 +256,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   <div class="sheet">
     <div class="sheet-handle"></div>
     <button class="sheet-close" id="sheetClose">✕</button>
-
     <div id="sheetForm">
       <div class="sheet-title">Sifarişi Tamamla</div>
       <div class="sheet-sub">Bir neçə məlumat daxil edin, mətbəx hazırlamağa başlasın</div>
@@ -325,7 +291,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       </div>
       <button class="btn-submit" id="btnSubmit">Mətbəxə Göndər →</button>
     </div>
-
     <div id="sheetSuccess" class="success-view" style="display:none;">
       <span class="success-icon">✅</span>
       <h3>Sifariş Alındı!</h3>
@@ -362,10 +327,89 @@ const api=(path,opts={})=>fetch(`${SUPABASE_URL}/rest/v1/${path}`,{
   ...opts
 }).then(r=>r.json());
 
-let tableData=null,menuItems=[],cart={},currentCat='all',cartOpen=false,orderType='table',tableOrders=[];
+// ── PRESENCE SYSTEM ──
+let tableData=null, menuItems=[], cart={}, currentCat='all', cartOpen=false, orderType='table', tableOrders=[];
+let hasOrdered=false;          // true once they successfully submit an order this session
+let heartbeatInterval=null;
+let idleTimeout=null;
+const IDLE_MS = 5*60*1000;     // 5 minutes
+const HEARTBEAT_MS = 25*1000;  // 25 seconds
 
 const token=new URLSearchParams(location.search).get('t');
 
+// ── MARK TABLE ACTIVE (on page load) ──
+async function markTableActive(){
+  if(!tableData)return;
+  await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`,{
+    method:'PATCH',
+    headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+    body:JSON.stringify({status:'active',last_seen_at:new Date().toISOString()})
+  });
+}
+
+// ── HEARTBEAT: keep last_seen_at fresh every 25s ──
+function startHeartbeat(){
+  if(heartbeatInterval)clearInterval(heartbeatInterval);
+  heartbeatInterval=setInterval(async()=>{
+    if(!tableData)return;
+    await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`,{
+      method:'PATCH',
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+      body:JSON.stringify({last_seen_at:new Date().toISOString()})
+    });
+  }, HEARTBEAT_MS);
+}
+
+// ── IDLE TIMER: if 5 min pass with no order, reset table & warn ──
+function resetIdleTimer(){
+  if(hasOrdered)return; // don't reset if they've ordered
+  clearTimeout(idleTimeout);
+  idleTimeout=setTimeout(async()=>{
+    if(hasOrdered)return;
+    document.getElementById('idleBanner').classList.add('show');
+    // Reset table to empty after idle
+    if(tableData){
+      await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`,{
+        method:'PATCH',
+        headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+        body:JSON.stringify({status:'empty'})
+      });
+    }
+  }, IDLE_MS);
+}
+
+// ── SEND BEACON ON PAGE LEAVE ──
+// Uses sendBeacon so it fires even when tab closes
+function sendLeaveBeacon(){
+  if(!tableData||hasOrdered)return; // don't clear if they ordered
+  const url=`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`;
+  const data=JSON.stringify({status:'empty'});
+  const blob=new Blob([data],{type:'application/json'});
+  // sendBeacon doesn't support custom headers — use keepalive fetch instead
+  navigator.sendBeacon && navigator.sendBeacon(
+    `${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}&apikey=${SUPABASE_ANON}`,
+    blob
+  );
+  // Fallback: keepalive fetch (more reliable with auth headers)
+  try{
+    fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`,{
+      method:'PATCH',
+      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
+      body:data,
+      keepalive:true
+    });
+  }catch(e){}
+}
+
+window.addEventListener('beforeunload',sendLeaveBeacon);
+window.addEventListener('pagehide',sendLeaveBeacon); // iOS Safari
+
+// Reset idle timer on any user interaction
+['click','touchstart','scroll','keydown'].forEach(ev=>
+  document.addEventListener(ev,()=>resetIdleTimer(),{passive:true})
+);
+
+// ── INIT ──
 async function init(){
   if(!token){showErr();return;}
   try{
@@ -373,13 +417,20 @@ async function init(){
     if(!tables.length||tables.error){showErr();return;}
     tableData=tables[0];
     document.getElementById('tableNum').textContent=tableData.table_number;
-    document.title=`Restoran — Masa ${tableData.table_number}`;
-    const menu = await api('menu_items?select=*&is_active=eq.true&order=category,name');
+    document.title=`Armood — Masa ${tableData.table_number}`;
+
+    // Mark active immediately, start heartbeat + idle timer
+    await markTableActive();
+    startHeartbeat();
+    resetIdleTimer();
+
+    const menu=await api('menu_items?select=*&is_active=eq.true&order=category,name');
     menuItems=Array.isArray(menu)?menu:[];
     await loadOrders();
     document.getElementById('loadScreen').style.display='none';
     document.getElementById('mainContent').style.display='block';
-    renderMenu();setupListeners();
+    renderMenu();
+    setupListeners();
     setInterval(loadOrders,15000);
   }catch(e){showErr();}
 }
@@ -388,6 +439,8 @@ async function loadOrders(){
   if(!tableData)return;
   const o=await api(`orders?table_id=eq.${tableData.id}&status=neq.paid&select=*,order_items(*,menu_items(name))`);
   tableOrders=Array.isArray(o)?o:[];
+  // If any orders exist, mark hasOrdered = true (persist across the session)
+  if(tableOrders.length>0)hasOrdered=true;
   renderOrders();
 }
 
@@ -413,10 +466,7 @@ function renderOrders(){
 function renderMenu(){
   const list=document.getElementById('menuList');
   const filtered=currentCat==='all'?menuItems:menuItems.filter(i=>i.category===currentCat);
-  if(!filtered.length){
-    list.innerHTML='<p style="text-align:center;color:var(--muted);padding:2.5rem;font-size:0.9rem;">Burada hələ heç nə yoxdur</p>';
-    return;
-  }
+  if(!filtered.length){list.innerHTML='<p style="text-align:center;color:var(--muted);padding:2.5rem;font-size:0.9rem;">Burada hələ heç nə yoxdur</p>';return;}
   list.innerHTML=filtered.map(item=>{
     const qty=cart[item.id]?.qty||0;
     const ua=!item.available;
@@ -491,9 +541,7 @@ function openSheet(){
 function closeSheet(){document.getElementById('sheetOverlay').classList.remove('open');}
 
 function resetAfterOrder(){
-  cart={};
-  renderMenu();
-  updateCart();
+  cart={};renderMenu();updateCart();
   document.getElementById('cartBar').classList.remove('open');
   cartOpen=false;
   document.getElementById('cartNote').value='';
@@ -526,11 +574,17 @@ async function submitOrder(){
       headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
       body:JSON.stringify(items.map(({item,qty})=>({order_id:orderId,menu_item_id:item.id,quantity:qty,price_at_order:Number(item.price),added_by:name})))
     });
+    // Mark table as 'ordered' and update last_seen_at
     await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`,{
       method:'PATCH',
       headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
-      body:JSON.stringify({status:'ordered'})
+      body:JSON.stringify({status:'ordered',last_seen_at:new Date().toISOString()})
     });
+    // Mark session as having ordered — prevents beacon from clearing table
+    hasOrdered=true;
+    clearTimeout(idleTimeout);
+    document.getElementById('idleBanner').classList.remove('show');
+
     document.getElementById('sheetForm').style.display='none';
     document.getElementById('sheetSuccess').style.display='block';
     resetAfterOrder();
@@ -577,9 +631,7 @@ function setupListeners(){
   document.getElementById('btnOrder').addEventListener('click',openSheet);
   document.getElementById('btnClear').addEventListener('click',()=>{cart={};renderMenu();updateCart();});
   document.getElementById('sheetClose').addEventListener('click',closeSheet);
-  document.getElementById('sheetOverlay').addEventListener('click',e=>{
-    if(e.target===document.getElementById('sheetOverlay'))closeSheet();
-  });
+  document.getElementById('sheetOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('sheetOverlay'))closeSheet();});
   document.getElementById('otTable').addEventListener('click',()=>{
     orderType='table';
     document.getElementById('otTable').classList.add('active');
@@ -592,19 +644,14 @@ function setupListeners(){
   });
   document.getElementById('btnSubmit').addEventListener('click',submitOrder);
   document.getElementById('successCloseBtn').addEventListener('click',()=>{closeSheet();});
-  document.getElementById('waiterBtn').addEventListener('click',()=>{
-    document.getElementById('waiterOverlay').classList.add('open');
-  });
-  document.getElementById('waiterClose').addEventListener('click',()=>{
-    document.getElementById('waiterOverlay').classList.remove('open');
-  });
-  document.getElementById('waiterOverlay').addEventListener('click',e=>{
-    if(e.target===document.getElementById('waiterOverlay'))
-      document.getElementById('waiterOverlay').classList.remove('open');
-  });
+  document.getElementById('waiterBtn').addEventListener('click',()=>{document.getElementById('waiterOverlay').classList.add('open');});
+  document.getElementById('waiterClose').addEventListener('click',()=>{document.getElementById('waiterOverlay').classList.remove('open');});
+  document.getElementById('waiterOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('waiterOverlay'))document.getElementById('waiterOverlay').classList.remove('open');});
 }
 
 init();
 </script>
 </body>
 </html>
+ENDOFFILE
+echo "table.html done: $(wc -c < /home/claude/table_updated.html) bytes"
