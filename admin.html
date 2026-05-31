@@ -741,10 +741,16 @@ async function deleteMenuItem(id){
   var item=menuItems.find(function(m){return String(m.id)===String(id);});
   var name=item?item.name:'this item';
   if(!confirm('Delete "'+name+'"?')) return;
-  var r=await fetch(SUPABASE_URL+'/rest/v1/menu_items?id=eq.'+id,{
-    method:'DELETE',
-    headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+authToken,'Content-Type':'application/json','Prefer':'return=representation'}
-  });
+  var r=await fetch(`${SUPABASE_URL}/rest/v1/menu?id=eq.${id}`, {
+  method: 'PATCH', // Use PATCH to update specific columns
+  headers: {
+    'apikey': SUPABASE_ANON,
+    'Authorization': `Bearer ${authToken}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  },
+  body: JSON.stringify({ is_active: false })
+});
   if(r.status===409){
     await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({available:false,name:'[Removed] '+name})});
     showToast('Item hidden (referenced in orders)');
