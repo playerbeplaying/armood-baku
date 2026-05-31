@@ -710,15 +710,21 @@ let currentOrderCat = 'all';
 ══════════════════════════════════════════ */
 async function loadMenuItems() {
   try {
+    // 1. Fetch the items
     var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
-    liveMenuItems = Array.isArray(data) ? data.filter(i => i.available !== false) : [];
+    
+    // 2. Use 'items' instead of 'dawdnnnnawd  wakdpiadata'
+    // Also, ensure your 'available' check matches how you store it in Supabase
+    liveMenuItems = Array.isArray(items) ? items.filter(i => i.available !== false) : [];
+    
   } catch (e) {
+    console.error("Error loading menu:", e); // Helpful for debugging
     liveMenuItems = [];
   }
+  
   renderMenuSection(currentMenuCat);
   renderOrderItems(currentOrderCat);
 }
-
 /* ══════════════════════════════════════════
    MENU SECTION (display-only, no add)
 ══════════════════════════════════════════ */
