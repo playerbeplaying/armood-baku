@@ -843,7 +843,7 @@ async function loadQR(){
     var t=tables[i];
     var num=t.table_number;
     var tok=(t.token||'').trim();
-    var pageUrl='https://armood-baku.vercel.app/table.html?t='+encodeURIComponent(tok);
+    var pageUrl='https://restoranlayout.vercel.app/table.html?t='+encodeURIComponent(tok);
     var hasSrc=(num>=1&&num<=5&&STATIC_QR[num]);
     html+='<div class="qr-card" id="qrc-'+t.id+'">';
     if(hasSrc){
