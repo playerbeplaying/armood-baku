@@ -322,7 +322,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 <div class="debug-bar" id="debugBar"></div>
 <button class="debug-toggle" id="debugToggle" onclick="toggleDebug()">🐛 debug</button>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+
 <script>
 var SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
@@ -709,19 +709,31 @@ async function toggleItem(id, current) {
   loadMenu();
 }
 async function deleteMenuItem(id) {
-  if (!confirm('Delete this menu item?\n\nNote: if this item appears in past orders it will be marked unavailable instead of deleted.')) return;
-  // Try hard delete first
+  var item = menuItems.find(function(m){ return String(m.id) === String(id); });
+  var itemName = item ? item.name : 'this item';
+  if (!confirm('Delete "' + itemName + '"?\n\nIf it appears in past orders it will be hidden instead.')) return;
+
+  // Try hard delete
   var r = await fetch(SUPABASE_URL + '/rest/v1/menu_items?id=eq.' + id, {
     method: 'DELETE',
     headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }
   });
+  dbg('DELETE menu_items HTTP ' + r.status);
+
   if (r.status === 409) {
-    // Foreign key conflict — item is referenced in order_items, soft-delete instead
-    dbg('WARN: delete 409 (FK conflict) — marking item unavailable instead');
-    await api('menu_items?id=eq.' + id, {method:'PATCH', body:JSON.stringify({available:false, name: '[Deleted] ' + (menuItems.find(function(m){return m.id==id;})||{name:''}).name })});
-    showToast('Item hidden (referenced in past orders)');
-  } else {
+    // FK constraint from order_items.menu_item_id — soft delete
+    dbg('409 FK conflict — soft deleting');
+    await api('menu_items?id=eq.' + id, {
+      method: 'PATCH',
+      body: JSON.stringify({ available: false, name: '[Removed] ' + itemName, description: 'This item has been removed from the menu.' })
+    });
+    showToast('Item removed from menu');
+  } else if (r.status === 200 || r.status === 204) {
     showToast('Item deleted');
+  } else {
+    var body = await r.text();
+    dbg('Delete unexpected status ' + r.status + ': ' + body.substring(0,80));
+    showToast('Delete failed (status ' + r.status + ')');
   }
   loadMenu();
 }
@@ -779,61 +791,41 @@ async function loadQR() {
     '</div>';
   }).join('');
 
-  /* Wait for QRCode library to be available, then render */
-  function renderQRCodes(tables, attempt) {
-    attempt = attempt || 0;
-    if (typeof QRCode === 'undefined') {
-      if (attempt > 20) { dbg('ERROR: QRCode library never loaded'); return; }
-      dbg('Waiting for QRCode lib... attempt ' + attempt);
-      setTimeout(function() { renderQRCodes(tables, attempt + 1); }, 200);
-      return;
-    }
-    tables.forEach(function(t) {
-      var tok = (t.token || '').trim();
-      if (!tok) { dbg('WARN: table ' + t.table_number + ' no token'); return; }
-      var canvas = document.getElementById('qr-canvas-' + t.id);
-      if (!canvas) { dbg('WARN: canvas missing for table ' + t.table_number); return; }
-      var url = 'https://armood-baku.vercel.app/table.html?t=' + tok;
-      // Try QRCode.toCanvas (npm qrcode package API)
-      if (typeof QRCode.toCanvas === 'function') {
-        QRCode.toCanvas(canvas, url, {
-          width: 220, margin: 3,
-          color: { dark: '#000000', light: '#ffffff' },
-          errorCorrectionLevel: 'M'
-        }, function(err) {
-          if (err) {
-            dbg('ERROR QR toCanvas table ' + t.table_number + ': ' + err.message);
-          } else {
-            dbg('OK QR table ' + t.table_number);
-          }
-        });
-      } else if (typeof QRCode === 'function') {
-        // Fallback: qrcodejs API — new QRCode(element, options)
-        canvas.innerHTML = '';
-        try {
-          new QRCode(canvas, {
-            text: url, width: 220, height: 220,
-            colorDark: '#000000', colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.M
-          });
-          dbg('OK QR (qrcodejs) table ' + t.table_number);
-        } catch(e) { dbg('ERROR QR fallback table ' + t.table_number + ': ' + e.message); }
-      } else {
-        dbg('ERROR: QRCode object has no known render method');
-      }
-    });
-  }
-  renderQRCodes(tables);
+  /* Render QR codes as <img> tags using the Google Charts QR API — no library needed */
+  tables.forEach(function(t) {
+    var tok = (t.token || '').trim();
+    if (!tok) { dbg('WARN: table ' + t.table_number + ' no token'); return; }
+    var wrap = document.getElementById('qr-wrap-' + t.id);
+    if (!wrap) { dbg('WARN: qr wrap missing for table ' + t.table_number); return; }
+    var url = 'https://armood-baku.vercel.app/table.html?t=' + tok;
+    var apiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&data=' + encodeURIComponent(url);
+    var img = document.createElement('img');
+    img.width = 220; img.height = 220;
+    img.style.borderRadius = '4px';
+    img.style.display = 'block';
+    img.style.margin = '0 auto 0.8rem';
+    img.onload = function() { dbg('OK QR table ' + t.table_number); };
+    img.onerror = function() { dbg('ERROR QR img failed table ' + t.table_number); wrap.innerHTML = '<p style="color:var(--red);font-size:0.72rem;">QR load failed</p>'; };
+    img.src = apiUrl;
+    wrap.appendChild(img);
+    // Store url for download
+    wrap.dataset.url = url;
+    wrap.dataset.qrApi = apiUrl;
+  });
 }
 
 function downloadQR(id, num) {
-  var canvas = document.getElementById('qr-canvas-' + id);
-  if (!canvas) { showToast('QR not ready'); return; }
+  var wrap = document.getElementById('qr-wrap-' + id);
+  if (!wrap) { showToast('QR not ready'); return; }
+  var img = wrap.querySelector('img');
+  if (!img) { showToast('QR still loading'); return; }
+  // Use the QR API URL directly as download link
   var link = document.createElement('a');
   link.download = 'armood-masa-' + num + '.png';
-  link.href = canvas.toDataURL('image/png');
+  link.href = wrap.dataset.qrApi || img.src;
+  link.target = '_blank';
   link.click();
-  showToast('QR downloaded');
+  showToast('QR downloading');
 }
 
 async function loadStaff() {
@@ -868,44 +860,70 @@ async function saveStaff() {
   if (password.length < 6) { showToast('Password min 6 chars'); return; }
 
   try {
-    // Step 1: Sign up the new admin via public signup endpoint
-    dbg('Signing up new user: ' + email);
+    // Step 1: Sign up via public endpoint
+    dbg('Signing up: ' + email);
     var signupRes = await fetch(SUPABASE_URL + '/auth/v1/signup', {
       method: 'POST',
       headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email, password: password })
     });
     var signupData = await signupRes.json();
-    dbg('Signup response: ' + JSON.stringify(signupData).substring(0,120));
+    dbg('Signup HTTP ' + signupRes.status + ': ' + JSON.stringify(signupData).substring(0,120));
 
-    // Signup returns either { id, email } or { user: { id } } depending on email confirm setting
-    var userId = (signupData.id) || (signupData.user && signupData.user.id) || null;
+    var userId = signupData.id || (signupData.user && signupData.user.id) || null;
 
-    if (signupData.error || !userId) {
-      var msg = signupData.error ? signupData.error.message : (signupData.msg || 'Signup failed — user may already exist');
-      // If user already exists in auth, try to find them in admins table by email
-      dbg('WARN: signup error: ' + msg + ' — checking if user already exists');
-      var existing = await api('admins?email=eq.' + encodeURIComponent(email) + '&select=id');
-      if (Array.isArray(existing) && existing.length) {
-        showToast('Admin with this email already exists');
+    if (signupData.error) {
+      var errMsg = signupData.error.message || JSON.stringify(signupData.error);
+      // "User already registered" means the auth account exists — try to just add to admins table
+      if (errMsg.toLowerCase().includes('already') || errMsg.toLowerCase().includes('registered')) {
+        dbg('User already in auth — trying to sign in to get their ID');
+        // Sign in with their credentials to get the user ID
+        var signinRes = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+          method: 'POST',
+          headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, password: password })
+        });
+        var signinData = await signinRes.json();
+        if (signinData.error || !signinData.user) {
+          showToast('User exists but wrong password — cannot add');
+          return;
+        }
+        userId = signinData.user.id;
+        dbg('Got existing user ID: ' + userId);
       } else {
-        showToast('Error: ' + msg);
+        showToast('Signup error: ' + errMsg);
+        return;
       }
+    }
+
+    if (!userId) {
+      // Email confirmation probably ON — signup worked but no session returned
+      // Insert with a placeholder ID — user must confirm email first
+      dbg('WARN: No user ID in signup response — email confirmation may be required');
+      showToast('Check: disable email confirmation in Supabase Auth settings, then try again.');
       return;
     }
 
-    // Step 2: Insert into admins table with the new auth user's ID
+    // Step 2: Check not already in admins table
+    var existing = await api('admins?id=eq.' + userId + '&select=id');
+    if (Array.isArray(existing) && existing.length) {
+      showToast('This account already has admin access');
+      closeModal('staffModal');
+      return;
+    }
+
+    // Step 3: Insert into admins table
     var insertRes = await api('admins', {
       method: 'POST',
       body: JSON.stringify({ id: userId, email: email, full_name: name, role: role })
     });
-    if (insertRes && insertRes.code) {
-      showToast('Auth user created but admin record failed: ' + (insertRes.message||insertRes.code));
-      dbg('ERROR admins insert: ' + JSON.stringify(insertRes));
+    dbg('admins insert: ' + JSON.stringify(insertRes).substring(0,100));
+    if (insertRes && (insertRes.code || insertRes.error)) {
+      showToast('Failed to grant admin access: ' + (insertRes.message || insertRes.code));
       return;
     }
 
-    showToast('Admin added — they can now sign in');
+    showToast('Admin added! They can sign in now at admin-login.html');
     closeModal('staffModal');
     loadStaff();
   } catch(e) {
