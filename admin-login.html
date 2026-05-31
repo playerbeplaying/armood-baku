@@ -8,263 +8,53 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --blue:#1a56db;
-  --blue-dark:#1e429f;
-  --blue-light:#ebf5ff;
-  --blue-mid:#3f83f8;
-  --slate:#0f172a;
-  --slate2:#1e293b;
-  --muted:#64748b;
-  --border:#e2e8f0;
-  --white:#ffffff;
-  --off:#f8fafc;
+  --blue:#1a56db;--blue-dark:#1e429f;--blue-light:#ebf5ff;--blue-mid:#3f83f8;
+  --slate:#0f172a;--slate2:#1e293b;--muted:#64748b;--border:#e2e8f0;--white:#ffffff;--off:#f8fafc;
 }
 html,body{height:100%;}
-body{
-  font-family:'Inter',sans-serif;
-  background:var(--off);
-  display:flex;
-  min-height:100vh;
-  overflow:hidden;
-}
-
-/* LEFT PANEL */
-.left{
-  width:42%;
-  background:var(--slate);
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  padding:3rem;
-  position:relative;
-  overflow:hidden;
-}
-.left::before{
-  content:'';
-  position:absolute;
-  width:600px;height:600px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(63,131,248,0.18) 0%,transparent 70%);
-  top:-100px;left:-150px;
-  pointer-events:none;
-}
-.left::after{
-  content:'';
-  position:absolute;
-  width:400px;height:400px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(26,86,219,0.22) 0%,transparent 70%);
-  bottom:-80px;right:-100px;
-  pointer-events:none;
-}
-.left-logo{
-  display:flex;align-items:center;gap:0.8rem;
-  position:relative;z-index:1;
-}
-.logo-mark{
-  width:40px;height:40px;
-  background:var(--blue);
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'DM Serif Display',serif;
-  font-size:1.3rem;color:white;
-  font-style:italic;
-}
-.logo-text{
-  font-family:'DM Serif Display',serif;
-  font-size:1.4rem;
-  color:white;
-  letter-spacing:0.04em;
-}
-.left-content{
-  position:relative;z-index:1;
-}
-.left-content h2{
-  font-family:'DM Serif Display',serif;
-  font-size:2.4rem;
-  color:white;
-  line-height:1.2;
-  margin-bottom:1rem;
-}
-.left-content h2 em{
-  font-style:italic;
-  color:#93c5fd;
-}
-.left-content p{
-  font-size:0.9rem;
-  color:rgba(255,255,255,0.45);
-  line-height:1.7;
-  max-width:280px;
-}
-.left-stats{
-  display:flex;gap:2rem;
-  position:relative;z-index:1;
-}
-.left-stat span{
-  display:block;
-  font-size:1.6rem;
-  font-weight:600;
-  color:white;
-  font-variant-numeric:tabular-nums;
-}
-.left-stat small{
-  font-size:0.72rem;
-  color:rgba(255,255,255,0.35);
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-}
-
-/* GRID DECORATION */
-.left-grid{
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);
-  background-size:40px 40px;
-  pointer-events:none;
-}
-
-/* RIGHT PANEL */
-.right{
-  flex:1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:2rem;
-}
-.login-box{
-  width:100%;
-  max-width:400px;
-}
-.login-box-header{
-  margin-bottom:2.5rem;
-}
-.login-box-header h1{
-  font-size:1.8rem;
-  font-weight:600;
-  color:var(--slate);
-  margin-bottom:0.3rem;
-}
-.login-box-header p{
-  font-size:0.88rem;
-  color:var(--muted);
-}
-
-.form-field{
-  margin-bottom:1.1rem;
-}
-.form-field label{
-  display:block;
-  font-size:0.75rem;
-  font-weight:500;
-  color:var(--slate2);
-  letter-spacing:0.04em;
-  text-transform:uppercase;
-  margin-bottom:0.5rem;
-}
-.input-wrap{
-  position:relative;
-}
-.input-wrap .icon{
-  position:absolute;
-  left:0.9rem;top:50%;transform:translateY(-50%);
-  color:var(--muted);
-  font-size:1rem;
-  pointer-events:none;
-}
-.form-field input{
-  width:100%;
-  padding:0.8rem 1rem 0.8rem 2.6rem;
-  border:1.5px solid var(--border);
-  border-radius:10px;
-  font-family:'Inter',sans-serif;
-  font-size:0.9rem;
-  color:var(--slate);
-  background:white;
-  outline:none;
-  transition:border-color 0.2s,box-shadow 0.2s;
-}
-.form-field input:focus{
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(26,86,219,0.1);
-}
+body{font-family:'Inter',sans-serif;background:var(--off);display:flex;min-height:100vh;overflow:hidden;}
+.left{width:42%;background:var(--slate);display:flex;flex-direction:column;justify-content:space-between;padding:3rem;position:relative;overflow:hidden;}
+.left::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(63,131,248,0.18) 0%,transparent 70%);top:-100px;left:-150px;pointer-events:none;}
+.left::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(26,86,219,0.22) 0%,transparent 70%);bottom:-80px;right:-100px;pointer-events:none;}
+.left-logo{display:flex;align-items:center;gap:0.8rem;position:relative;z-index:1;}
+.logo-mark{width:40px;height:40px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:1.3rem;color:white;font-style:italic;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.4rem;color:white;letter-spacing:0.04em;}
+.left-content{position:relative;z-index:1;}
+.left-content h2{font-family:'DM Serif Display',serif;font-size:2.4rem;color:white;line-height:1.2;margin-bottom:1rem;}
+.left-content h2 em{font-style:italic;color:#93c5fd;}
+.left-content p{font-size:0.9rem;color:rgba(255,255,255,0.45);line-height:1.7;max-width:280px;}
+.left-stats{display:flex;gap:2rem;position:relative;z-index:1;}
+.left-stat span{display:block;font-size:1.6rem;font-weight:600;color:white;font-variant-numeric:tabular-nums;}
+.left-stat small{font-size:0.72rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em;}
+.left-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.right{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.login-box{width:100%;max-width:400px;}
+.login-box-header{margin-bottom:2.5rem;}
+.login-box-header h1{font-size:1.8rem;font-weight:600;color:var(--slate);margin-bottom:0.3rem;}
+.login-box-header p{font-size:0.88rem;color:var(--muted);}
+.form-field{margin-bottom:1.1rem;}
+.form-field label{display:block;font-size:0.75rem;font-weight:500;color:var(--slate2);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:0.5rem;}
+.input-wrap{position:relative;}
+.input-wrap .icon{position:absolute;left:0.9rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem;pointer-events:none;}
+.form-field input{width:100%;padding:0.8rem 1rem 0.8rem 2.6rem;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:0.9rem;color:var(--slate);background:white;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.form-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,0.1);}
 .form-field input::placeholder{color:#cbd5e1;}
-
-.btn-login{
-  width:100%;
-  padding:0.85rem;
-  background:var(--blue);
-  color:white;
-  border:none;
-  border-radius:10px;
-  font-family:'Inter',sans-serif;
-  font-size:0.9rem;
-  font-weight:600;
-  cursor:pointer;
-  transition:background 0.2s,transform 0.15s,box-shadow 0.2s;
-  margin-top:0.5rem;
-  display:flex;
-  align-items:center;justify-content:center;gap:0.5rem;
-  box-shadow:0 4px 14px rgba(26,86,219,0.3);
-}
+.btn-login{width:100%;padding:0.85rem;background:var(--blue);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.15s,box-shadow 0.2s;margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;box-shadow:0 4px 14px rgba(26,86,219,0.3);}
 .btn-login:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,86,219,0.35);}
 .btn-login:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 .btn-arrow{transition:transform 0.2s;}
 .btn-login:hover .btn-arrow{transform:translateX(3px);}
-
-.error-box{
-  background:#fef2f2;
-  border:1px solid #fecaca;
-  border-radius:8px;
-  padding:0.8rem 1rem;
-  font-size:0.83rem;
-  color:#dc2626;
-  margin-bottom:1rem;
-  display:none;
-  align-items:center;gap:0.6rem;
-}
+.error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:0.8rem 1rem;font-size:0.83rem;color:#dc2626;margin-bottom:1rem;display:none;align-items:center;gap:0.6rem;}
 .error-box.show{display:flex;}
-
-.divider{
-  display:flex;align-items:center;gap:1rem;
-  margin:1.5rem 0;
-  color:var(--border);
-  font-size:0.75rem;
-  color:var(--muted);
-}
-.divider::before,.divider::after{
-  content:'';flex:1;height:1px;background:var(--border);
-}
-
-.login-footer{
-  margin-top:2rem;
-  font-size:0.78rem;
-  color:var(--muted);
-  text-align:center;
-}
-
-/* LOADING SPINNER */
-.spinner{
-  width:18px;height:18px;
-  border:2px solid rgba(255,255,255,0.4);
-  border-top-color:white;
-  border-radius:50%;
-  animation:spin 0.7s linear infinite;
-  display:none;
-}
+.login-footer{margin-top:2rem;font-size:0.78rem;color:var(--muted);text-align:center;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
 .btn-login.loading .spinner{display:block;}
 .btn-login.loading .btn-text,.btn-login.loading .btn-arrow{display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-@media(max-width:768px){
-  .left{display:none;}
-  body{display:block;}
-  .right{min-height:100vh;}
-}
+@media(max-width:768px){.left{display:none;}body{display:block;}.right{min-height:100vh;}}
 </style>
 </head>
 <body>
-
 <div class="left">
   <div class="left-grid"></div>
   <div class="left-logo">
@@ -276,67 +66,41 @@ body{
     <p>Real-time orders, table management, menu control — all in one place.</p>
   </div>
   <div class="left-stats">
-    <div class="left-stat">
-      <span id="liveTime">—</span>
-      <small>Current Time</small>
-    </div>
-    <div class="left-stat">
-      <span>5</span>
-      <small>Tables</small>
-    </div>
+    <div class="left-stat"><span id="liveTime">—</span><small>Current Time</small></div>
+    <div class="left-stat"><span>5</span><small>Tables</small></div>
   </div>
 </div>
-
 <div class="right">
   <div class="login-box">
     <div class="login-box-header">
       <h1>Welcome back</h1>
       <p>Sign in to your admin account to continue</p>
     </div>
-
-    <div class="error-box" id="errorBox">
-      ⚠ <span id="errorText">Email or password is incorrect.</span>
-    </div>
-
+    <div class="error-box" id="errorBox">⚠ <span id="errorText">Email or password is incorrect.</span></div>
     <div class="form-field">
       <label>Email Address</label>
-      <div class="input-wrap">
-        <span class="icon">✉</span>
-        <input type="email" id="email" placeholder="admin@armood.az" autocomplete="email">
-      </div>
+      <div class="input-wrap"><span class="icon">✉</span><input type="email" id="email" placeholder="admin@armood.az" autocomplete="email"></div>
     </div>
-
     <div class="form-field">
       <label>Password</label>
-      <div class="input-wrap">
-        <span class="icon">🔒</span>
-        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
-      </div>
+      <div class="input-wrap"><span class="icon">🔒</span><input type="password" id="password" placeholder="••••••••" autocomplete="current-password"></div>
     </div>
-
     <button class="btn-login" id="btnLogin">
       <div class="spinner"></div>
       <span class="btn-text">Sign In</span>
       <span class="btn-arrow">→</span>
     </button>
-
-    <div class="login-footer">
-      Armood Restaurant System · Admin Portal
-    </div>
+    <div class="login-footer">Armood Restaurant System · Admin Portal</div>
   </div>
 </div>
-
 <script>
 const SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 
 if (localStorage.getItem('armood_session')) window.location.href = 'admin.html';
 
-// Live clock
 function updateTime(){
-  const now = new Date();
-  document.getElementById('liveTime').textContent =
-    now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('liveTime').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
 }
 updateTime(); setInterval(updateTime,1000);
 
@@ -344,10 +108,7 @@ const btn = document.getElementById('btnLogin');
 const errBox = document.getElementById('errorBox');
 const errText = document.getElementById('errorText');
 
-function showError(msg){
-  errText.textContent = msg;
-  errBox.classList.add('show');
-}
+function showError(msg){ errText.textContent = msg; errBox.classList.add('show'); }
 function hideError(){ errBox.classList.remove('show'); }
 
 document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
@@ -357,10 +118,8 @@ async function login(){
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   hideError();
-  if(!email||!password){showError('Please fill in both fields.');return;}
-
+  if(!email||!password){ showError('Please fill in both fields.'); return; }
   btn.disabled=true; btn.classList.add('loading');
-
   try{
     const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
       method:'POST',
@@ -368,19 +127,24 @@ async function login(){
       body:JSON.stringify({email,password})
     });
     const data = await res.json();
-    if(data.error||!data.access_token){showError('Invalid email or password.');btn.disabled=false;btn.classList.remove('loading');return;}
+    if(data.error||!data.access_token){ showError('Invalid email or password.'); btn.disabled=false; btn.classList.remove('loading'); return; }
 
-    const adminRes = await fetch(`${SUPABASE_URL}/rest/v1/admins?email=eq.${email}&select=*`,{
+    const adminRes = await fetch(`${SUPABASE_URL}/rest/v1/admins?email=eq.${encodeURIComponent(email)}&select=*`,{
       headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${data.access_token}`}
     });
     const adminData = await adminRes.json();
-    if(!adminData.length){showError('This account does not have admin access.');btn.disabled=false;btn.classList.remove('loading');return;}
+    if(!Array.isArray(adminData)||!adminData.length){ showError('This account does not have admin access.'); btn.disabled=false; btn.classList.remove('loading'); return; }
 
-    localStorage.setItem('armood_session',JSON.stringify({token:data.access_token,user:adminData[0]}));
+    /* Save token + refresh_token so admin.html can silently renew when expired */
+    localStorage.setItem('armood_session', JSON.stringify({
+      token: data.access_token,
+      refresh_token: data.refresh_token,
+      user: adminData[0]
+    }));
     window.location.href='admin.html';
   }catch(e){
     showError('Connection error. Please try again.');
-    btn.disabled=false;btn.classList.remove('loading');
+    btn.disabled=false; btn.classList.remove('loading');
   }
 }
 </script>
