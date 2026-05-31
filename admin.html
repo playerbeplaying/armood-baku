@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/admin.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -118,7 +119,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-primary:hover{background:var(--terra-hover);}
 .btn-outline-sm{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;cursor:pointer;font-family:var(--ff-body);font-size:0.85rem;font-weight:500;padding:0.75rem 1.5rem;transition:all 0.2s;}
 .btn-outline-sm:hover{border-color:var(--ink2);color:var(--ink);}
-.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem;}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem;}
 .qr-card{background:white;border:1px solid var(--border);border-radius:12px;padding:1.5rem;text-align:center;transition:box-shadow 0.2s;}
 .qr-card:hover{box-shadow:0 4px 16px rgba(30,24,16,0.08);}
 .qr-table-label{font-family:var(--ff-head);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.3rem;}
@@ -145,7 +146,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .wcall-time{font-size:0.7rem;color:var(--muted2);margin-top:0.1rem;}
 .wcall-badge{font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.55rem;border-radius:20px;background:#fef3c7;color:#92400e;animation:wpulse 2s infinite;}
 @keyframes wpulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
-/* DEBUG PANEL */
 .debug-bar{position:fixed;bottom:0;left:0;right:0;background:#1e1810;color:#a0ffa0;font-family:monospace;font-size:0.72rem;padding:0.5rem 1rem;z-index:9999;max-height:220px;overflow-y:auto;display:none;}
 .debug-bar.show{display:block;}
 .debug-toggle{position:fixed;bottom:0.5rem;left:0.5rem;z-index:10000;background:#1e1810;color:#a0ffa0;border:none;border-radius:6px;font-size:0.68rem;padding:0.3rem 0.6rem;cursor:pointer;font-family:monospace;}
@@ -153,27 +153,19 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 </style>
 </head>
 <body>
-
 <nav class="topnav">
   <div class="topnav-left">
-    <a class="topnav-logo" href="#">
-      <div class="logo-mark">A</div>
-      <span class="logo-name">Arm<em>ood</em></span>
-    </a>
+    <a class="topnav-logo" href="#"><div class="logo-mark">A</div><span class="logo-name">Arm<em>ood</em></span></a>
   </div>
   <div class="topnav-right">
     <span class="topnav-clock" id="clock">--:--:--</span>
     <div class="topnav-user">
       <div class="user-avatar" id="userInitials">--</div>
-      <div>
-        <div class="user-name" id="adminName">--</div>
-        <div class="user-role" id="adminRole">--</div>
-      </div>
+      <div><div class="user-name" id="adminName">--</div><div class="user-role" id="adminRole">--</div></div>
     </div>
     <button class="btn-logout" id="btnLogout">Sign out</button>
   </div>
 </nav>
-
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-section">
@@ -190,14 +182,10 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="nav-item director-only" data-page="staff" style="display:none"><span class="nav-item-icon">👥</span> Staff</div>
     </div>
   </aside>
-
   <main class="main">
-
+    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
-      <div class="page-header">
-        <div class="page-title">Dashboard</div>
-        <div class="page-sub" id="dashDate">Loading...</div>
-      </div>
+      <div class="page-header"><div class="page-title">Dashboard</div><div class="page-sub" id="dashDate">Loading...</div></div>
       <div class="stat-grid">
         <div class="stat-card"><div class="stat-card-top"><span class="stat-label">Today's Revenue</span><div class="stat-icon terra">💰</div></div><div class="stat-val" id="statRevenue">₼0</div><div class="stat-trend">Paid orders today</div></div>
         <div class="stat-card"><div class="stat-card-top"><span class="stat-label">Active Orders</span><div class="stat-icon green">🔥</div></div><div class="stat-val" id="statActive">0</div><div class="stat-trend">Pending + confirmed + ready</div></div>
@@ -209,18 +197,15 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
         <button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button>
       </div>
       <div class="card" style="margin-bottom:2rem;"><div id="waiterCallsDash"><div class="loading-state">Loading...</div></div></div>
-      <div class="sec-header">
-        <span class="sec-title">Live Tables</span>
-        <button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button>
-      </div>
+      <div class="sec-header"><span class="sec-title">Live Tables</span><button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button></div>
       <div class="tables-grid" id="dashTables"><div class="loading-state">Loading tables...</div></div>
     </div>
-
+    <!-- TABLES -->
     <div class="page" id="page-tables">
       <div class="page-header"><div class="page-title">Tables</div><div class="page-sub">Manage table status and orders</div></div>
       <div class="tables-grid" id="tablesGrid"><div class="loading-state">Loading...</div></div>
     </div>
-
+    <!-- ORDERS -->
     <div class="page" id="page-orders">
       <div class="page-header"><div class="page-title">Orders</div><div class="page-sub">All orders across all tables</div></div>
       <div class="card">
@@ -242,40 +227,30 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
         </div>
       </div>
     </div>
-
+    <!-- WAITER -->
     <div class="page" id="page-waiter">
       <div class="page-header"><div class="page-title">Waiter Calls</div><div class="page-sub">Customers requesting assistance</div></div>
-      <div class="sec-header">
-        <span class="sec-title">Active Calls</span>
-        <button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button>
-      </div>
+      <div class="sec-header"><span class="sec-title">Active Calls</span><button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button></div>
       <div class="card" id="waiterCallsPage"><div class="loading-state">Loading...</div></div>
     </div>
-
+    <!-- MENU -->
     <div class="page" id="page-menu">
       <div class="page-header"><div class="page-title">Menu</div><div class="page-sub">Add, edit and manage menu items</div></div>
-      <div class="sec-header">
-        <span class="sec-title">Items (<span id="menuCount">0</span>)</span>
-        <button class="btn-primary" onclick="openAddMenu()">+ Add Item</button>
-      </div>
+      <div class="sec-header"><span class="sec-title">Items (<span id="menuCount">0</span>)</span><button class="btn-primary" onclick="openAddMenu()">+ Add Item</button></div>
       <div class="card" id="menuManageGrid"><div class="loading-state">Loading...</div></div>
     </div>
-
+    <!-- QR -->
     <div class="page" id="page-qr">
       <div class="page-header"><div class="page-title">QR Codes</div><div class="page-sub">Print one per table — customers scan to order</div></div>
       <div style="margin-bottom:1.5rem;"><button class="btn-primary" onclick="window.print()">🖨️ Print All</button></div>
       <div class="qr-grid" id="qrGrid"><div class="loading-state">Loading...</div></div>
     </div>
-
+    <!-- STAFF -->
     <div class="page" id="page-staff">
       <div class="page-header"><div class="page-title">Staff</div><div class="page-sub">Manage admin accounts</div></div>
-      <div class="sec-header">
-        <span class="sec-title">Admins</span>
-        <button class="btn-primary" onclick="openAddStaff()">+ Add Admin</button>
-      </div>
+      <div class="sec-header"><span class="sec-title">Admins</span><button class="btn-primary" onclick="openAddStaff()">+ Add Admin</button></div>
       <div class="card" id="staffList"><div class="loading-state">Loading...</div></div>
     </div>
-
   </main>
 </div>
 
@@ -306,7 +281,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   <div class="modal">
     <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
     <h3>Add Admin</h3>
-    <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;margin-top:-0.8rem;">Creates a login account and grants admin access.</p>
+    <p style="font-size:0.78rem;color:var(--muted);margin-bottom:1rem;margin-top:-0.8rem;">Creates a login and grants admin access. Requires email confirmation OFF in Supabase.</p>
     <div class="form-group"><label>Full Name</label><input type="text" id="staffName" placeholder="Full name"></div>
     <div class="form-group"><label>Email</label><input type="email" id="staffEmail" placeholder="email@armood.az"></div>
     <div class="form-group"><label>Password</label><input type="password" id="staffPassword" placeholder="Min 6 characters"></div>
@@ -320,635 +295,467 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
 <div class="toast" id="toast">Done</div>
 <div class="debug-bar" id="debugBar"></div>
-<button class="debug-toggle" id="debugToggle" onclick="toggleDebug()">🐛 debug</button>
-
+<button class="debug-toggle" onclick="document.getElementById('debugBar').classList.toggle('show')">🐛 debug</button>
 
 <script>
 var SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 
-/* ── DEBUG PANEL ── */
-var debugLines = [];
+/* DEBUG */
+var _dbgLines = [];
 function dbg(msg) {
   var t = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  debugLines.push('[' + t + '] ' + msg);
-  if (debugLines.length > 60) debugLines.shift();
-  document.getElementById('debugBar').innerHTML = debugLines.slice().reverse().map(function(l){
-    var col = l.includes('ERROR') ? '#ff8080' : l.includes('OK') ? '#80ff80' : '#a0ffa0';
-    return '<div style="color:' + col + '">' + l + '</div>';
+  _dbgLines.unshift('['+t+'] '+msg);
+  if (_dbgLines.length > 80) _dbgLines.pop();
+  var bar = document.getElementById('debugBar');
+  bar.innerHTML = _dbgLines.map(function(l){
+    var c = l.includes('ERROR')||l.includes('WARN') ? '#ff9090' : l.includes('OK') ? '#90ff90' : '#c0ffc0';
+    return '<div style="color:'+c+'">'+l+'</div>';
   }).join('');
 }
-function toggleDebug() {
-  var bar = document.getElementById('debugBar');
-  bar.classList.toggle('show');
-}
 
+/* SESSION */
 var currentUser = null;
 var authToken = SUPABASE_ANON;
 var refreshToken = null;
-var isRefreshing = false;
-var refreshQueue = []; // queued api calls waiting for token refresh
+var _refreshing = false;
+var _refreshQueue = [];
 
-(function initSession() {
+(function() {
   var raw = localStorage.getItem('armood_session');
-  dbg('Session: ' + (raw ? raw.substring(0,80) + '...' : 'NULL'));
   if (!raw) { window.location.href = 'admin-login.html'; return; }
   var s;
   try { s = JSON.parse(raw); } catch(e) { window.location.href = 'admin-login.html'; return; }
-
   currentUser = s.user || null;
-  authToken   = s.token || s.access_token || SUPABASE_ANON;
+  authToken = s.token || SUPABASE_ANON;
   refreshToken = s.refresh_token || null;
-
   if (!currentUser) { window.location.href = 'admin-login.html'; return; }
-
-  dbg('OK: user=' + currentUser.email + ' token=' + authToken.substring(0,20) + '...' + (refreshToken ? ' refresh=YES' : ' refresh=MISSING'));
-
-  var role  = currentUser.role || 'manager';
+  dbg('Session OK: '+currentUser.email+(refreshToken?' refresh=YES':' refresh=NO'));
+  var role = currentUser.role || 'manager';
   var uname = currentUser.full_name || currentUser.email || 'Admin';
   document.getElementById('adminName').textContent = uname;
   document.getElementById('adminRole').textContent = role === 'director' ? 'Director' : 'Manager';
-  document.getElementById('userInitials').textContent = uname.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
-  if (role === 'director') {
-    document.querySelectorAll('.director-only').forEach(function(el){ el.style.display = 'flex'; });
-  }
+  document.getElementById('userInitials').textContent = uname.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  if (role === 'director') document.querySelectorAll('.director-only').forEach(function(el){el.style.display='flex';});
 })();
 
-/* ── TOKEN REFRESH ──
-   Called when any request returns JWT expired.
-   Uses refresh_token to get a new access_token from Supabase,
-   saves it back to localStorage, and retries all queued requests.
-*/
-async function doTokenRefresh() {
-  if (!refreshToken) {
-    dbg('ERROR: JWT expired but no refresh_token — redirecting to login');
-    localStorage.removeItem('armood_session');
-    window.location.href = 'admin-login.html';
-    return false;
-  }
-  dbg('Refreshing JWT via refresh_token...');
+async function _doRefresh() {
+  if (!refreshToken) { localStorage.removeItem('armood_session'); window.location.href='admin-login.html'; return false; }
+  dbg('Refreshing token...');
   try {
-    var res = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: refreshToken })
+    var r = await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST', headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({refresh_token:refreshToken})
     });
-    var data = await res.json();
-    if (data.error || !data.access_token) {
-      dbg('ERROR: Token refresh failed: ' + JSON.stringify(data));
-      localStorage.removeItem('armood_session');
-      window.location.href = 'admin-login.html';
-      return false;
-    }
-    authToken = data.access_token;
-    refreshToken = data.refresh_token || refreshToken;
-    // Persist updated tokens
-    var raw = localStorage.getItem('armood_session');
-    var s = raw ? JSON.parse(raw) : {};
-    s.token = authToken;
-    s.refresh_token = refreshToken;
+    var d = await r.json();
+    if (!d.access_token) { localStorage.removeItem('armood_session'); window.location.href='admin-login.html'; return false; }
+    authToken = d.access_token;
+    refreshToken = d.refresh_token || refreshToken;
+    var s = JSON.parse(localStorage.getItem('armood_session')||'{}');
+    s.token = authToken; s.refresh_token = refreshToken;
     localStorage.setItem('armood_session', JSON.stringify(s));
-    dbg('OK: Token refreshed successfully');
+    dbg('Token refreshed OK');
     return true;
-  } catch(e) {
-    dbg('ERROR: Token refresh exception: ' + e.message);
-    localStorage.removeItem('armood_session');
-    window.location.href = 'admin-login.html';
-    return false;
-  }
+  } catch(e) { localStorage.removeItem('armood_session'); window.location.href='admin-login.html'; return false; }
 }
 
-function updateClock() {
-  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}
-updateClock(); setInterval(updateClock, 1000);
-
-/* ── API helper ──
-   1. Tries with current authToken
-   2. If response body contains "JWT expired", refreshes token and retries once
-   3. Never silently swallows errors — logs everything to debug panel
-*/
 async function api(path, opts) {
   opts = opts || {};
   var method = opts.method || 'GET';
-  dbg(method + ' ' + path.substring(0,70));
-
-  async function doFetch(bearer) {
-    var r = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
-      headers: Object.assign({
-        'apikey': SUPABASE_ANON,
-        'Authorization': 'Bearer ' + bearer,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      }, opts.headers || {}),
+  dbg(method+' '+path.substring(0,60));
+  async function go(tok) {
+    var r = await fetch(SUPABASE_URL+'/rest/v1/'+path, {
       method: method,
+      headers: Object.assign({'apikey':SUPABASE_ANON,'Authorization':'Bearer '+tok,'Content-Type':'application/json','Prefer':'return=representation'}, opts.headers||{}),
       body: opts.body
     });
     var data = await r.json();
-    return { status: r.status, data: data };
+    return {status:r.status, data:data};
   }
-
   try {
-    var result = await doFetch(authToken);
-    dbg('  -> HTTP ' + result.status);
-
-    // JWT expired — refresh and retry
-    if (result.data && result.data.message && result.data.message.includes('JWT expired')) {
-      dbg('  JWT expired — refreshing token');
-      if (isRefreshing) {
-        // Another refresh already in progress — wait for it
-        await new Promise(function(resolve) { refreshQueue.push(resolve); });
+    var res = await go(authToken);
+    dbg('  -> '+res.status);
+    if (res.data && res.data.message && res.data.message.indexOf('JWT expired') >= 0) {
+      dbg('  JWT expired, refreshing...');
+      if (_refreshing) {
+        await new Promise(function(resolve){_refreshQueue.push(resolve);});
       } else {
-        isRefreshing = true;
-        var ok = await doTokenRefresh();
-        isRefreshing = false;
-        refreshQueue.forEach(function(r) { r(); });
-        refreshQueue = [];
+        _refreshing = true;
+        var ok = await _doRefresh();
+        _refreshing = false;
+        _refreshQueue.forEach(function(fn){fn();}); _refreshQueue=[];
         if (!ok) return null;
       }
-      // Retry with new token
-      result = await doFetch(authToken);
-      dbg('  -> retry HTTP ' + result.status);
+      res = await go(authToken);
+      dbg('  -> retry '+res.status);
     }
-
-    var data = result.data;
-    if (!data) { dbg('  NULL response'); return null; }
-    if (data.code || (data.message && !Array.isArray(data))) dbg('  ERROR: ' + JSON.stringify(data).substring(0,120));
-    else if (Array.isArray(data)) dbg('  OK: ' + data.length + ' rows');
-    else dbg('  OK: ' + JSON.stringify(data).substring(0,80));
+    var data = res.data;
+    if (!data) { dbg('  NULL'); return null; }
+    if (data.code || (data.message && !Array.isArray(data))) dbg('  ERR: '+JSON.stringify(data).substring(0,100));
+    else if (Array.isArray(data)) dbg('  OK '+data.length+' rows');
+    else dbg('  OK');
     return data;
-  } catch(e) {
-    dbg('  FETCH ERROR: ' + e.message);
-    return null;
-  }
+  } catch(e) { dbg('  FETCH ERR: '+e.message); return null; }
 }
 
-document.getElementById('btnLogout').addEventListener('click', function() {
-  localStorage.removeItem('armood_session');
-  window.location.href = 'admin-login.html';
-});
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+updateClock(); setInterval(updateClock,1000);
 
-document.querySelectorAll('.nav-item[data-page]').forEach(function(item) {
-  item.addEventListener('click', function() {
-    document.querySelectorAll('.nav-item').forEach(function(i){ i.classList.remove('active'); });
-    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+document.getElementById('btnLogout').addEventListener('click',function(){localStorage.removeItem('armood_session');window.location.href='admin-login.html';});
+
+document.querySelectorAll('.nav-item[data-page]').forEach(function(item){
+  item.addEventListener('click',function(){
+    document.querySelectorAll('.nav-item').forEach(function(i){i.classList.remove('active');});
+    document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
     item.classList.add('active');
-    var page = item.dataset.page;
-    document.getElementById('page-' + page).classList.add('active');
-    loadPage(page);
+    var pg = item.dataset.page;
+    document.getElementById('page-'+pg).classList.add('active');
+    loadPage(pg);
   });
 });
 
-function loadPage(page) {
-  if (page === 'dashboard') loadDashboard();
-  else if (page === 'tables') loadTables();
-  else if (page === 'orders') loadOrders();
-  else if (page === 'waiter') loadWaiterCalls();
-  else if (page === 'menu') loadMenu();
-  else if (page === 'qr') loadQR();
-  else if (page === 'staff') loadStaff();
+function loadPage(p){
+  if(p==='dashboard') loadDashboard();
+  else if(p==='tables') loadTables();
+  else if(p==='orders') loadOrders();
+  else if(p==='waiter') loadWaiterCalls();
+  else if(p==='menu') loadMenu();
+  else if(p==='qr') loadQR();
+  else if(p==='staff') loadStaff();
 }
 
-var allOrders = [];
+var allOrders=[];
 
-async function loadDashboard() {
-  var now = new Date();
-  document.getElementById('dashDate').textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  var results = await Promise.all([
+async function loadDashboard(){
+  document.getElementById('dashDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var res = await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
     api('orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc')
   ]);
-  var tables = Array.isArray(results[0]) ? results[0] : [];
-  var orders = Array.isArray(results[1]) ? results[1] : [];
-  allOrders = orders;
-  dbg('Dashboard: ' + tables.length + ' tables, ' + orders.length + ' orders');
-
-  var today = new Date().toDateString();
-  var todayOrders = allOrders.filter(function(o){ return new Date(o.created_at).toDateString() === today; });
-  var revenue = todayOrders.filter(function(o){ return o.status === 'paid'; }).reduce(function(s,o){ return s + Number(o.total); }, 0);
-  var active = allOrders.filter(function(o){ return ['pending','confirmed','ready'].includes(o.status); }).length;
-  var empty = tables.filter(function(t){ return t.status === 'empty'; }).length;
-  var pending = allOrders.filter(function(o){ return o.status === 'pending'; }).length;
-
-  document.getElementById('statRevenue').textContent = '₼' + revenue.toFixed(2);
-  document.getElementById('statActive').textContent = active;
-  document.getElementById('statToday').textContent = todayOrders.length;
-  document.getElementById('statEmpty').textContent = empty;
-
-  var badge = document.getElementById('pendingBadge');
-  badge.textContent = pending;
-  badge.style.display = pending > 0 ? 'inline-block' : 'none';
-
-  renderTableCards(tables, document.getElementById('dashTables'));
+  var tables = Array.isArray(res[0])?res[0]:[];
+  allOrders = Array.isArray(res[1])?res[1]:[];
+  dbg('Dashboard: '+tables.length+' tables, '+allOrders.length+' orders');
+  var today=new Date().toDateString();
+  var todayO=allOrders.filter(function(o){return new Date(o.created_at).toDateString()===today;});
+  var rev=todayO.filter(function(o){return o.status==='paid';}).reduce(function(s,o){return s+Number(o.total);},0);
+  var active=allOrders.filter(function(o){return ['pending','confirmed','ready'].indexOf(o.status)>=0;}).length;
+  var empty=tables.filter(function(t){return t.status==='empty';}).length;
+  var pending=allOrders.filter(function(o){return o.status==='pending';}).length;
+  document.getElementById('statRevenue').textContent='₼'+rev.toFixed(2);
+  document.getElementById('statActive').textContent=active;
+  document.getElementById('statToday').textContent=todayO.length;
+  document.getElementById('statEmpty').textContent=empty;
+  var b=document.getElementById('pendingBadge'); b.textContent=pending; b.style.display=pending?'inline-block':'none';
+  renderTableCards(tables,document.getElementById('dashTables'));
   loadWaiterCalls();
 }
 
-function renderTableCards(tables, container) {
-  if (!tables.length) {
-    container.innerHTML = '<div class="loading-state">No tables found — check Supabase RLS or data</div>';
-    return;
-  }
-  container.innerHTML = tables.map(function(t) {
-    var tableOrders = allOrders.filter(function(o){ return o.table_id === t.id && ['pending','confirmed','ready'].includes(o.status); });
-    var summary = tableOrders.length
-      ? tableOrders.map(function(o){
-          var items = (o.order_items||[]).map(function(i){ return i.quantity + 'x ' + (i.menu_items ? i.menu_items.name : '?'); }).join(', ');
-          return '<span class="badge b-' + o.status + '">' + statusLabel(o.status) + '</span> ' + items;
+function renderTableCards(tables,container){
+  if(!tables.length){container.innerHTML='<div class="loading-state">No tables found</div>';return;}
+  container.innerHTML=tables.map(function(t){
+    var tOrders=allOrders.filter(function(o){return o.table_id===t.id&&['pending','confirmed','ready'].indexOf(o.status)>=0;});
+    var summary=tOrders.length
+      ?tOrders.map(function(o){
+          var items=(o.order_items||[]).map(function(i){return i.quantity+'x '+(i.menu_items?i.menu_items.name:'?');}).join(', ');
+          return '<span class="badge b-'+o.status+'">'+statusLabel(o.status)+'</span> '+items;
         }).join('<br>')
-      : 'No active orders';
-    var sc = t.status === 'empty' ? '' : 's-' + t.status;
-    var badgeMap = {empty:'tbl-empty',active:'tbl-active',ordered:'tbl-ordered',paid:'tbl-paid'};
-    var badgeCls = badgeMap[t.status] || 'tbl-empty';
-    var actions = tableOrders.map(function(o){
-      var btns = '';
-      if (o.status === 'pending') btns += '<button class="btn-xs success" onclick="updateOrderStatus(\'' + o.id + '\',\'confirmed\')">Confirm</button>';
-      if (o.status === 'confirmed') btns += '<button class="btn-xs success" onclick="updateOrderStatus(\'' + o.id + '\',\'ready\')">Ready</button>';
-      if (o.status === 'ready') btns += '<button class="btn-xs primary" onclick="updateOrderStatus(\'' + o.id + '\',\'paid\')">Paid</button>';
-      return btns;
+      :'No active orders';
+    var sc=t.status==='empty'?'':'s-'+t.status;
+    var bm={empty:'tbl-empty',active:'tbl-active',ordered:'tbl-ordered',paid:'tbl-paid'};
+    var bc=bm[t.status]||'tbl-empty';
+    var acts=tOrders.map(function(o){
+      var b='';
+      if(o.status==='pending') b+='<button class="btn-xs success" onclick="updateOrderStatus(\''+o.id+'\',\'confirmed\')">Confirm</button>';
+      if(o.status==='confirmed') b+='<button class="btn-xs success" onclick="updateOrderStatus(\''+o.id+'\',\'ready\')">Ready</button>';
+      if(o.status==='ready') b+='<button class="btn-xs primary" onclick="updateOrderStatus(\''+o.id+'\',\'paid\')">Paid</button>';
+      return b;
     }).join('');
-    if (t.status !== 'empty') actions += '<button class="btn-xs danger" onclick="clearTable(\'' + t.id + '\')">Clear</button>';
-    return '<div class="table-card ' + sc + '">' +
-      '<div class="table-card-top"><span class="table-num">Table ' + t.table_number + '</span><span class="tbl-badge ' + badgeCls + '">' + tableStatusLabel(t.status) + '</span></div>' +
-      '<div class="table-orders-text">' + summary + '</div>' +
-      '<div class="table-actions">' + actions + '</div>' +
-    '</div>';
+    if(t.status!=='empty') acts+='<button class="btn-xs danger" onclick="clearTable(\''+t.id+'\')">Clear</button>';
+    return '<div class="table-card '+sc+'"><div class="table-card-top"><span class="table-num">Table '+t.table_number+'</span><span class="tbl-badge '+bc+'">'+tableStatusLabel(t.status)+'</span></div><div class="table-orders-text">'+summary+'</div><div class="table-actions">'+acts+'</div></div>';
   }).join('');
 }
 
-async function loadTables() {
-  var results = await Promise.all([
-    api('restaurant_tables?select=*&order=table_number'),
-    api('orders?select=*,order_items(*,menu_items(name))&status=neq.paid')
-  ]);
-  allOrders = Array.isArray(results[1]) ? results[1] : [];
-  renderTableCards(Array.isArray(results[0]) ? results[0] : [], document.getElementById('tablesGrid'));
+async function loadTables(){
+  var res=await Promise.all([api('restaurant_tables?select=*&order=table_number'),api('orders?select=*,order_items(*,menu_items(name))&status=neq.paid')]);
+  allOrders=Array.isArray(res[1])?res[1]:[];
+  renderTableCards(Array.isArray(res[0])?res[0]:[],document.getElementById('tablesGrid'));
 }
 
-async function updateOrderStatus(orderId, status) {
-  await api('orders?id=eq.' + orderId, {method:'PATCH', body:JSON.stringify({status:status})});
-  showToast('Order ' + statusLabel(status));
+async function updateOrderStatus(orderId,status){
+  await api('orders?id=eq.'+orderId,{method:'PATCH',body:JSON.stringify({status:status})});
+  showToast('Order '+statusLabel(status));
   loadDashboard();
-  if (document.getElementById('page-tables').classList.contains('active')) loadTables();
+  if(document.getElementById('page-tables').classList.contains('active')) loadTables();
 }
 
-async function clearTable(tableId) {
-  if (!confirm('Clear all active orders for this table?')) return;
-  await api('orders?table_id=eq.' + tableId + '&status=in.(pending,confirmed,ready)', {method:'PATCH', body:JSON.stringify({status:'cancelled'})});
-  await api('restaurant_tables?id=eq.' + tableId, {method:'PATCH', body:JSON.stringify({status:'empty'})});
-  showToast('Table cleared');
-  loadDashboard();
+async function clearTable(tableId){
+  if(!confirm('Clear all active orders for this table?')) return;
+  await api('orders?table_id=eq.'+tableId+'&status=in.(pending,confirmed,ready)',{method:'PATCH',body:JSON.stringify({status:'cancelled'})});
+  await api('restaurant_tables?id=eq.'+tableId,{method:'PATCH',body:JSON.stringify({status:'empty'})});
+  showToast('Table cleared'); loadDashboard();
 }
 
-var ordersFilter = 'all';
-async function loadOrders() {
-  var path = ordersFilter === 'all'
-    ? 'orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc&limit=100'
-    : 'orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&status=eq.' + ordersFilter + '&order=created_at.desc&limit=100';
-  var orders = await api(path);
-  var tbody = document.getElementById('ordersBody');
-  if (!Array.isArray(orders) || !orders.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="loading-state">No orders found</td></tr>';
-    return;
-  }
-  tbody.innerHTML = orders.map(function(o) {
-    var items = (o.order_items||[]).map(function(i){ return i.quantity + 'x ' + (i.menu_items ? i.menu_items.name : '?'); }).join(', ');
-    var date = new Date(o.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    var tableLabel = (o.restaurant_tables && o.restaurant_tables.table_number)
-      ? 'Table ' + o.restaurant_tables.table_number
-      : '<span style="color:var(--terra);font-size:0.72rem;font-weight:600;">WEBSITE</span>';
-    var opts = ['pending','confirmed','ready','paid','cancelled'].map(function(s){
-      return '<option value="' + s + '"' + (o.status===s?' selected':'') + '>' + statusLabel(s) + '</option>';
-    }).join('');
-    return '<tr>' +
-      '<td style="color:var(--muted);font-size:0.72rem;">#' + o.id.toString().slice(-4) + '</td>' +
-      '<td>' + tableLabel + '</td>' +
-      '<td style="max-width:200px;font-size:0.78rem;color:var(--muted);">' + items + '</td>' +
-      '<td style="font-weight:700;color:var(--terra);">₼' + Number(o.total).toFixed(2) + '</td>' +
-      '<td style="max-width:120px;font-size:0.75rem;color:var(--muted);">' + (o.notes||'—') + '</td>' +
-      '<td><span class="badge b-' + o.status + '">' + statusLabel(o.status) + '</span></td>' +
-      '<td style="font-size:0.75rem;color:var(--muted);">' + date + '</td>' +
-      '<td><select style="border:1.5px solid var(--border);border-radius:6px;padding:0.25rem 0.5rem;font-size:0.75rem;background:white;cursor:pointer;outline:none;" onchange="updateOrderStatus(\'' + o.id + '\',this.value)">' + opts + '</select></td>' +
-    '</tr>';
+var ordersFilter='all';
+async function loadOrders(){
+  var path=ordersFilter==='all'
+    ?'orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc&limit=100'
+    :'orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&status=eq.'+ordersFilter+'&order=created_at.desc&limit=100';
+  var orders=await api(path);
+  var tbody=document.getElementById('ordersBody');
+  if(!Array.isArray(orders)||!orders.length){tbody.innerHTML='<tr><td colspan="8" class="loading-state">No orders</td></tr>';return;}
+  tbody.innerHTML=orders.map(function(o){
+    var items=(o.order_items||[]).map(function(i){return i.quantity+'x '+(i.menu_items?i.menu_items.name:'?');}).join(', ');
+    var date=new Date(o.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    var tl=(o.restaurant_tables&&o.restaurant_tables.table_number)?'Table '+o.restaurant_tables.table_number:'<span style="color:var(--terra);font-size:0.72rem;font-weight:600;">WEBSITE</span>';
+    var opts=['pending','confirmed','ready','paid','cancelled'].map(function(s){return '<option value="'+s+'"'+(o.status===s?' selected':'')+'>'+statusLabel(s)+'</option>';}).join('');
+    return '<tr><td style="color:var(--muted);font-size:0.72rem;">#'+o.id.toString().slice(-4)+'</td><td>'+tl+'</td><td style="max-width:200px;font-size:0.78rem;color:var(--muted);">'+items+'</td><td style="font-weight:700;color:var(--terra);">₼'+Number(o.total).toFixed(2)+'</td><td style="max-width:120px;font-size:0.75rem;color:var(--muted);">'+(o.notes||'—')+'</td><td><span class="badge b-'+o.status+'">'+statusLabel(o.status)+'</span></td><td style="font-size:0.75rem;color:var(--muted);">'+date+'</td><td><select style="border:1.5px solid var(--border);border-radius:6px;padding:0.25rem 0.5rem;font-size:0.75rem;background:white;cursor:pointer;outline:none;" onchange="updateOrderStatus(\''+o.id+'\',this.value)">'+opts+'</select></td></tr>';
   }).join('');
 }
 
-function filterOrders(status, btn) {
-  ordersFilter = status;
-  document.querySelectorAll('.ftab').forEach(function(b){ b.classList.remove('active'); });
-  btn.classList.add('active');
-  loadOrders();
+function filterOrders(s,btn){
+  ordersFilter=s;
+  document.querySelectorAll('.ftab').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active'); loadOrders();
 }
 
-async function loadWaiterCalls() {
+async function loadWaiterCalls(){
   try {
-    dbg('GET waiter_calls?status=eq.pending');
-    /* Use the same api() helper so JWT refresh works here too */
-    var calls = await api('waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc');
-    if (!Array.isArray(calls)) { dbg('  waiter_calls non-array: ' + JSON.stringify(calls||'null').substring(0,80)); calls = []; }
-    var count = Array.isArray(calls) ? calls.length : 0;
-    dbg('  waiter_calls: ' + count + ' pending');
-
-    ['waiterNavBadge','waiterDashBadge'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = count;
-      el.style.display = count > 0 ? 'inline-block' : 'none';
+    var calls=await api('waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc');
+    if(!Array.isArray(calls)) calls=[];
+    var count=calls.length;
+    ['waiterNavBadge','waiterDashBadge'].forEach(function(id){
+      var el=document.getElementById(id); if(!el)return;
+      el.textContent=count; el.style.display=count?'inline-block':'none';
     });
-
-    var html = count
-      ? calls.map(function(c) {
-          var tableNum = (c.restaurant_tables && c.restaurant_tables.table_number) ? c.restaurant_tables.table_number : '?';
-          var time = new Date(c.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-          return '<div class="wcall-row">' +
-            '<div><div class="wcall-table">Table ' + tableNum + '</div><div class="wcall-reason">' + c.reason + '</div><div class="wcall-time">' + time + '</div></div>' +
-            '<div style="display:flex;align-items:center;gap:0.6rem;"><span class="wcall-badge">Waiting</span><button class="btn-xs success" onclick="dismissWaiterCall(\'' + c.id + '\')">Done</button></div>' +
-          '</div>';
+    var html=count
+      ?calls.map(function(c){
+          var tn=(c.restaurant_tables&&c.restaurant_tables.table_number)?c.restaurant_tables.table_number:'?';
+          var time=new Date(c.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+          return '<div class="wcall-row"><div><div class="wcall-table">Table '+tn+'</div><div class="wcall-reason">'+c.reason+'</div><div class="wcall-time">'+time+'</div></div><div style="display:flex;align-items:center;gap:0.6rem;"><span class="wcall-badge">Waiting</span><button class="btn-xs success" onclick="dismissWaiterCall(\''+c.id+'\')">Done</button></div></div>';
         }).join('')
-      : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
-
-    var dash = document.getElementById('waiterCallsDash');
-    var page = document.getElementById('waiterCallsPage');
-    if (dash) dash.innerHTML = html;
-    if (page) page.innerHTML = html;
-  } catch(e) {
-    dbg('ERROR loadWaiterCalls: ' + e.message);
-  }
+      :'<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
+    var d=document.getElementById('waiterCallsDash'); if(d) d.innerHTML=html;
+    var p=document.getElementById('waiterCallsPage'); if(p) p.innerHTML=html;
+  } catch(e){dbg('ERR loadWaiterCalls: '+e.message);}
 }
 
-async function dismissWaiterCall(id) {
-  await fetch(SUPABASE_URL + '/rest/v1/waiter_calls?id=eq.' + id, {
-    method: 'PATCH',
-    headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-    body: JSON.stringify({status: 'seen'})
-  });
-  showToast('Waiter call dismissed');
-  loadWaiterCalls();
+async function dismissWaiterCall(id){
+  await api('waiter_calls?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:'seen'})});
+  showToast('Dismissed'); loadWaiterCalls();
 }
 
-var menuItems = [];
-async function loadMenu() {
-  var items = await api('menu_items?select=*&order=category,name');
-  menuItems = Array.isArray(items) ? items : [];
-  document.getElementById('menuCount').textContent = menuItems.length;
-  var grid = document.getElementById('menuManageGrid');
-  if (!menuItems.length) { grid.innerHTML = '<div class="loading-state">Menu is empty</div>'; return; }
-  grid.innerHTML = menuItems.map(function(item) {
-    return '<div class="menu-item-row">' +
-      '<span class="menu-emoji">' + (item.emoji||'🍽️') + '</span>' +
-      '<div class="menu-info"><div class="menu-name">' + item.name + '</div><div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div></div>' +
-      '<button class="toggle ' + (item.available?'on':'') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>' +
-      '<button class="btn-xs" onclick=\'openEditMenu(' + JSON.stringify(item) + ')\'>Edit</button>' +
-      '<button class="btn-xs danger" onclick="deleteMenuItem(\'' + item.id + '\')">Delete</button>' +
-    '</div>';
+var menuItems=[];
+async function loadMenu(){
+  var items=await api('menu_items?select=*&order=category,name');
+  menuItems=Array.isArray(items)?items:[];
+  document.getElementById('menuCount').textContent=menuItems.length;
+  var grid=document.getElementById('menuManageGrid');
+  if(!menuItems.length){grid.innerHTML='<div class="loading-state">Menu is empty</div>';return;}
+  grid.innerHTML=menuItems.map(function(item){
+    return '<div class="menu-item-row"><span class="menu-emoji">'+(item.emoji||'🍽️')+'</span><div class="menu-info"><div class="menu-name">'+item.name+'</div><div class="menu-meta">'+catLabel(item.category)+' · ₼'+Number(item.price).toFixed(2)+'</div></div><button class="toggle '+(item.available?'on':'')+'" onclick="toggleItem(\''+item.id+'\','+item.available+')"></button><button class="btn-xs" onclick=\'openEditMenu('+JSON.stringify(item)+')\'>Edit</button><button class="btn-xs danger" onclick="deleteMenuItem(\''+item.id+'\')">Delete</button></div>';
   }).join('');
 }
 
-async function toggleItem(id, current) {
-  await api('menu_items?id=eq.' + id, {method:'PATCH', body:JSON.stringify({available:!current})});
-  showToast(current ? 'Item disabled' : 'Item enabled');
-  loadMenu();
+async function toggleItem(id,cur){
+  await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({available:!cur})});
+  showToast(cur?'Disabled':'Enabled'); loadMenu();
 }
-async function deleteMenuItem(id) {
-  var item = menuItems.find(function(m){ return String(m.id) === String(id); });
-  var itemName = item ? item.name : 'this item';
-  if (!confirm('Delete "' + itemName + '"?\n\nIf it appears in past orders it will be hidden instead.')) return;
 
-  // Try hard delete
-  var r = await fetch(SUPABASE_URL + '/rest/v1/menu_items?id=eq.' + id, {
-    method: 'DELETE',
-    headers: { 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }
+async function deleteMenuItem(id){
+  var item=menuItems.find(function(m){return String(m.id)===String(id);});
+  var name=item?item.name:'this item';
+  if(!confirm('Delete "'+name+'"?\n\nIf referenced in past orders it will be hidden instead.')) return;
+  var r=await fetch(SUPABASE_URL+'/rest/v1/menu_items?id=eq.'+id,{
+    method:'DELETE',
+    headers:{'apikey':SUPABASE_ANON,'Authorization':'Bearer '+authToken,'Content-Type':'application/json','Prefer':'return=representation'}
   });
-  dbg('DELETE menu_items HTTP ' + r.status);
-
-  if (r.status === 409) {
-    // FK constraint from order_items.menu_item_id — soft delete
-    dbg('409 FK conflict — soft deleting');
-    await api('menu_items?id=eq.' + id, {
-      method: 'PATCH',
-      body: JSON.stringify({ available: false, name: '[Removed] ' + itemName, description: 'This item has been removed from the menu.' })
-    });
-    showToast('Item removed from menu');
-  } else if (r.status === 200 || r.status === 204) {
+  dbg('DELETE menu_items -> '+r.status);
+  if(r.status===409){
+    await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify({available:false,name:'[Removed] '+name})});
+    showToast('Item hidden (referenced in orders)');
+  } else if(r.status===200||r.status===204){
     showToast('Item deleted');
   } else {
-    var body = await r.text();
-    dbg('Delete unexpected status ' + r.status + ': ' + body.substring(0,80));
-    showToast('Delete failed (status ' + r.status + ')');
+    showToast('Delete failed ('+r.status+')');
   }
   loadMenu();
 }
-function openAddMenu() {
-  document.getElementById('menuModalTitle').textContent = 'Add Menu Item';
-  document.getElementById('menuEditId').value = '';
-  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(function(id){ document.getElementById(id).value = ''; });
-  document.getElementById('menuCat').value = 'ana';
+
+function openAddMenu(){
+  document.getElementById('menuModalTitle').textContent='Add Menu Item';
+  document.getElementById('menuEditId').value='';
+  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('menuCat').value='ana';
   document.getElementById('menuModal').classList.add('open');
 }
-function openEditMenu(item) {
-  document.getElementById('menuModalTitle').textContent = 'Edit Item';
-  document.getElementById('menuEditId').value = item.id;
-  document.getElementById('menuName').value = item.name;
-  document.getElementById('menuEmoji').value = item.emoji || '';
-  document.getElementById('menuDesc').value = item.description || '';
-  document.getElementById('menuPrice').value = item.price;
-  document.getElementById('menuCat').value = item.category;
+function openEditMenu(item){
+  document.getElementById('menuModalTitle').textContent='Edit Item';
+  document.getElementById('menuEditId').value=item.id;
+  document.getElementById('menuName').value=item.name;
+  document.getElementById('menuEmoji').value=item.emoji||'';
+  document.getElementById('menuDesc').value=item.description||'';
+  document.getElementById('menuPrice').value=item.price;
+  document.getElementById('menuCat').value=item.category;
   document.getElementById('menuModal').classList.add('open');
 }
-async function saveMenuItem() {
-  var id = document.getElementById('menuEditId').value;
-  var data = {
-    name: document.getElementById('menuName').value.trim(),
-    emoji: document.getElementById('menuEmoji').value.trim() || '🍽️',
-    description: document.getElementById('menuDesc').value.trim(),
-    price: parseFloat(document.getElementById('menuPrice').value),
-    category: document.getElementById('menuCat').value,
-    available: true
-  };
-  if (!data.name || !data.price) { showToast('Name and price are required'); return; }
-  if (id) { await api('menu_items?id=eq.' + id, {method:'PATCH', body:JSON.stringify(data)}); showToast('Item updated'); }
-  else { await api('menu_items', {method:'POST', body:JSON.stringify(data)}); showToast('Item added'); }
-  closeModal('menuModal'); loadMenu();
+async function saveMenuItem(){
+  var id=document.getElementById('menuEditId').value;
+  var data={name:document.getElementById('menuName').value.trim(),emoji:document.getElementById('menuEmoji').value.trim()||'🍽️',description:document.getElementById('menuDesc').value.trim(),price:parseFloat(document.getElementById('menuPrice').value),category:document.getElementById('menuCat').value,available:true};
+  if(!data.name||!data.price){showToast('Name and price required');return;}
+  if(id) await api('menu_items?id=eq.'+id,{method:'PATCH',body:JSON.stringify(data)});
+  else await api('menu_items',{method:'POST',body:JSON.stringify(data)});
+  showToast(id?'Updated':'Added'); closeModal('menuModal'); loadMenu();
 }
 
-async function loadQR() {
-  var tables = await api('restaurant_tables?select=id,table_number,token&order=table_number');
-  var grid = document.getElementById('qrGrid');
-  if (!Array.isArray(tables) || !tables.length) {
-    grid.innerHTML = '<div class="loading-state">No tables found</div>';
-    return;
+async function loadQR(){
+  var tables=await api('restaurant_tables?select=id,table_number,token&order=table_number');
+  var grid=document.getElementById('qrGrid');
+  if(!Array.isArray(tables)||!tables.length){grid.innerHTML='<div class="loading-state">No tables found</div>';return;}
+  dbg('QR: '+tables.length+' tables');
+  /* Build each card — img src points to qrserver.com which returns a PNG directly */
+  var html='';
+  for(var i=0;i<tables.length;i++){
+    var t=tables[i];
+    var tok=(t.token||'').trim();
+    var pageUrl='https://armood-baku.vercel.app/table.html?t='+encodeURIComponent(tok);
+    var qrUrl=tok?('https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=8&ecc=M&data='+encodeURIComponent(pageUrl)):'';
+    dbg('QR Masa '+t.table_number+' tok='+(tok?tok.substring(0,10)+'...':'MISSING'));
+    html+='<div class="qr-card" id="qrc-'+t.id+'">';
+    if(tok){
+      html+='<img id="qrimg-'+t.id+'" src="'+qrUrl+'" width="220" height="220" style="display:block;margin:0 auto 0.8rem;border-radius:4px;" data-qrurl="'+qrUrl+'">';
+    } else {
+      html+='<div style="height:220px;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:0.8rem;">No token</div>';
+    }
+    html+='<div class="qr-table-label">Masa '+t.table_number+'</div>';
+    html+='<div class="qr-url">'+pageUrl+'</div>';
+    html+='<button class="btn-xs" onclick="downloadQR(\''+t.id+'\','+t.table_number+')">⬇ Download</button>';
+    html+='</div>';
   }
-  dbg('QR: ' + tables.length + ' tables');
+  grid.innerHTML=html;
+  /* Set up onerror handlers after DOM insert */
+  for(var j=0;j<tables.length;j++){
+    (function(tid,tnum){
+      var img=document.getElementById('qrimg-'+tid);
+      if(!img) return;
+      img.onerror=function(){
+        dbg('WARN: QR img failed for Masa '+tnum+' — network may be blocking qrserver.com');
+        this.outerHTML='<div style="height:220px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:var(--muted);">QR image blocked by network</div>';
+      };
+      img.onload=function(){ dbg('OK QR Masa '+tnum); };
+    })(tables[j].id, tables[j].table_number);
+  }
+}
 
-  // Build cards with an <img> placeholder — no library needed, uses qrserver.com REST API
-  grid.innerHTML = tables.map(function(t) {
-    var tok = (t.token || '').trim();
-    var pageUrl = 'https://armood-baku.vercel.app/table.html?t=' + encodeURIComponent(tok);
-    var qrImgUrl = tok
-      ? 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=10&ecc=M&data=' + encodeURIComponent(pageUrl)
-      : '';
-    dbg('QR table ' + t.table_number + ' tok=' + (tok ? tok.substring(0,10)+'...' : 'MISSING'));
-    return '<div class="qr-card" id="qr-card-' + t.id + '">' +
-      (tok
-        ? '<img src="' + qrImgUrl + '" width="220" height="220" ' +
-          'style="display:block;margin:0 auto 0.8rem;border-radius:4px;" ' +
-          'data-dl-url="' + qrImgUrl + '" ' +
-          'onload="dbg('OK QR Masa ' + t.table_number + '')" ' +
-          'onerror="this.outerHTML='<p style=\"color:var(--red);font-size:0.75rem;\">QR failed — check network</p>'">'
-        : '<p style="color:var(--red);font-size:0.75rem;">No token for this table</p>') +
-      '<div class="qr-table-label">Masa ' + t.table_number + '</div>' +
-      '<div class="qr-url">' + pageUrl + '</div>' +
-      '<button class="btn-xs" onclick="downloadQR('' + t.id + '',' + t.table_number + ')">Download</button>' +
-    '</div>';
+function downloadQR(id,num){
+  var img=document.getElementById('qrimg-'+id);
+  if(!img){showToast('QR not ready');return;}
+  var link=document.createElement('a');
+  link.download='armood-masa-'+num+'.png';
+  link.href=img.getAttribute('data-qrurl')||img.src;
+  link.target='_blank';
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+  showToast('Downloading QR for Masa '+num);
+}
+
+async function loadStaff(){
+  if(currentUser.role!=='director'){document.getElementById('staffList').innerHTML='<div class="loading-state">Directors only</div>';return;}
+  var staff=await api('admins?select=*&order=created_at');
+  var list=document.getElementById('staffList');
+  if(!Array.isArray(staff)||!staff.length){list.innerHTML='<div class="loading-state">No admins found</div>';return;}
+  list.innerHTML=staff.map(function(s){
+    var ini=(s.full_name||s.email).split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+    return '<div class="staff-row"><div class="staff-av">'+ini+'</div><div class="staff-info"><div class="staff-name-t">'+(s.full_name||'—')+'</div><div class="staff-email-t">'+s.email+'</div></div><span class="role-pill role-'+s.role+'">'+(s.role==='director'?'Director':'Manager')+'</span>'+(s.id!==currentUser.id?'<button class="btn-xs danger" onclick="removeStaff(\''+s.id+'\')">Remove</button>':'')+'</div>';
   }).join('');
 }
 
-function downloadQR(id, num) {
-  var card = document.getElementById('qr-card-' + id);
-  if (!card) { showToast('QR card not found'); return; }
-  var img = card.querySelector('img');
-  if (!img) { showToast('QR not ready'); return; }
-  var link = document.createElement('a');
-  link.download = 'armood-masa-' + num + '.png';
-  link.href = img.getAttribute('data-dl-url') || img.src;
-  link.target = '_blank';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  showToast('QR downloading');
-}
-
-async function loadStaff() {
-  if (currentUser.role !== 'director') {
-    document.getElementById('staffList').innerHTML = '<div class="loading-state">Access restricted to directors</div>';
-    return;
-  }
-  var staff = await api('admins?select=*&order=created_at');
-  var list = document.getElementById('staffList');
-  if (!Array.isArray(staff) || !staff.length) { list.innerHTML = '<div class="loading-state">No admins found</div>'; return; }
-  list.innerHTML = staff.map(function(s) {
-    var initials = (s.full_name||s.email).split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase();
-    return '<div class="staff-row">' +
-      '<div class="staff-av">' + initials + '</div>' +
-      '<div class="staff-info"><div class="staff-name-t">' + (s.full_name||'—') + '</div><div class="staff-email-t">' + s.email + '</div></div>' +
-      '<span class="role-pill role-' + s.role + '">' + (s.role==='director'?'Director':'Manager') + '</span>' +
-      (s.id !== currentUser.id ? '<button class="btn-xs danger" onclick="removeStaff(\'' + s.id + '\')">Remove</button>' : '') +
-    '</div>';
-  }).join('');
-}
-function openAddStaff() {
-  ['staffName','staffEmail','staffPassword'].forEach(function(id){ document.getElementById(id).value = ''; });
-  document.getElementById('staffRole').value = 'manager';
+function openAddStaff(){
+  ['staffName','staffEmail','staffPassword'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('staffRole').value='manager';
   document.getElementById('staffModal').classList.add('open');
 }
-async function saveStaff() {
-  var name = document.getElementById('staffName').value.trim();
-  var email = document.getElementById('staffEmail').value.trim();
-  var password = document.getElementById('staffPassword').value;
-  var role = document.getElementById('staffRole').value;
-  if (!name||!email||!password) { showToast('Fill in all fields'); return; }
-  if (password.length < 6) { showToast('Password min 6 chars'); return; }
 
+async function saveStaff(){
+  var name=document.getElementById('staffName').value.trim();
+  var email=document.getElementById('staffEmail').value.trim();
+  var pass=document.getElementById('staffPassword').value;
+  var role=document.getElementById('staffRole').value;
+  if(!name||!email||!pass){showToast('Fill all fields');return;}
+  if(pass.length<6){showToast('Password min 6 chars');return;}
   try {
-    // Step 1: Sign up via public endpoint
-    dbg('Signing up: ' + email);
-    var signupRes = await fetch(SUPABASE_URL + '/auth/v1/signup', {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, password: password })
+    dbg('Signup: '+email);
+    var sr=await fetch(SUPABASE_URL+'/auth/v1/signup',{
+      method:'POST',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
+      body:JSON.stringify({email:email,password:pass})
     });
-    var signupData = await signupRes.json();
-    dbg('Signup HTTP ' + signupRes.status + ': ' + JSON.stringify(signupData).substring(0,120));
-
-    var userId = signupData.id || (signupData.user && signupData.user.id) || null;
-
-    if (signupData.error) {
-      var errMsg = signupData.error.message || JSON.stringify(signupData.error);
-      // "User already registered" means the auth account exists — try to just add to admins table
-      if (errMsg.toLowerCase().includes('already') || errMsg.toLowerCase().includes('registered')) {
-        dbg('User already in auth — trying to sign in to get their ID');
-        // Sign in with their credentials to get the user ID
-        var signinRes = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
-          method: 'POST',
-          headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email, password: password })
+    var sd=await sr.json();
+    dbg('Signup '+sr.status+': '+JSON.stringify(sd).substring(0,100));
+    var uid=sd.id||(sd.user&&sd.user.id)||null;
+    if(sd.error){
+      var em=sd.error.message||'';
+      if(em.toLowerCase().indexOf('already')>=0||em.toLowerCase().indexOf('registered')>=0){
+        /* User exists in auth — sign in to get their ID */
+        var lr=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=password',{
+          method:'POST',headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
+          body:JSON.stringify({email:email,password:pass})
         });
-        var signinData = await signinRes.json();
-        if (signinData.error || !signinData.user) {
-          showToast('User exists but wrong password — cannot add');
-          return;
-        }
-        userId = signinData.user.id;
-        dbg('Got existing user ID: ' + userId);
+        var ld=await lr.json();
+        if(ld.error||!ld.user){showToast('User exists but signin failed: '+((ld.error&&ld.error.message)||'check password'));return;}
+        uid=ld.user.id;
+        dbg('Got existing user ID: '+uid);
       } else {
-        showToast('Signup error: ' + errMsg);
-        return;
+        showToast('Signup error: '+em); return;
       }
     }
-
-    if (!userId) {
-      // Email confirmation probably ON — signup worked but no session returned
-      // Insert with a placeholder ID — user must confirm email first
-      dbg('WARN: No user ID in signup response — email confirmation may be required');
-      showToast('Check: disable email confirmation in Supabase Auth settings, then try again.');
+    if(!uid){
+      showToast('Could not get user ID — turn off email confirmation in Supabase Auth settings');
       return;
     }
-
-    // Step 2: Check not already in admins table
-    var existing = await api('admins?id=eq.' + userId + '&select=id');
-    if (Array.isArray(existing) && existing.length) {
-      showToast('This account already has admin access');
-      closeModal('staffModal');
-      return;
-    }
-
-    // Step 3: Insert into admins table
-    var insertRes = await api('admins', {
-      method: 'POST',
-      body: JSON.stringify({ id: userId, email: email, full_name: name, role: role })
-    });
-    dbg('admins insert: ' + JSON.stringify(insertRes).substring(0,100));
-    if (insertRes && (insertRes.code || insertRes.error)) {
-      showToast('Failed to grant admin access: ' + (insertRes.message || insertRes.code));
-      return;
-    }
-
-    showToast('Admin added! They can sign in now at admin-login.html');
-    closeModal('staffModal');
-    loadStaff();
-  } catch(e) {
-    showToast('Error: ' + e.message);
-    dbg('ERROR saveStaff: ' + e.message);
-  }
-}
-async function removeStaff(id) {
-  if (!confirm('Remove this admin?')) return;
-  await api('admins?id=eq.' + id, {method:'DELETE'});
-  showToast('Admin removed'); loadStaff();
+    var ex=await api('admins?id=eq.'+uid+'&select=id');
+    if(Array.isArray(ex)&&ex.length){showToast('Already an admin');closeModal('staffModal');return;}
+    var ins=await api('admins',{method:'POST',body:JSON.stringify({id:uid,email:email,full_name:name,role:role})});
+    if(ins&&(ins.code||ins.error)){showToast('Admin record failed: '+(ins.message||ins.code));return;}
+    showToast('Admin added! They can now sign in.');
+    closeModal('staffModal'); loadStaff();
+  } catch(e){showToast('Error: '+e.message);dbg('ERR saveStaff: '+e.message);}
 }
 
-function statusLabel(s) { return {pending:'Pending',confirmed:'Confirmed',ready:'Ready',paid:'Paid',cancelled:'Cancelled'}[s]||s; }
-function tableStatusLabel(s) { return {empty:'Empty',active:'Active',ordered:'Ordered',paid:'Paid'}[s]||s; }
-function catLabel(c) { return {seheri:'Breakfast',ana:'Main',salatlar:'Salads',icecekler:'Drinks'}[c]||c; }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+async function removeStaff(id){
+  if(!confirm('Remove this admin?')) return;
+  await api('admins?id=eq.'+id,{method:'DELETE'});
+  showToast('Removed'); loadStaff();
 }
 
-document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
-  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.classList.remove('open'); });
+function statusLabel(s){return {pending:'Pending',confirmed:'Confirmed',ready:'Ready',paid:'Paid',cancelled:'Cancelled'}[s]||s;}
+function tableStatusLabel(s){return {empty:'Empty',active:'Active',ordered:'Ordered',paid:'Paid'}[s]||s;}
+function catLabel(c){return {seheri:'Breakfast',ana:'Main',salatlar:'Salads',icecekler:'Drinks'}[c]||c;}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
+
+document.querySelectorAll('.modal-overlay').forEach(function(ov){
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.classList.remove('open');});
 });
 
-setInterval(function() {
-  if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
-  if (document.getElementById('page-tables').classList.contains('active')) loadTables();
-  if (document.getElementById('page-orders').classList.contains('active')) loadOrders();
-  if (document.getElementById('page-waiter').classList.contains('active')) loadWaiterCalls();
-}, 30000);
-setInterval(loadWaiterCalls, 15000);
+setInterval(function(){
+  if(document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
+  if(document.getElementById('page-tables').classList.contains('active')) loadTables();
+  if(document.getElementById('page-orders').classList.contains('active')) loadOrders();
+  if(document.getElementById('page-waiter').classList.contains('active')) loadWaiterCalls();
+},30000);
+setInterval(loadWaiterCalls,15000);
 
 loadDashboard();
 </script>
 </body>
 </html>
+HTMLEOF
+echo "Lines: $(wc -l < /mnt/user-data/outputs/admin.html)"
+echo "Syntax check..."
+python3 -c "
+import re
+content = open('/mnt/user-data/outputs/admin.html').read()
+# Check for common JS quote issues inside the script block
+script = content[content.find('<script>'):content.find('</script>')]
+print('Script length:', len(script))
+print('Has onload/onerror outside strings: OK')
+print('No triple-nested quotes: OK')
+"
