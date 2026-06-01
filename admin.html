@@ -757,8 +757,9 @@ function buildTableCard(t,waiterCalls){
   if(tOrders.length){
     var totalItems=tOrders.reduce(function(s,o){return s+(o.order_items||[]).reduce(function(a,i){return a+i.quantity;},0);},0);
     var tableTotal=tOrders.reduce(function(s,o){return s+Number(o.total);},0);
-    summaryHtml='<span>'+totalItems+' item'+(totalItems!==1?'s'||''+':')+'</span>'
-      +'<span class="tc-summary-total">₼'+tableTotal.toFixed(2)+'</span>';
+    summaryHtml =
+  '<span>'+totalItems+' item'+(totalItems!==1?'s':'')+':</span>'
+  +'<span class="tc-summary-total">₼'+tableTotal.toFixed(2)+'</span>';
   } else if(t.status==='active'){
     summaryHtml='<span class="tc-summary-empty">Browsing the menu…</span>';
   } else {
