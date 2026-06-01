@@ -428,15 +428,6 @@ async function init(){
   }catch(e){showErr();}
 }
 
-
-  if(!tableData)return;
-  const o=await api(`orders?table_id=eq.${tableData.id}&status=neq.paid&select=*,order_items(*,menu_items(name))`);
-  tableOrders=Array.isArray(o)?o:[];
-  // If any orders exist, mark hasOrdered = true (persist across the session)
-  if(tableOrders.length>0)hasOrdered=true;
-  renderOrders();
-}
-
 function renderOrders(){
   const sec=document.getElementById('ordersSection');
   const list=document.getElementById('ordersList');
