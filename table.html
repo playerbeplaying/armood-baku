@@ -203,11 +203,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     Canlı sifariş — sifarişiniz birbaşa mətbəxə göndərilir
   </div>
 
-  <div class="orders-section" id="ordersSection" style="display:none;">
-    <div class="orders-label">Cari sifarişləriniz</div>
-    <div id="ordersList"></div>
-  </div>
-
   <div class="cat-wrap" id="catBar">
     <button class="cat-tab active" data-cat="all">Hamısı</button>
     <button class="cat-tab" data-cat="seheri">Səhər yeməyi</button>
@@ -444,24 +439,6 @@ async function loadOrders(){
   renderOrders();
 }
 
-function renderOrders(){
-  const sec=document.getElementById('ordersSection');
-  const list=document.getElementById('ordersList');
-  if(!tableOrders.length){sec.style.display='none';return;}
-  sec.style.display='block';
-  const spMap={pending:'pill-pending',confirmed:'pill-confirmed',ready:'pill-ready',paid:'pill-paid'};
-  const lMap={pending:'Gözlənilir',confirmed:'Təsdiqləndi',ready:'🔔 Hazırdır!',paid:'Ödənildi'};
-  list.innerHTML=tableOrders.map(o=>{
-    const items=(o.order_items||[]).map(i=>`${i.quantity}× ${i.menu_items?.name||'?'}`).join(', ');
-    return `<div class="order-card">
-      <div class="oc-left">
-        <div class="oc-id">Sifariş #${o.id.toString().slice(-4)}</div>
-        <div class="oc-items">${items}</div>
-      </div>
-      <span class="pill ${spMap[o.status]||'pill-pending'}">${lMap[o.status]||o.status}</span>
-    </div>`;
-  }).join('');
-}
 
 function renderMenu(){
   const list=document.getElementById('menuList');
