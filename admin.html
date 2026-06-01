@@ -1,4 +1,4 @@
-cat > /home/claude/admin_updated.html << 'ENDOFFILE'
+cat > /home/claude/admin_updated.html << 'HEREDOC_END'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -29,7 +29,6 @@ html{scroll-behavior:smooth;}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
 
-/* ── TOP NAV ── */
 .topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1rem 0 0;z-index:100;box-shadow:0 1px 3px rgba(30,24,16,0.05);}
 .topnav-left{display:flex;align-items:center;padding:0 1.2rem;height:100%;}
 .topnav-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none;}
@@ -45,7 +44,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-logout:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
 .topnav-clock{font-size:0.72rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
 
-/* ── LAYOUT ── */
 .layout{display:flex;margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h));}
 .sidebar{width:var(--sidebar-w);background:white;border-right:1px solid var(--border);padding:1.2rem 0;flex-shrink:0;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;}
 .sidebar-section{padding:0 0.75rem;margin-bottom:0.5rem;}
@@ -57,7 +55,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:0.65rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;min-width:18px;text-align:center;}
 .main{flex:1;padding:1.5rem;overflow-x:hidden;background:var(--bg);}
 
-/* ── BOTTOM NAV ── */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:white;border-top:1px solid var(--border);z-index:100;box-shadow:0 -2px 10px rgba(30,24,16,0.06);}
 .bottom-nav-inner{display:flex;height:100%;align-items:stretch;}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:all 0.15s;color:var(--muted);-webkit-tap-highlight-color:transparent;position:relative;}
@@ -67,7 +64,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .bnav-label{font-size:0.6rem;font-weight:600;letter-spacing:0.02em;}
 .bnav-dot{position:absolute;top:6px;right:calc(50% - 14px);background:var(--red);color:white;font-size:0.55rem;font-weight:700;padding:0.1rem 0.3rem;border-radius:10px;min-width:16px;text-align:center;display:none;}
 
-/* ── MORE SHEET ── */
 .more-menu-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.45);z-index:150;align-items:flex-end;justify-content:stretch;}
 .more-menu-overlay.open{display:flex;}
 .more-menu-sheet{background:white;border-radius:16px 16px 0 0;padding:1rem 1rem 1.5rem;width:100%;}
@@ -78,13 +74,11 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .more-menu-item.active{background:var(--terra-pale);color:var(--terra);}
 .more-menu-item-icon{font-size:1.1rem;width:24px;text-align:center;}
 
-/* ── PAGES ── */
 .page{display:none;}.page.active{display:block;}
 .page-header{margin-bottom:1.5rem;}
 .page-title{font-family:var(--ff-head);font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:0.2rem;}
 .page-sub{font-size:0.82rem;color:var(--muted);}
 
-/* ── STAT GRID ── */
 .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-bottom:1.5rem;}
 .stat-card{background:white;border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:0.4rem;transition:box-shadow 0.2s;}
 .stat-card:hover{box-shadow:0 4px 12px rgba(30,24,16,0.07);}
@@ -95,24 +89,22 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .stat-val{font-size:1.6rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;}
 .stat-trend{font-size:0.7rem;color:var(--muted);}
 
-/* ════════════════════════════════════════
-   TABLE CARDS  — redesigned
-════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   TABLE CARDS — fixed expand/collapse
+═══════════════════════════════════════ */
 .tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem;}
 
-/* Base card */
 .table-card{
   background:white;
   border:2px solid var(--border);
   border-radius:var(--radius);
   overflow:hidden;
-  transition:box-shadow 0.25s,border-color 0.25s,transform 0.15s;
+  transition:box-shadow 0.25s,border-color 0.25s;
   cursor:pointer;
   position:relative;
 }
-.table-card:hover{box-shadow:0 6px 24px rgba(30,24,16,0.09);transform:translateY(-1px);}
+.table-card:hover{box-shadow:0 6px 24px rgba(30,24,16,0.09);}
 
-/* Status accent strip (top edge) */
 .table-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
   background:var(--border);border-radius:var(--radius) var(--radius) 0 0;
@@ -122,7 +114,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .table-card.s-ordered::before{background:var(--green);}
 .table-card.s-waiter::before{background:var(--amber);}
 
-/* Card header */
 .tc-header{
   display:flex;align-items:center;justify-content:space-between;
   padding:1rem 1rem 0.75rem;
@@ -156,9 +147,9 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   font-size:0.65rem;color:var(--muted2);
   transition:transform 0.3s,background 0.2s;
 }
-.table-card.open .tc-chevron{transform:rotate(180deg);background:var(--terra-pale);color:var(--terra);}
+/* chevron rotates when card has .tc-open class */
+.table-card.tc-open .tc-chevron{transform:rotate(180deg);background:var(--terra-pale);color:var(--terra);}
 
-/* Summary strip */
 .tc-summary{
   padding:0.55rem 1rem 0.75rem;
   font-size:0.79rem;color:var(--muted);
@@ -171,7 +162,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   font-family:var(--ff-head);font-size:1rem;font-weight:700;color:var(--terra);
 }
 
-/* Indicator strips */
 .tc-strip{
   padding:0.32rem 1rem;
   font-size:0.68rem;font-weight:500;
@@ -184,15 +174,17 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .tc-strip.waiter .tc-strip-dot{animation:wpulse 1.5s infinite;}
 @keyframes wpulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.75);}}
 
-/* ── EXPANDED DETAIL PANEL ── */
+/* ── DETAIL PANEL: always in DOM, toggled via max-height ── */
 .tc-detail{
-  max-height:0;overflow:hidden;
+  max-height:0;
+  overflow:hidden;
   transition:max-height 0.45s var(--ease);
   background:var(--bg);
   border-top:0px solid transparent;
+  transition:max-height 0.45s var(--ease), border-top-color 0.1s;
 }
-.table-card.open .tc-detail{
-  max-height:2000px;
+.table-card.tc-open .tc-detail{
+  max-height:3000px;
   border-top:1px solid var(--border);
 }
 .tc-detail-inner{padding:1rem;}
@@ -273,7 +265,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .ob-btn.paid:hover{background:var(--terra);color:white;}
 .ob-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
 
-/* Table-level actions */
 .tc-divider{border:none;border-top:1px solid var(--border);margin:0.85rem 0 0.7rem;}
 .tc-actions{display:flex;gap:0.4rem;flex-wrap:wrap;}
 .tc-btn{
@@ -288,7 +279,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
 .tc-empty-state{text-align:center;padding:1.75rem;color:var(--muted2);font-size:0.82rem;}
 
-/* ── CARD COMPONENT ── */
 .card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .card-header{padding:0.9rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;}
 .data-table{width:100%;border-collapse:collapse;font-size:0.8rem;}
@@ -303,7 +293,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .ftab{padding:0.3rem 0.7rem;font-size:0.75rem;font-weight:500;border-radius:7px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;}
 .ftab:hover,.ftab.active{background:var(--terra);border-color:var(--terra);color:white;}
 
-/* ── MENU ITEMS ── */
 .menu-item-row{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.2rem;border-bottom:1px solid rgba(224,213,197,0.5);}
 .menu-item-row:last-child{border-bottom:none;}
 .menu-emoji{font-size:1.4rem;width:34px;text-align:center;flex-shrink:0;}
@@ -314,7 +303,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:white;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
 .toggle.on{background:var(--terra);}.toggle.on::after{transform:translateX(16px);}
 
-/* ── MODALS ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.5);z-index:200;align-items:flex-end;justify-content:stretch;backdrop-filter:blur(3px);}
 .modal-overlay.open{display:flex;}
 .modal{background:white;border-radius:16px 16px 0 0;padding:1.5rem 1.2rem 2rem;width:100%;max-height:90vh;overflow-y:auto;position:relative;}
@@ -331,14 +319,12 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-outline-sm{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;cursor:pointer;font-family:var(--ff-body);font-size:0.88rem;font-weight:500;padding:0.75rem 1.4rem;transition:all 0.2s;}
 .btn-outline-sm:hover,.btn-outline-sm:active{border-color:var(--ink2);color:var(--ink);}
 
-/* ── QR ── */
 .qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.2rem;}
 .qr-card{background:white;border:1px solid var(--border);border-radius:12px;padding:1.2rem;text-align:center;transition:box-shadow 0.2s;}
 .qr-card:hover{box-shadow:0 4px 16px rgba(30,24,16,0.08);}
 .qr-table-label{font-family:var(--ff-head);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.25rem;}
 .qr-url{font-size:0.6rem;color:var(--muted);word-break:break-all;margin-bottom:0.7rem;}
 
-/* ── STAFF ── */
 .staff-row{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.2rem;border-bottom:1px solid rgba(224,213,197,0.5);}
 .staff-row:last-child{border-bottom:none;}
 .staff-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--terra),var(--terra-light));color:white;font-size:0.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -348,7 +334,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .role-pill{font-size:0.65rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:20px;flex-shrink:0;}
 .role-director{background:var(--terra-pale);color:var(--terra);}.role-manager{background:var(--slate-pale);color:var(--slate);}
 
-/* ── WAITER CALLS ── */
 .wcall-row{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1.1rem;border-bottom:1px solid rgba(224,213,197,0.5);gap:0.5rem;}
 .wcall-row:last-child{border-bottom:none;}
 .wcall-table{font-size:0.88rem;font-weight:600;color:var(--ink);}
@@ -357,7 +342,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .wcall-badge{font-size:0.63rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:20px;background:#fef3c7;color:#92400e;animation:wpulse2 2s infinite;}
 @keyframes wpulse2{0%,100%{opacity:1;}50%{opacity:0.5;}}
 
-/* ── MISC UTILITIES ── */
 .toast{position:fixed;bottom:calc(var(--bottom-nav-h) + 0.75rem);right:1rem;left:1rem;background:var(--ink);color:white;padding:0.75rem 1rem;border-radius:10px;font-size:0.82rem;font-weight:500;z-index:300;opacity:0;transform:translateY(8px);transition:all 0.3s;box-shadow:0 8px 24px rgba(30,24,16,0.2);text-align:center;}
 .toast.show{opacity:1;transform:translateY(0);}
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.6rem;}
@@ -366,7 +350,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .refresh-btn{display:flex;align-items:center;gap:0.35rem;padding:0.35rem 0.7rem;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.75rem;font-weight:500;cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent;}
 .refresh-btn:hover,.refresh-btn:active{border-color:var(--terra);color:var(--terra);}
 
-/* ── DESKTOP OVERRIDES ── */
 @media(min-width:900px){
   :root{--nav-h:64px;}
   .topnav{padding:0 1.5rem 0 0;}
@@ -461,7 +444,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
     <!-- TABLES -->
     <div class="page" id="page-tables">
-      <div class="page-header"><div class="page-title">Tables</div><div class="page-sub">Click any card to expand orders · See totals and take action</div></div>
+      <div class="page-header"><div class="page-title">Tables</div><div class="page-sub">Click any card to see orders and take action</div></div>
       <div class="tables-grid" id="tablesGrid"><div class="loading-state">Loading...</div></div>
     </div>
 
@@ -668,12 +651,16 @@ function loadPage(p){
   else if(p==='staff')loadStaff();
 }
 
-var allOrders=[],allTables=[];
+// ─── GLOBAL DATA ───
+var allOrders=[], allTables=[];
 
-// ─── STALE PRESENCE CLEANUP (no heartbeat > 5 min → reset to empty) ───
+// ─── OPEN TABLE TRACKING ───
+// Stores the ID of whichever table card is currently expanded
+var openTableId=null;
+
+// ─── STALE PRESENCE CLEANUP ───
 async function autoCleanupStalePresence(tables){
-  var now=Date.now();
-  var STALE_MS=5*60*1000;
+  var now=Date.now(), STALE_MS=5*60*1000;
   var stale=tables.filter(function(t){
     if(t.status!=='active')return false;
     if(!t.last_seen_at)return true;
@@ -690,185 +677,196 @@ async function loadDashboard(){
   document.getElementById('dashDate').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   var res=await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
-    api('orders?select=*,order_items(*,menu_items(name)),restaurant_tables(table_number)&order=created_at.desc&limit=200')
+    // CRITICAL: always fetch with full join so item names are available
+    api('orders?select=*,order_items(*,menu_items(name,emoji)),restaurant_tables(table_number)&order=created_at.desc&limit=200')
   ]);
   allTables=Array.isArray(res[0])?res[0]:[];
   allOrders=Array.isArray(res[1])?res[1]:[];
   await autoCleanupStalePresence(allTables);
-  allTables=await api('restaurant_tables?select=*&order=table_number');
-  if(!Array.isArray(allTables))allTables=[];
+  // Re-fetch tables after cleanup
+  var freshTables=await api('restaurant_tables?select=*&order=table_number');
+  if(Array.isArray(freshTables))allTables=freshTables;
+
   var today=new Date().toDateString();
   var todayO=allOrders.filter(function(o){return new Date(o.created_at).toDateString()===today;});
   var rev=todayO.filter(function(o){return o.status==='paid';}).reduce(function(s,o){return s+Number(o.total);},0);
   var active=allOrders.filter(function(o){return['pending','confirmed','ready'].indexOf(o.status)>=0;}).length;
   var empty=allTables.filter(function(t){return t.status==='empty';}).length;
   var pending=allOrders.filter(function(o){return o.status==='pending';}).length;
+
   document.getElementById('statRevenue').textContent='₼'+rev.toFixed(2);
   document.getElementById('statActive').textContent=active;
   document.getElementById('statToday').textContent=todayO.length;
   document.getElementById('statEmpty').textContent=empty;
   var b=document.getElementById('pendingBadge');b.textContent=pending;b.style.display=pending?'inline-block':'none';
   var bd=document.getElementById('bdot-orders');if(bd){bd.textContent=pending;bd.style.display=pending?'block':'none';}
+
   renderTableCards(allTables,document.getElementById('dashTables'));
   loadWaiterCalls();
 }
 
+// ─── TABLES PAGE ───
 async function loadTables(){
   var res=await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
-    api('orders?select=*,order_items(*,menu_items(name))&status=in.(pending,confirmed,ready)&order=created_at.desc')
+    // CRITICAL FIX: fetch ALL active orders with full menu_items join
+    api('orders?select=*,order_items(*,menu_items(name,emoji)),restaurant_tables(table_number)&status=in.(pending,confirmed,ready)&order=created_at.desc')
   ]);
   allTables=Array.isArray(res[0])?res[0]:[];
   allOrders=Array.isArray(res[1])?res[1]:[];
   await autoCleanupStalePresence(allTables);
-  allTables=await api('restaurant_tables?select=*&order=table_number');
-  if(!Array.isArray(allTables))allTables=[];
+  var freshTables=await api('restaurant_tables?select=*&order=table_number');
+  if(Array.isArray(freshTables))allTables=freshTables;
   renderTableCards(allTables,document.getElementById('tablesGrid'));
 }
 
-// ─── OPEN TABLE TRACKING ───
-var openTableId=null;
-
-// ─── TABLE CARD RENDERER ───
+// ─── RENDER TABLE CARDS INTO A CONTAINER ───
 function renderTableCards(tables,container){
-  if(!tables.length){container.innerHTML='<div class="loading-state">No tables found</div>';return;}
+  if(!tables||!tables.length){container.innerHTML='<div class="loading-state">No tables found</div>';return;}
   var waiterCalls=window._waiterCallsByTable||{};
   container.innerHTML=tables.map(function(t){return buildTableCard(t,waiterCalls);}).join('');
 }
 
+// ─── BUILD ONE TABLE CARD (detail always in DOM, toggled by CSS) ───
 function buildTableCard(t,waiterCalls){
-  var tOrders=allOrders.filter(function(o){return o.table_id===t.id&&['pending','confirmed','ready'].indexOf(o.status)>=0;});
-  var hasWaiter=!!waiterCalls[t.id];
+  // Only show active-status orders for this table
+  var tOrders=allOrders.filter(function(o){
+    return o.table_id===t.id && ['pending','confirmed','ready'].indexOf(o.status)>=0;
+  });
+  var hasWaiter=!!(waiterCalls&&waiterCalls[t.id]);
   var isOpen=(openTableId===t.id);
 
-  // Status pill config
+  // Status pill
   var scMap={empty:'tsp-empty',active:'tsp-active',ordered:'tsp-ordered',paid:'tsp-paid'};
   var scLabel={empty:'Empty',active:'Browsing',ordered:'Ordered',paid:'Paid'};
   var sc=scMap[t.status]||'tsp-empty';
 
-  // Card class
-  var cardClass='table-card'
-    +(t.status==='active'||t.status==='ordered'?' s-'+t.status:'')
-    +(hasWaiter?' s-waiter':'')
-    +(isOpen?' open':'');
+  // Card classes
+  var cardCls='table-card';
+  if(t.status==='active'||t.status==='ordered')cardCls+=' s-'+t.status;
+  if(hasWaiter)cardCls+=' s-waiter';
+  if(isOpen)cardCls+=' tc-open';
 
-  // ── Summary strip content ──
+  // ── Summary strip ──
   var summaryHtml='';
   if(tOrders.length){
     var totalItems=tOrders.reduce(function(s,o){return s+(o.order_items||[]).reduce(function(a,i){return a+i.quantity;},0);},0);
     var tableTotal=tOrders.reduce(function(s,o){return s+Number(o.total);},0);
-    summaryHtml =
-  '<span>'+totalItems+' item'+(totalItems!==1?'s':'')+':</span>'
-  +'<span class="tc-summary-total">₼'+tableTotal.toFixed(2)+'</span>';
+    summaryHtml='<span>'+totalItems+' item'+(totalItems!==1?'s':'')+'</span>'
+      +'<span class="tc-summary-total">₼'+tableTotal.toFixed(2)+'</span>';
   } else if(t.status==='active'){
     summaryHtml='<span class="tc-summary-empty">Browsing the menu…</span>';
   } else {
     summaryHtml='<span class="tc-summary-empty">No active orders</span>';
   }
 
-  // Presence strip
+  // ── Presence strip ──
   var presenceHtml='';
   if(t.status==='active'&&t.last_seen_at){
     var mins=Math.floor((Date.now()-new Date(t.last_seen_at).getTime())/60000);
     presenceHtml='<div class="tc-strip presence"><div class="tc-strip-dot"></div>Customer active '+mins+'m ago</div>';
   }
 
-  // Waiter call strip
+  // ── Waiter call strip ──
   var waiterHtml='';
   if(hasWaiter){
     var wc=waiterCalls[t.id];
-    waiterHtml='<div class="tc-strip waiter"><div class="tc-strip-dot"></div>🔔 '+(typeof wc==='string'?wc:'Waiter requested')+'</div>';
+    waiterHtml='<div class="tc-strip waiter"><div class="tc-strip-dot"></div>🔔 '+(typeof wc==='string'?escHtml(wc):'Waiter requested')+'</div>';
   }
 
-  // ── EXPANDED DETAIL (only rendered when open) ──
+  // ── DETAIL PANEL (always rendered — CSS controls visibility) ──
   var detailInner='';
-  if(isOpen){
-    if(tOrders.length){
-      var grandTotal=tOrders.reduce(function(s,o){return s+Number(o.total);},0);
-      var orderCount=tOrders.length;
+  if(tOrders.length){
+    var grandTotal=tOrders.reduce(function(s,o){return s+Number(o.total);},0);
+    var orderCount=tOrders.length;
+    var grandItems=tOrders.reduce(function(s,o){return s+(o.order_items||[]).reduce(function(a,i){return a+i.quantity;},0);},0);
 
-      detailInner+='<div class="tc-grand-total">'
-        +'<div class="tc-grand-left">'
-          +'<div class="tc-grand-label">Table Total</div>'
-          +'<div class="tc-grand-sub">'+orderCount+' order'+(orderCount!==1?'s':'')
-            +' · '+ tOrders.reduce(function(s,o){return s+(o.order_items||[]).reduce(function(a,i){return a+i.quantity;},0);},0)+' items</div>'
+    detailInner+='<div class="tc-grand-total">'
+      +'<div class="tc-grand-left">'
+        +'<div class="tc-grand-label">Table Total</div>'
+        +'<div class="tc-grand-sub">'+orderCount+' order'+(orderCount!==1?'s':'')+' · '+grandItems+' item'+(grandItems!==1?'s':'')+'</div>'
+      +'</div>'
+      +'<div class="tc-grand-val"><small>₼</small>'+grandTotal.toFixed(2)+'</div>'
+    +'</div>';
+
+    // Per-order bubbles
+    tOrders.forEach(function(o){
+      var spMap={pending:'osp-pending',confirmed:'osp-confirmed',ready:'osp-ready',paid:'osp-paid'};
+      var slMap={pending:'⏳ Pending',confirmed:'✓ Confirmed',ready:'🍽 Ready!',paid:'💳 Paid'};
+      var bCls='order-bubble'+(o.status==='ready'?' ob-ready':(o.status==='pending'?' ob-pending':''));
+      var items=o.order_items||[];
+      var sub=items.reduce(function(s,i){return s+Number(i.price_at_order||0)*i.quantity;},0);
+
+      // Parse notes: name|phone|payment|note|type
+      var parts=(o.notes||'').split('|');
+      var guestName=(parts[0]||'').trim();
+      var guestNote=(parts[3]||'').trim();
+      var payMethod=(parts[2]||'').trim();
+
+      detailInner+='<div class="'+bCls+'">';
+      detailInner+='<div class="ob-header">'
+        +'<div class="ob-id-wrap">'
+          +'<span class="ob-id">#'+o.id.toString().slice(-4)+'</span>'
+          +(guestName?'<span class="ob-guest">'+escHtml(guestName)+'</span>':'')
         +'</div>'
-        +'<div class="tc-grand-val"><small>₼</small>'+grandTotal.toFixed(2)+'</div>'
+        +'<span class="ob-status-pill '+(spMap[o.status]||'osp-pending')+'">'+slMap[o.status]+'</span>'
       +'</div>';
 
-      // Per-order bubbles
-      tOrders.forEach(function(o){
-        var spMap={pending:'osp-pending',confirmed:'osp-confirmed',ready:'osp-ready',paid:'osp-paid'};
-        var slMap={pending:'⏳ Pending',confirmed:'✓ Confirmed',ready:'🍽 Ready!',paid:'💳 Paid'};
-        var bClass='order-bubble'+(o.status==='ready'?' ob-ready':(o.status==='pending'?' ob-pending':''));
-        var items=(o.order_items||[]);
-        var sub=items.reduce(function(s,i){return s+Number(i.price_at_order||0)*i.quantity;},0);
-
-        // Parse notes: name|phone|payment|note|type
-        var parts=(o.notes||'').split('|');
-        var guestName=(parts[0]||'').trim();
-        var guestNote=(parts[3]||'').trim();
-        var payMethod=(parts[2]||'').trim();
-
-        detailInner+='<div class="'+bClass+'">';
-        detailInner+='<div class="ob-header">'
-          +'<div class="ob-id-wrap">'
-            +'<span class="ob-id">#'+o.id.toString().slice(-4)+'</span>'
-            +(guestName?'<span class="ob-guest">'+escHtml(guestName)+'</span>':'')
-          +'</div>'
-          +'<span class="ob-status-pill '+(spMap[o.status]||'osp-pending')+'">'+slMap[o.status]+'</span>'
+      // Item lines
+      detailInner+='<div class="ob-items">';
+      items.forEach(function(i){
+        var iname=i.menu_items?escHtml(i.menu_items.name):'Unknown item';
+        var iemoji=(i.menu_items&&i.menu_items.emoji)?i.menu_items.emoji:'';
+        var iprice=(Number(i.price_at_order||0)*i.quantity).toFixed(2);
+        detailInner+='<div class="ob-item-line">'
+          +'<span class="ob-item-name">'+(iemoji?iemoji+' ':'')+i.quantity+'× '+iname+'</span>'
+          +'<span class="ob-item-price">₼'+iprice+'</span>'
         +'</div>';
-
-        detailInner+='<div class="ob-items">';
-        items.forEach(function(i){
-          detailInner+='<div class="ob-item-line">'
-            +'<span class="ob-item-name">'+i.quantity+'× '+(i.menu_items?escHtml(i.menu_items.name):'Unknown')+'</span>'
-            +'<span class="ob-item-price">₼'+(Number(i.price_at_order||0)*i.quantity).toFixed(2)+'</span>'
-          +'</div>';
-        });
-        detailInner+='</div>';
-
-        detailInner+='<div class="ob-subtotal"><span>Subtotal</span><span>₼'+sub.toFixed(2)+'</span></div>';
-
-        var metaItems=[];
-        if(guestNote)metaItems.push('📝 '+escHtml(guestNote));
-        if(payMethod)metaItems.push('💳 '+escHtml(payMethod));
-        if(metaItems.length)detailInner+='<div class="ob-meta">'+metaItems.map(function(m){return'<span class="ob-meta-tag">'+m+'</span>';}).join('')+'</div>';
-
-        detailInner+='<div class="ob-actions">';
-        if(o.status==='pending'){
-          detailInner+='<button class="ob-btn confirm" onclick="updateOrderStatus(\''+o.id+'\',\'confirmed\',event)">✓ Confirm</button>';
-        }
-        if(o.status==='confirmed'){
-          detailInner+='<button class="ob-btn ready" onclick="updateOrderStatus(\''+o.id+'\',\'ready\',event)">🍽 Mark Ready</button>';
-        }
-        if(o.status==='ready'){
-          detailInner+='<button class="ob-btn paid" onclick="updateOrderStatus(\''+o.id+'\',\'paid\',event)">💳 Mark Paid</button>';
-        }
-        if(o.status!=='paid'){
-          detailInner+='<button class="ob-btn danger" onclick="updateOrderStatus(\''+o.id+'\',\'cancelled\',event)">✕ Cancel</button>';
-        }
-        detailInner+='</div></div>';
       });
-    } else {
-      detailInner+='<div class="tc-empty-state">No active orders for this table.</div>';
-    }
+      detailInner+='</div>';
 
-    detailInner+='<hr class="tc-divider">';
-    detailInner+='<div class="tc-actions">';
-    if(t.status!=='empty'){
-      detailInner+='<button class="tc-btn danger" onclick="clearTable(\''+t.id+'\',event)">🗑 Clear & Reset</button>';
-    }
-    detailInner+='<button class="tc-btn" onclick="markTableEmpty(\''+t.id+'\',event)">↩ Force Empty</button>';
-    detailInner+='</div>';
+      detailInner+='<div class="ob-subtotal"><span>Subtotal</span><span>₼'+sub.toFixed(2)+'</span></div>';
+
+      var metaTags=[];
+      if(guestNote)metaTags.push('📝 '+escHtml(guestNote));
+      if(payMethod)metaTags.push('💳 '+escHtml(payMethod));
+      if(metaTags.length)detailInner+='<div class="ob-meta">'+metaTags.map(function(m){return'<span class="ob-meta-tag">'+m+'</span>';}).join('')+'</div>';
+
+      // Action buttons — stop propagation so card doesn't toggle when clicking buttons
+      detailInner+='<div class="ob-actions">';
+      if(o.status==='pending'){
+        detailInner+='<button class="ob-btn confirm" onclick="event.stopPropagation();updateOrderStatus(\''+o.id+'\',\'confirmed\')">✓ Confirm</button>';
+      }
+      if(o.status==='confirmed'){
+        detailInner+='<button class="ob-btn ready" onclick="event.stopPropagation();updateOrderStatus(\''+o.id+'\',\'ready\')">🍽 Mark Ready</button>';
+      }
+      if(o.status==='ready'){
+        detailInner+='<button class="ob-btn paid" onclick="event.stopPropagation();updateOrderStatus(\''+o.id+'\',\'paid\')">💳 Mark Paid</button>';
+      }
+      if(o.status!=='paid'){
+        detailInner+='<button class="ob-btn danger" onclick="event.stopPropagation();updateOrderStatus(\''+o.id+'\',\'cancelled\')">✕ Cancel</button>';
+      }
+      detailInner+='</div></div>';
+    });
+  } else {
+    detailInner+='<div class="tc-empty-state">No active orders for this table.</div>';
   }
 
-  return '<div class="'+cardClass+'" id="tc-'+t.id+'" onclick="toggleTableCard(\''+t.id+'\')">'
+  // Table-level actions
+  detailInner+='<hr class="tc-divider">';
+  detailInner+='<div class="tc-actions">';
+  if(t.status!=='empty'){
+    detailInner+='<button class="tc-btn danger" onclick="event.stopPropagation();clearTable(\''+t.id+'\')">🗑 Clear &amp; Reset</button>';
+  }
+  detailInner+='<button class="tc-btn" onclick="event.stopPropagation();markTableEmpty(\''+t.id+'\')">↩ Force Empty</button>';
+  detailInner+='</div>';
+
+  return '<div class="'+cardCls+'" id="tc-'+t.id+'" onclick="toggleTableCard(\''+t.id+'\')">'
     +'<div class="tc-header">'
       +'<div class="tc-num">'
         +'<div class="tc-num-icon">🍽</div>'
         +'Table '+t.table_number
-        +(hasWaiter?'<span style="font-size:0.75rem;color:var(--amber);">🔔</span>':'')
+        +(hasWaiter?' <span style="font-size:0.8rem;">🔔</span>':'')
       +'</div>'
       +'<div class="tc-right">'
         +'<span class="tc-status-pill '+sc+'">'+scLabel[t.status]+'</span>'
@@ -886,46 +884,88 @@ function escHtml(s){
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ─── TOGGLE TABLE CARD ───
+// KEY FIX: instead of rebuilding innerHTML (which destroys DOM and loses state),
+// we toggle the CSS class directly on the existing element, and track openTableId.
 function toggleTableCard(tableId){
-  openTableId=(openTableId===tableId)?null:tableId;
-  var dashEl=document.getElementById('dashTables');
-  var tablesEl=document.getElementById('tablesGrid');
-  if(dashEl&&dashEl.querySelector('.table-card'))renderTableCards(allTables,dashEl);
-  if(tablesEl&&tablesEl.querySelector('.table-card'))renderTableCards(allTables,tablesEl);
+  // If clicking the already-open card: close it
+  if(openTableId===tableId){
+    openTableId=null;
+    var el=document.getElementById('tc-'+tableId);
+    if(el)el.classList.remove('tc-open');
+    return;
+  }
+  // Close any previously open card
+  if(openTableId){
+    var prev=document.getElementById('tc-'+openTableId);
+    if(prev)prev.classList.remove('tc-open');
+  }
+  openTableId=tableId;
+  var el=document.getElementById('tc-'+tableId);
+  if(el)el.classList.add('tc-open');
 }
 
 // ─── ORDER STATUS UPDATE ───
-async function updateOrderStatus(orderId,status,e){
-  if(e)e.stopPropagation();
+async function updateOrderStatus(orderId,status){
   await api('orders?id=eq.'+orderId,{method:'PATCH',body:JSON.stringify({status:status})});
   showToast('Order → '+statusLabel(status));
+  // Auto-clear table if no more active orders
   if(status==='paid'||status==='cancelled'){
-    var ord=allOrders.find(function(o){return o.id==orderId;});
+    var ord=allOrders.find(function(o){return String(o.id)===String(orderId);});
     if(ord){
-      var remaining=allOrders.filter(function(o){return o.table_id===ord.table_id&&o.id!==ord.id&&['pending','confirmed','ready'].indexOf(o.status)>=0;});
+      var remaining=allOrders.filter(function(o){
+        return o.table_id===ord.table_id && String(o.id)!==String(orderId) && ['pending','confirmed','ready'].indexOf(o.status)>=0;
+      });
       if(!remaining.length){
         await api('restaurant_tables?id=eq.'+ord.table_id,{method:'PATCH',body:JSON.stringify({status:'empty'})});
       }
     }
   }
-  loadDashboard();
-  if(document.getElementById('page-tables').classList.contains('active'))loadTables();
+  // Refresh whichever pages are active, keeping the card open
+  await refreshActiveTablesData();
 }
 
-async function clearTable(tableId,e){
-  if(e)e.stopPropagation();
+async function clearTable(tableId){
   if(!confirm('Cancel all active orders and clear this table?'))return;
   await api('orders?table_id=eq.'+tableId+'&status=in.(pending,confirmed,ready)',{method:'PATCH',body:JSON.stringify({status:'cancelled'})});
   await api('restaurant_tables?id=eq.'+tableId,{method:'PATCH',body:JSON.stringify({status:'empty'})});
   openTableId=null;
-  showToast('Table cleared');loadDashboard();
+  showToast('Table cleared');
+  await refreshActiveTablesData();
 }
 
-async function markTableEmpty(tableId,e){
-  if(e)e.stopPropagation();
+async function markTableEmpty(tableId){
   await api('restaurant_tables?id=eq.'+tableId,{method:'PATCH',body:JSON.stringify({status:'empty'})});
   openTableId=null;
-  showToast('Table reset to empty');loadDashboard();
+  showToast('Table reset to empty');
+  await refreshActiveTablesData();
+}
+
+// ─── SMART REFRESH: re-fetches data and re-renders while preserving open card ───
+async function refreshActiveTablesData(){
+  // Always re-fetch both tables and orders with full join
+  var res=await Promise.all([
+    api('restaurant_tables?select=*&order=table_number'),
+    api('orders?select=*,order_items(*,menu_items(name,emoji)),restaurant_tables(table_number)&status=in.(pending,confirmed,ready)&order=created_at.desc')
+  ]);
+  allTables=Array.isArray(res[0])?res[0]:[];
+  allOrders=Array.isArray(res[1])?res[1]:[];
+
+  var dash=document.getElementById('dashTables');
+  var tabs=document.getElementById('tablesGrid');
+  if(dash&&dash.querySelector('.table-card'))renderTableCards(allTables,dash);
+  if(tabs&&tabs.querySelector('.table-card'))renderTableCards(allTables,tabs);
+
+  // Re-open the card that was open before re-render
+  if(openTableId){
+    var el=document.getElementById('tc-'+openTableId);
+    if(el)el.classList.add('tc-open');
+  }
+
+  // Also update stats if dashboard is visible
+  if(document.getElementById('page-dashboard').classList.contains('active')){
+    loadDashboard();
+  }
 }
 
 // ─── ORDERS TABLE ───
@@ -942,8 +982,17 @@ async function loadOrders(){
     var date=new Date(o.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
     var tl=(o.restaurant_tables&&o.restaurant_tables.table_number)?'Table '+o.restaurant_tables.table_number:'<span style="color:var(--terra);font-size:0.7rem;font-weight:600;">WEBSITE</span>';
     var opts=['pending','confirmed','ready','paid','cancelled'].map(function(s){return'<option value="'+s+'"'+(o.status===s?' selected':'')+'>'+statusLabel(s)+'</option>';}).join('');
-    return'<tr><td style="color:var(--muted);font-size:0.7rem;">#'+o.id.toString().slice(-4)+'</td><td>'+tl+'</td><td style="max-width:180px;font-size:0.76rem;color:var(--muted);">'+items+'</td><td style="font-weight:700;color:var(--terra);white-space:nowrap;">₼'+Number(o.total).toFixed(2)+'</td><td style="max-width:100px;font-size:0.73rem;color:var(--muted);">'+(o.notes||'—')+'</td><td><span class="badge b-'+o.status+'">'+statusLabel(o.status)+'</span></td><td style="font-size:0.73rem;color:var(--muted);white-space:nowrap;">'+date+'</td><td><select style="border:1.5px solid var(--border);border-radius:6px;padding:0.22rem 0.45rem;font-size:0.73rem;background:white;cursor:pointer;outline:none;" onchange="updateOrderStatus(\''+o.id+'\',this.value,null)">'+opts+'</select></td></tr>';
+    return'<tr><td style="color:var(--muted);font-size:0.7rem;">#'+o.id.toString().slice(-4)+'</td><td>'+tl+'</td><td style="max-width:180px;font-size:0.76rem;color:var(--muted);">'+items+'</td><td style="font-weight:700;color:var(--terra);white-space:nowrap;">₼'+Number(o.total).toFixed(2)+'</td><td style="max-width:100px;font-size:0.73rem;color:var(--muted);">'+(o.notes||'—')+'</td><td><span class="badge b-'+o.status+'">'+statusLabel(o.status)+'</span></td><td style="font-size:0.73rem;color:var(--muted);white-space:nowrap;">'+date+'</td><td><select style="border:1.5px solid var(--border);border-radius:6px;padding:0.22rem 0.45rem;font-size:0.73rem;background:white;cursor:pointer;outline:none;" onchange="updateOrderStatusFromTable(\''+o.id+'\',this.value,this)">'+opts+'</select></td></tr>';
   }).join('');
+}
+
+// Separate handler for the Orders table dropdowns (no re-render needed there)
+async function updateOrderStatusFromTable(orderId,status,selectEl){
+  await api('orders?id=eq.'+orderId,{method:'PATCH',body:JSON.stringify({status:status})});
+  showToast('Order → '+statusLabel(status));
+  // Update allOrders cache
+  var ord=allOrders.find(function(o){return String(o.id)===String(orderId);});
+  if(ord)ord.status=status;
 }
 
 function filterOrders(s,btn){ordersFilter=s;document.querySelectorAll('.ftab').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');loadOrders();}
@@ -1107,6 +1156,7 @@ setInterval(function(){
 },30000);
 setInterval(loadWaiterCalls,15000);
 
+// ─── BOOT ───
 loadDashboard();
 </script>
 </body>
