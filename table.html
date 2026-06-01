@@ -421,16 +421,14 @@ async function init(){
 
     const menu=await api('menu_items?select=*&is_active=eq.true&order=category,name');
     menuItems=Array.isArray(menu)?menu:[];
-    await loadOrders();
     document.getElementById('loadScreen').style.display='none';
     document.getElementById('mainContent').style.display='block';
     renderMenu();
     setupListeners();
-    setInterval(loadOrders,15000);
   }catch(e){showErr();}
 }
 
-async function loadOrders(){
+
   if(!tableData)return;
   const o=await api(`orders?table_id=eq.${tableData.id}&status=neq.paid&select=*,order_items(*,menu_items(name))`);
   tableOrders=Array.isArray(o)?o:[];
@@ -439,6 +437,24 @@ async function loadOrders(){
   renderOrders();
 }
 
+function renderOrders(){
+  const sec=document.getElementById('ordersSection');
+  const list=document.getElementById('ordersList');
+  if(!tableOrders.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  const spMap={pending:'pill-pending',confirmed:'pill-confirmed',ready:'pill-ready',paid:'pill-paid'};
+  const lMap={pending:'Gözlənilir',confirmed:'Təsdiqləndi',ready:'🔔 Hazırdır!',paid:'Ödənildi'};
+  list.innerHTML=tableOrders.map(o=>{
+    const items=(o.order_items||[]).map(i=>`${i.quantity}× ${i.menu_items?.name||'?'}`).join(', ');
+    return `<div class="order-card">
+      <div class="oc-left">
+        <div class="oc-id">Sifariş #${o.id.toString().slice(-4)}</div>
+        <div class="oc-items">${items}</div>
+      </div>
+      <span class="pill ${spMap[o.status]||'pill-pending'}">${lMap[o.status]||o.status}</span>
+    </div>`;
+  }).join('');
+}
 
 function renderMenu(){
   const list=document.getElementById('menuList');
@@ -630,5 +646,3 @@ init();
 </script>
 </body>
 </html>
-ENDOFFILE
-echo "table.html done: $(wc -c < /home/claude/table_updated.html) bytes"
