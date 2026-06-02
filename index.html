@@ -10,7 +10,6 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  /* ── brand palette bluedababadiaibaa ── */
   --bg:#faf8f4;
   --bg2:#f3ede2;
   --bg3:#e9e0d0;
@@ -21,14 +20,11 @@
   --muted2:#b89f85;
   --border:#e0d5c5;
   --border2:#cdbfa9;
-
-  /* the signature warm orange n red */
   --terra:#bf4e1e;
   --terra-hover:#a84218;
   --terra-light:#d97040;
   --terra-pale:#fdf0e8;
   --terra-mid:#e8825a;
-
   --slate:#3d5068;
   --slate-light:#6a8aaa;
   --slate-pale:#eaf0f6;
@@ -36,7 +32,6 @@
   --gold-pale:#fdf5e0;
   --green:#2e6b45;
   --green-pale:#e5f2eb;
-
   --ff-head:'Lora',Georgia,serif;
   --ff-body:'Inter',system-ui,sans-serif;
   --nav-h:68px;
@@ -48,20 +43,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--ff-body);font-weigh
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--terra-light);border-radius:2px;}
 
-/*  NAV  */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  height:var(--nav-h);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 3.5rem;
-  transition:background 0.4s var(--ease),box-shadow 0.4s;
-}
-nav.scrolled{
-  background:rgba(250,248,244,0.97);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  box-shadow:0 2px 16px rgba(30,24,16,0.06);
-}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 3.5rem;transition:background 0.4s var(--ease),box-shadow 0.4s;}
+nav.scrolled{background:rgba(250,248,244,0.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(30,24,16,0.06);}
 .nav-logo{font-family:var(--ff-head);font-size:1.6rem;font-weight:700;color:var(--terra);letter-spacing:0.01em;text-decoration:none;}
 .nav-logo em{color:var(--terra-light);font-style:italic;}
 .nav-links{display:flex;gap:2.2rem;list-style:none;}
@@ -75,18 +59,13 @@ nav.scrolled{
 .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;border:none;background:none;padding:4px;}
 .burger span{display:block;width:22px;height:1.5px;background:var(--ink);transition:transform 0.3s,opacity 0.3s;}
 
-/* ── MOBILE MENU ── */
-.mobile-menu{
-  position:fixed;top:0;left:0;right:0;bottom:0;
-  background:rgba(250,248,244,0.98);z-index:99;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;
-  transform:translateX(100%);transition:transform 0.4s var(--ease);
-}
+/* MOBILE MENU */
+.mobile-menu{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(250,248,244,0.98);z-index:99;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;transform:translateX(100%);transition:transform 0.4s var(--ease);}
 .mobile-menu.open{transform:translateX(0);}
 .mobile-menu a{font-family:var(--ff-head);font-size:2.2rem;font-weight:600;color:var(--ink);text-decoration:none;transition:color 0.2s;}
 .mobile-menu a:hover{color:var(--terra);}
 
-/* ── HERO ── */
+/* HERO */
 #hero{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--ink);}
 .hero-texture{position:absolute;inset:0;opacity:0.04;background-image:repeating-linear-gradient(45deg,var(--terra) 0,var(--terra) 1px,transparent 0,transparent 50%);background-size:20px 20px;}
 .hero-blob{position:absolute;border-radius:50%;filter:blur(80px);}
@@ -106,7 +85,7 @@ nav.scrolled{
 @keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
 
-/* ── SECTION BASE ── */
+/* SECTION BASE */
 section{padding:7rem 3.5rem;}
 .section-label{font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--terra);font-weight:600;margin-bottom:0.85rem;}
 .section-title{font-family:var(--ff-head);font-size:clamp(2.2rem,4.5vw,4rem);font-weight:700;line-height:1.05;color:var(--ink);}
@@ -114,7 +93,7 @@ section{padding:7rem 3.5rem;}
 .reveal{opacity:0;transform:translateY(32px);transition:opacity 0.75s var(--ease),transform 0.75s var(--ease);}
 .reveal.visible{opacity:1;transform:translateY(0);}
 
-/* ── ABOUT ── */
+/* ABOUT */
 #about{background:var(--white);}
 .about-grid{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;}
 .about-visual{position:relative;}
@@ -130,7 +109,7 @@ section{padding:7rem 3.5rem;}
 .stat-num{font-family:var(--ff-head);font-size:2.2rem;font-weight:700;color:var(--terra);display:block;}
 .stat-label{font-size:0.73rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2);margin-top:0.25rem;}
 
-/* ── MENU ── */
+/* MENU */
 #menu{background:var(--bg);}
 .menu-inner{max-width:1160px;margin:0 auto;}
 .menu-header{text-align:center;margin-bottom:4rem;}
@@ -147,7 +126,7 @@ section{padding:7rem 3.5rem;}
 .menu-card-tag{position:absolute;top:1rem;right:1rem;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold-pale);color:var(--gold);padding:0.15rem 0.55rem;border-radius:20px;font-weight:600;}
 .menu-loading{text-align:center;padding:3rem;color:var(--muted);font-size:0.9rem;}
 
-/* ── REVIEWS ── */
+/* REVIEWS */
 #reviews{background:var(--white);}
 .reviews-inner{max-width:1060px;margin:0 auto;}
 .reviews-header{text-align:center;margin-bottom:3.5rem;}
@@ -165,7 +144,7 @@ section{padding:7rem 3.5rem;}
 .review-name{font-size:0.83rem;font-weight:500;color:var(--ink);}
 .review-role{font-size:0.7rem;color:var(--muted2);}
 
-/* ── GALLERY ── */
+/* GALLERY */
 #gallery{background:var(--bg2);padding:6rem 3.5rem;}
 .gallery-inner{max-width:1160px;margin:0 auto;}
 .gallery-header{text-align:center;margin-bottom:2.5rem;}
@@ -181,7 +160,7 @@ section{padding:7rem 3.5rem;}
 .gallery-caption a{color:var(--terra);text-decoration:none;border-bottom:1px solid rgba(191,78,30,0.3);}
 .gallery-caption a:hover{border-color:var(--terra);}
 
-/* ── INFO ── */
+/* INFO */
 #info{background:var(--white);}
 .info-inner{max-width:1060px;margin:0 auto;}
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;}
@@ -206,7 +185,7 @@ section{padding:7rem 3.5rem;}
 .map-btn{display:inline-block;background:var(--terra);color:var(--white);padding:0.5rem 1.2rem;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;border-radius:6px;transition:background 0.2s;font-weight:500;}
 .map-btn:hover{background:var(--terra-hover);}
 
-/* ── ORDER SECTION ── */
+/* ORDER SECTION */
 #order{background:var(--bg);}
 .order-inner{max-width:1160px;margin:0 auto;}
 .order-header{text-align:center;margin-bottom:3.5rem;}
@@ -226,7 +205,7 @@ section{padding:7rem 3.5rem;}
 .qty-btn:hover{background:var(--terra);color:white;border-color:var(--terra);}
 .qty-num{font-size:0.88rem;font-weight:600;color:var(--ink);min-width:14px;text-align:center;}
 
-/* ── CART PANEL ── */
+/* CART PANEL */
 .cart-panel{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:1.6rem;position:sticky;top:calc(var(--nav-h) + 1.2rem);}
 .cart-title{font-family:var(--ff-head);font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:1.3rem;display:flex;align-items:center;justify-content:space-between;}
 .cart-badge{background:var(--terra);color:white;font-family:var(--ff-body);font-size:0.72rem;font-weight:700;padding:0.15rem 0.55rem;border-radius:20px;}
@@ -252,7 +231,7 @@ section{padding:7rem 3.5rem;}
 .cart-clear{width:100%;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;font-family:var(--ff-body);font-size:0.75rem;letter-spacing:0.06em;text-transform:uppercase;padding:0.55rem;margin-top:0.5rem;border-radius:8px;transition:all 0.18s;}
 .cart-clear:hover{border-color:var(--terra);color:var(--terra);}
 
-/* ── CHECKOUT MODAL ── */
+/* CHECKOUT MODAL */
 .checkout-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(30,24,16,0.6);align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
 .checkout-overlay.open{display:flex;}
 .checkout-modal-wrap{position:relative;width:100%;max-width:480px;}
@@ -287,7 +266,7 @@ section{padding:7rem 3.5rem;}
 .new-order-btn{display:inline-block;margin-top:1.3rem;background:var(--terra);color:white;border:none;border-radius:8px;padding:0.75rem 1.5rem;font-family:var(--ff-body);font-size:0.83rem;font-weight:600;cursor:pointer;transition:background 0.2s;}
 .new-order-btn:hover{background:var(--terra-hover);}
 
-/* ── RESERVATION ── */
+/* RESERVATION */
 #reservation{background:var(--bg2);}
 .reservation-inner{max-width:660px;margin:0 auto;text-align:center;}
 .reservation-inner .section-title{margin-bottom:0.75rem;}
@@ -297,7 +276,7 @@ section{padding:7rem 3.5rem;}
 .res-submit{grid-column:1/-1;background:var(--terra);color:white;padding:0.95rem 2rem;border:none;cursor:pointer;font-family:var(--ff-body);font-size:0.85rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;width:100%;border-radius:8px;transition:background 0.2s,transform 0.15s;margin-top:0.3rem;}
 .res-submit:hover{background:var(--terra-hover);transform:translateY(-2px);}
 
-/* ── FOOTER ── */
+/* FOOTER */
 footer{background:var(--ink);padding:4rem 3.5rem;}
 .footer-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;}
 .footer-brand .nav-logo{display:block;margin-bottom:0.9rem;color:var(--terra-light) !important;}
@@ -313,18 +292,41 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
 .footer-col ul li a:hover{color:var(--terra-light);}
 .footer-bottom{max-width:1160px;margin:2.5rem auto 0;padding-top:1.8rem;border-top:1px solid rgba(250,248,244,0.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.8rem;}
 .footer-bottom p{font-size:0.76rem;color:rgba(250,248,244,0.18);}
+.footer-legal{display:flex;gap:1.2rem;flex-wrap:wrap;}
+.footer-legal a{font-size:0.76rem;color:rgba(250,248,244,0.3);text-decoration:none;transition:color 0.18s;}
+.footer-legal a:hover{color:var(--terra-light);}
 
-/* ── TOAST ── */
+/* TOAST */
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--ink);border:1px solid var(--terra);color:var(--bg);padding:0.85rem 1.3rem;font-size:0.83rem;border-radius:8px;z-index:300;transform:translateY(80px);opacity:0;transition:all 0.4s var(--ease);pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.success{background:var(--green);border-color:var(--green);}
 .toast.warn{background:var(--terra);border-color:var(--terra-hover);}
 
-/* ── SPINNER ── */
+/* SPINNER */
 .spinner{width:28px;height:28px;border:2.5px solid var(--border2);border-top-color:var(--terra);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ── RESPONSIVE ── */
+/* ── COOKIE BANNER ── */
+#cookieBanner{
+  position:fixed;bottom:0;left:0;right:0;z-index:400;
+  background:var(--ink);
+  border-top:1px solid rgba(191,78,30,0.35);
+  padding:1.1rem 3.5rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;
+  transform:translateY(100%);
+  transition:transform 0.45s var(--ease);
+}
+#cookieBanner.visible{transform:translateY(0);}
+#cookieBanner p{font-size:0.8rem;color:rgba(250,248,244,0.55);line-height:1.7;max-width:680px;}
+#cookieBanner a{color:var(--terra-light);text-decoration:none;border-bottom:1px solid rgba(217,112,64,0.3);}
+#cookieBanner a:hover{border-color:var(--terra-light);}
+.cookie-actions{display:flex;gap:0.6rem;flex-shrink:0;}
+.cookie-btn-accept{background:var(--terra);color:white;border:none;cursor:pointer;font-family:var(--ff-body);font-size:0.75rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.55rem 1.2rem;border-radius:6px;transition:background 0.2s;white-space:nowrap;}
+.cookie-btn-accept:hover{background:var(--terra-hover);}
+.cookie-btn-decline{background:transparent;color:rgba(250,248,244,0.35);border:1px solid rgba(250,248,244,0.12);cursor:pointer;font-family:var(--ff-body);font-size:0.75rem;letter-spacing:0.07em;text-transform:uppercase;padding:0.55rem 1rem;border-radius:6px;transition:all 0.2s;white-space:nowrap;}
+.cookie-btn-decline:hover{border-color:rgba(250,248,244,0.3);color:rgba(250,248,244,0.6);}
+
+/* RESPONSIVE */
 @media(max-width:900px){
   nav{padding:0 1.3rem;}
   .nav-links{display:none;}
@@ -342,6 +344,7 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
   .g-cell-1{grid-column:1;grid-row:1/3;}
   .g-cell-4{grid-column:2;grid-row:3/5;}
   .res-form{grid-template-columns:1fr;}
+  #cookieBanner{padding:1.1rem 1.3rem;}
 }
 @media(max-width:600px){
   .hero-title{font-size:2.8rem;}
@@ -350,6 +353,7 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
   .g-cell-1,.g-cell-4{grid-column:1;grid-row:auto;}
   .g-cell{aspect-ratio:4/3;}
   .checkout-row{grid-template-columns:1fr;}
+  .footer-legal{gap:0.8rem;}
 }
 </style>
 </head>
@@ -668,16 +672,52 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
     <div class="footer-col"><p class="footer-col-title">Əlaqə</p><ul><li><a href="tel:+994000000000">0?? ??? ?? ??</a></li><li><a href="mailto:info@restoran.az">info@restoran.az</a></li><li><a href="https://maps.google.com" target="_blank">Küçə ünvanı, Bakı</a></li><li><a href="#order">Online Sifariş</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© 2025 Restoran Bütün hüquqlar qorunur.</p>
+    <p>© <span id="copyrightYear"></span> Restoran. Bütün hüquqlar qorunur.</p>
+    <div class="footer-legal">
+      <a href="privacy.html">Məxfilik Siyasəti</a>
+      <a href="terms.html">İstifadə Şərtləri</a>
+    </div>
     <p>Bakı, Azərbaycan</p>
   </div>
 </footer>
+
+<!-- COOKIE CONSENT BANNER -->
+<div id="cookieBanner" role="region" aria-label="Cookie razılığı">
+  <p>
+    Bu sayt sifarişlər, rezervasiyalar və saytın düzgün işləməsi üçün cookies istifadə edir.
+    Daha ətraflı məlumat üçün <a href="privacy.html">Məxfilik Siyasətimizə</a> baxın.
+  </p>
+  <div class="cookie-actions">
+    <button class="cookie-btn-decline" id="cookieDecline">Rədd et</button>
+    <button class="cookie-btn-accept" id="cookieAccept">Qəbul et</button>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
 /* ══════════════════════════════════════════
-   SUPABASE CONFIG  (matches table.html / admin.html)
+   COOKIE BANNER
+══════════════════════════════════════════ */
+(function(){
+  if (!localStorage.getItem('cookieConsent')) {
+    setTimeout(() => document.getElementById('cookieBanner').classList.add('visible'), 800);
+  }
+  document.getElementById('cookieAccept').addEventListener('click', () => {
+    localStorage.setItem('cookieConsent', 'accepted');
+    document.getElementById('cookieBanner').classList.remove('visible');
+  });
+  document.getElementById('cookieDecline').addEventListener('click', () => {
+    localStorage.setItem('cookieConsent', 'declined');
+    document.getElementById('cookieBanner').classList.remove('visible');
+  });
+})();
+
+/* Dynamic copyright year */
+document.getElementById('copyrightYear').textContent = new Date().getFullYear();
+
+/* ══════════════════════════════════════════
+   SUPABASE CONFIG
 ══════════════════════════════════════════ */
 const SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
@@ -698,8 +738,8 @@ const sbApi = (path, opts = {}) => fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
 ══════════════════════════════════════════ */
 const DELIVERY_FEE = 3;
 let liveMenuItems = [];
-let cart = {};         // { itemId: { item, qty } }
-let orderType = 'delivery'; // 'delivery' | 'pickup'
+let cart = {};
+let orderType = 'delivery';
 let currentMenuCat = 'all';
 let currentOrderCat = 'all';
 
@@ -708,23 +748,18 @@ let currentOrderCat = 'all';
 ══════════════════════════════════════════ */
 async function loadMenuItems() {
   try {
-    // 1. Fetch the items
     var items = await sbApi('menu_items?select=*&is_active=eq.true&order=category,name');
-    
-    // 2. Use 'items' instead of 'dawdnnnnawd  wakdpiadata'
-    // Also, ensure your 'available' check matches how you store it in Supabase
     liveMenuItems = Array.isArray(items) ? items.filter(i => i.available !== false) : [];
-    
   } catch (e) {
-    console.error("Error loading menu:", e); // Helpful for debugging
+    console.error("Error loading menu:", e);
     liveMenuItems = [];
   }
-  
   renderMenuSection(currentMenuCat);
   renderOrderItems(currentOrderCat);
 }
+
 /* ══════════════════════════════════════════
-   MENU SECTION (display-only, no add)
+   MENU SECTION (display-only)
 ══════════════════════════════════════════ */
 function renderMenuSection(cat) {
   const grid = document.getElementById('menuGrid');
@@ -850,9 +885,7 @@ function closeCheckout() {
 }
 
 /* ══════════════════════════════════════════
-   SUBMIT ORDER → SUPABASE (delivery/pickup)
-   Uses table_id = null for website orders,
-   notes field encodes customer info.
+   SUBMIT ORDER → SUPABASE
 ══════════════════════════════════════════ */
 async function submitOrder() {
   const name = document.getElementById('co-name').value.trim();
@@ -875,7 +908,6 @@ async function submitOrder() {
   btn.textContent = 'Göndərilir...';
 
   try {
-    // Create order — table_id is NULL for website orders
     const orderRes = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
       method: 'POST',
       headers: {
@@ -895,7 +927,6 @@ async function submitOrder() {
     const orderId = oData[0]?.id;
     if (!orderId) throw new Error('Order creation failed');
 
-    // Insert order items
     await fetch(`${SUPABASE_URL}/rest/v1/order_items`, {
       method: 'POST',
       headers: {
@@ -912,11 +943,9 @@ async function submitOrder() {
       })))
     });
 
-    // Success!
     document.getElementById('checkoutFormWrap').style.display = 'none';
     document.getElementById('checkoutSuccess').style.display = 'block';
 
-    // Reset cart
     cart = {};
     renderOrderItems(currentOrderCat);
     updateCartPanel();
@@ -946,8 +975,6 @@ function showToast(msg, type = '') {
 /* ══════════════════════════════════════════
    EVENT LISTENERS
 ══════════════════════════════════════════ */
-
-// Menu display category tabs
 document.getElementById('menuCatBtns').addEventListener('click', e => {
   const btn = e.target.closest('.cat-btn'); if (!btn) return;
   document.querySelectorAll('#menuCatBtns .cat-btn').forEach(b => b.classList.remove('active'));
@@ -956,7 +983,6 @@ document.getElementById('menuCatBtns').addEventListener('click', e => {
   renderMenuSection(currentMenuCat);
 });
 
-// Order category tabs
 document.getElementById('orderCats').addEventListener('click', e => {
   const btn = e.target.closest('[data-ocat]'); if (!btn) return;
   document.querySelectorAll('[data-ocat]').forEach(b => b.classList.remove('active'));
@@ -965,10 +991,8 @@ document.getElementById('orderCats').addEventListener('click', e => {
   renderOrderItems(currentOrderCat);
 });
 
-// Cart checkout button
 document.getElementById('cartCheckout').addEventListener('click', openCheckout);
 
-// Cart clear button
 document.getElementById('cartClearBtn').addEventListener('click', () => {
   if (!Object.keys(cart).length) return;
   cart = {};
@@ -977,13 +1001,11 @@ document.getElementById('cartClearBtn').addEventListener('click', () => {
   showToast('Səbət təmizləndi');
 });
 
-// Checkout close
 document.getElementById('checkoutClose').addEventListener('click', closeCheckout);
 document.getElementById('checkoutOverlay').addEventListener('click', e => {
   if (e.target === document.getElementById('checkoutOverlay')) closeCheckout();
 });
 
-// Delivery / pickup toggle
 document.getElementById('typeDelivery').addEventListener('click', () => {
   orderType = 'delivery';
   document.getElementById('typeDelivery').classList.add('active');
@@ -1005,25 +1027,19 @@ document.getElementById('typePickup').addEventListener('click', () => {
   updateCartPanel();
 });
 
-// Submit order
 document.getElementById('checkoutSubmit').addEventListener('click', submitOrder);
-
-// New order after success
 document.getElementById('newOrderBtn').addEventListener('click', closeCheckout);
 
-// Reservation form
 document.getElementById('resForm').addEventListener('submit', e => {
   e.preventDefault();
   showToast('✓ Rezervasiya sorğunuz göndərildi!', 'success');
   e.target.reset();
 });
 
-// Nav scroll effect
 window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', scrollY > 60);
 });
 
-// Burger menu
 const burger = document.getElementById('burgerBtn');
 const mobileMenu = document.getElementById('mobileMenu');
 burger.addEventListener('click', () => {
@@ -1044,13 +1060,11 @@ document.querySelectorAll('.mm-link').forEach(a => {
   });
 });
 
-// Scroll reveal
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// Date input min = today
 const dateInput = document.querySelector('input[type="date"]');
 if (dateInput) dateInput.min = new Date().toISOString().split('T')[0];
 
