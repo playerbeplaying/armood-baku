@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/admin.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -63,12 +64,15 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:0.65rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;min-width:18px;text-align:center;}
 .main{flex:1;padding:1.5rem;overflow-x:hidden;background:var(--bg);min-width:0;}
 
-/* BOTTOM NAV */
+/* BOTTOM NAV — FIX: use block not flex for the nav container items */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:white;border-top:1px solid var(--border);z-index:100;box-shadow:0 -2px 10px rgba(30,24,16,0.06);}
 .bottom-nav-inner{display:flex;height:100%;align-items:stretch;}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:all 0.15s;color:var(--muted);-webkit-tap-highlight-color:transparent;position:relative;}
 .bnav-item.active{color:var(--terra);}
 .bnav-item:active{background:var(--bg2);}
+/* FIX: bnav-item hidden by default with display:none needs to show as flex, not block */
+.bnav-item[style*="display:none"]{display:none!important;}
+.bnav-item.show-flex{display:flex!important;}
 .bnav-icon{font-size:1.3rem;line-height:1;}
 .bnav-label{font-size:0.6rem;font-weight:600;letter-spacing:0.02em;}
 .bnav-dot{position:absolute;top:6px;right:calc(50% - 14px);background:var(--red);color:white;font-size:0.55rem;font-weight:700;padding:0.1rem 0.3rem;border-radius:10px;min-width:16px;text-align:center;display:none;}
@@ -180,6 +184,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .panel-waiter-strip{display:flex;align-items:center;gap:0.5rem;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.85rem;font-size:0.78rem;color:#92400e;font-weight:500;}
 .panel-waiter-dismiss{margin-left:auto;padding:0.22rem 0.55rem;border-radius:5px;background:#fbbf24;border:none;color:white;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:var(--ff-body);}
 
+/* FIX: Mobile panel slides up from bottom */
 @media(max-width:768px){
   .table-panel{top:auto;bottom:0;right:0;left:0;width:100%;height:85vh;border-left:none;border-top:1px solid var(--border);border-radius:16px 16px 0 0;transform:translateY(100%);}
   .table-panel.panel-open{transform:translateY(0);}
@@ -242,6 +247,10 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .search-clear{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:0.85rem;padding:0;line-height:1;display:none;}
 .search-clear.show{display:block;}
 .search-clear:hover{color:var(--red);}
+
+/* SEARCH HINT */
+.search-hint{font-size:0.7rem;color:var(--muted2);margin-bottom:0.6rem;padding:0 0.1rem;}
+.search-hint span{display:inline-block;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:0.05rem 0.35rem;font-size:0.68rem;margin:0 0.15rem;}
 
 /* GENERAL CARDS */
 .card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
@@ -319,7 +328,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .refresh-btn{display:flex;align-items:center;gap:0.35rem;padding:0.35rem 0.7rem;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.75rem;font-weight:500;cursor:pointer;transition:all 0.15s;}
 .refresh-btn:hover{border-color:var(--terra);color:var(--terra);}
 
-/* RESPONSIVE */
+/* ══ RESPONSIVE ══ */
 @media(min-width:900px){
   :root{--nav-h:64px;}
   .topnav{padding:0 1.5rem 0 0;}
@@ -336,6 +345,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   .page-header{margin-bottom:1.8rem;}
 }
 @media(max-width:899px){
+  /* FIX: hide sidebar, show bottom nav */
   .sidebar{display:none!important;}
   .bottom-nav{display:block!important;}
   .layout{padding-bottom:var(--bottom-nav-h);}
@@ -373,15 +383,13 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
 <div class="layout">
   <aside class="sidebar">
-    <!-- All roles see these 3 -->
     <div class="sidebar-section">
       <div class="sidebar-label">Operations</div>
       <div class="nav-item active" data-page="waiter"><span class="nav-item-icon">🔔</span>Waiter Calls <span class="nav-badge" id="waiterNavBadge" style="display:none">0</span></div>
       <div class="nav-item" data-page="tables"><span class="nav-item-icon">🍽️</span>Tables</div>
       <div class="nav-item" data-page="orders"><span class="nav-item-icon">📋</span>Orders <span class="nav-badge" id="pendingBadge" style="display:none">0</span></div>
     </div>
-    <!-- Manager+ only -->
-    <div class="sidebar-section manager-only" style="display:none;margin-top:0.5rem;">
+    <div class="sidebar-section manager-only" id="sidebarManagerSection" style="display:none;margin-top:0.5rem;">
       <div class="sidebar-label">Management</div>
       <div class="nav-item" data-page="dashboard"><span class="nav-item-icon">📊</span>Dashboard</div>
       <div class="nav-item" data-page="menu"><span class="nav-item-icon">🗒️</span>Menu</div>
@@ -393,7 +401,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
   <main class="main">
 
-    <!-- WAITER CALLS (default landing page) -->
+    <!-- WAITER CALLS -->
     <div class="page active" id="page-waiter">
       <div class="page-header"><div class="page-title">Waiter Calls</div><div class="page-sub">Customers requesting assistance</div></div>
       <div class="sec-header"><span class="sec-title">Active Calls</span><button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button></div>
@@ -418,16 +426,17 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
           <button class="ftab" onclick="filterOrders('paid',this)">Paid</button>
         </div>
         <div style="display:flex;gap:0.5rem;align-items:center;">
-          <button class="refresh-btn manager-only" style="display:none;" onclick="exportOrdersCSV()">⬇ CSV</button>
+          <button class="refresh-btn manager-only" id="csvExportBtn" style="display:none;" onclick="exportOrdersCSV()">⬇ CSV</button>
           <button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button>
         </div>
       </div>
-      <!-- Search bar for orders -->
+      <!-- IMPROVED SEARCH: covers table name like T1, guest name, item name, price, date -->
       <div class="search-bar">
         <span>🔍</span>
-        <input type="text" id="ordersSearch" placeholder="Search by table, guest name, or item…" oninput="onOrdersSearch(this.value)">
+        <input type="text" id="ordersSearch" placeholder="T1, guest name, item, ₼12.50, today…" oninput="onOrdersSearch(this.value)">
         <button class="search-clear" id="ordersClearBtn" onclick="clearOrdersSearch()">✕</button>
       </div>
+      <div class="search-hint">Try: <span>T1</span> <span>T3</span> <span>Nigar</span> <span>pizza</span> <span>12.50</span> <span>today</span></div>
       <div id="ordersCountLabel" class="orders-count-label"></div>
       <div id="ordersGrid"><div class="loading-state">Loading...</div></div>
     </div>
@@ -474,7 +483,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
           <button class="refresh-btn" onclick="loadAuditLog()">↻ Refresh</button>
         </div>
       </div>
-      <!-- Search bar for audit log -->
       <div class="search-bar">
         <span>🔍</span>
         <input type="text" id="auditSearch" placeholder="Search by action, admin name, or details…" oninput="onAuditSearch(this.value)">
@@ -493,13 +501,24 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   </main>
 </div>
 
-<!-- MOBILE BOTTOM NAV — 3 always-visible + More -->
+<!-- MOBILE BOTTOM NAV — FIX: manager-only item shown via JS, not CSS class conflict -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
-    <div class="bnav-item active" data-page="waiter"><span class="bnav-dot" id="bdot-waiter"></span><span class="bnav-icon">🔔</span><span class="bnav-label">Calls</span></div>
-    <div class="bnav-item" data-page="tables"><span class="bnav-icon">🍽️</span><span class="bnav-label">Tables</span></div>
-    <div class="bnav-item" data-page="orders"><span class="bnav-dot" id="bdot-orders"></span><span class="bnav-icon">📋</span><span class="bnav-label">Orders</span></div>
-    <div class="bnav-item manager-only" id="bnavMore" data-page="__more__" style="display:none"><span class="bnav-icon">⋯</span><span class="bnav-label">More</span></div>
+    <div class="bnav-item active" data-page="waiter">
+      <span class="bnav-dot" id="bdot-waiter"></span>
+      <span class="bnav-icon">🔔</span><span class="bnav-label">Calls</span>
+    </div>
+    <div class="bnav-item" data-page="tables">
+      <span class="bnav-icon">🍽️</span><span class="bnav-label">Tables</span>
+    </div>
+    <div class="bnav-item" data-page="orders">
+      <span class="bnav-dot" id="bdot-orders"></span>
+      <span class="bnav-icon">📋</span><span class="bnav-label">Orders</span>
+    </div>
+    <!-- FIX: id only, visibility controlled by JS after role check -->
+    <div class="bnav-item" id="bnavMore" data-page="__more__" style="display:none">
+      <span class="bnav-icon">⋯</span><span class="bnav-label">More</span>
+    </div>
   </div>
 </nav>
 
@@ -564,7 +583,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
         <option value="chef">Chef</option>
         <option value="manager">Manager</option>
         <option value="director">Director</option>
-        <option value="custom">Host</option><!-- ← rename "Host" here to whatever you want -->
+        <option value="custom">Host</option>
       </select>
     </div>
     <div style="display:flex;gap:0.6rem;margin-top:0.4rem;">
@@ -592,7 +611,6 @@ var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 var currentUser   = null, authToken = SUPABASE_ANON, refreshToken = null;
 var _refreshing   = false, _refreshQueue = [];
 
-// Role hierarchy — anything >= manager index gets manager-only features
 var ROLE_RANK = { waiter: 0, chef: 0, custom: 0, manager: 1, director: 2 };
 
 (function() {
@@ -614,15 +632,22 @@ var ROLE_RANK = { waiter: 0, chef: 0, custom: 0, manager: 1, director: 2 };
   document.getElementById('adminRole').textContent    = roleLabels[role] || role;
   document.getElementById('userInitials').textContent = uname.split(' ').map(function(w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
 
-  // Show manager-only sections if rank >= 1
+  // ── FIX: Show manager-only sections properly ──
   if (rank >= 1) {
-    document.querySelectorAll('.manager-only').forEach(function(el) { el.style.display = 'flex'; });
-    // Export CSV button in orders toolbar
-    var csvBtn = document.querySelector('.refresh-btn.manager-only');
+    // Sidebar management section
+    var sidebarSec = document.getElementById('sidebarManagerSection');
+    if (sidebarSec) sidebarSec.style.display = 'block';
+
+    // Bottom nav "More" button — use flex (it's a flex column item)
+    var bnavMore = document.getElementById('bnavMore');
+    if (bnavMore) bnavMore.style.display = 'flex';
+
+    // CSV export button
+    var csvBtn = document.getElementById('csvExportBtn');
     if (csvBtn) csvBtn.style.display = 'flex';
   }
 
-  // Show director-only items if rank >= 2
+  // Show director-only items
   if (rank >= 2) {
     document.querySelectorAll('.director-only').forEach(function(el) { el.style.display = 'flex'; });
   }
@@ -760,7 +785,8 @@ document.querySelectorAll('.more-menu-item[data-page]').forEach(function(item) {
   item.addEventListener('click', function() {
     closeMoreMenu(null); navigateTo(item.dataset.page);
     document.querySelectorAll('.bnav-item').forEach(function(i) { i.classList.remove('active'); });
-    document.getElementById('bnavMore').classList.add('active');
+    var moreBtn = document.getElementById('bnavMore');
+    if (moreBtn) moreBtn.classList.add('active');
   });
 });
 function openMoreMenu()  { document.getElementById('moreMenuOverlay').classList.add('open'); }
@@ -988,9 +1014,87 @@ async function refreshAndRepaint() {
   var { tables, orders } = await fetchCoreData();
   var dashTables  = document.getElementById('dashTables');
   var tablesGrid  = document.getElementById('tablesGrid');
-  if (dashTables && dashTables.querySelector('.table-pill'))  renderTablePills(tables, orders, dashTables);
-  if (tablesGrid  && tablesGrid.querySelector('.table-pill')) renderTablePills(tables, orders, tablesGrid);
+  if (dashTables  && dashTables.querySelector('.table-pill'))  renderTablePills(tables, orders, dashTables);
+  if (tablesGrid  && tablesGrid.querySelector('.table-pill'))  renderTablePills(tables, orders, tablesGrid);
   if (_currentPanelTableId) renderPanelContent(_currentPanelTableId);
+}
+
+// ══════════════════════════════════════════
+// ══ IMPROVED SEARCH LOGIC ══
+// Matches: "T1" → table 1, "T3" → table 3,
+//          guest name, item name, price (12.50),
+//          date keywords (today, yesterday)
+// ══════════════════════════════════════════
+function orderMatchesQuery(o, q) {
+  if (!q) return true;
+  q = q.toLowerCase().trim();
+
+  // ── Table name: "T1", "t1", "table 1", "1" ──
+  var tableNum = (o.restaurant_tables && o.restaurant_tables.table_number != null)
+    ? String(o.restaurant_tables.table_number) : '';
+  // "T1" → strip leading T/table and compare number
+  var qStripped = q.replace(/^t(able)?\s*/i, '');
+  if (tableNum && qStripped && tableNum === qStripped) return true;
+  // plain number match
+  if (tableNum && q === tableNum) return true;
+  // "T" + number prefix: T1 matches table 1, T10 matches table 10
+  if (/^t\d+$/i.test(q) && tableNum === q.slice(1)) return true;
+
+  // ── Guest name (in notes, pipe-separated) ──
+  var parts     = (o.notes || '').split('|');
+  var guestName = (parts[0] || '').toLowerCase().trim();
+  var guestNote = (parts[3] || '').toLowerCase().trim();
+  var payMethod = (parts[2] || '').toLowerCase().trim();
+  if (guestName.includes(q)) return true;
+  if (guestNote.includes(q)) return true;
+  if (payMethod.includes(q)) return true;
+
+  // ── Item names ──
+  var items = o.order_items || [];
+  for (var i = 0; i < items.length; i++) {
+    var iname = items[i].menu_items ? items[i].menu_items.name.toLowerCase() : '';
+    if (iname.includes(q)) return true;
+  }
+
+  // ── Price / total: "12.50", "12", "₼12" ──
+  var priceQ = q.replace(/^₼/, '');
+  var totalStr = Number(o.total).toFixed(2);
+  if (totalStr.includes(priceQ) || totalStr === priceQ) return true;
+  // also match per-item prices
+  for (var j = 0; j < items.length; j++) {
+    var itemPrice = Number(items[j].price_at_order || 0).toFixed(2);
+    if (itemPrice.includes(priceQ)) return true;
+  }
+
+  // ── Date keywords ──
+  var oDate    = new Date(o.created_at);
+  var todayStr = new Date().toDateString();
+  var yesterdayStr = new Date(Date.now() - 86400000).toDateString();
+  if (q === 'today' && oDate.toDateString() === todayStr) return true;
+  if ((q === 'yesterday' || q === 'dünən') && oDate.toDateString() === yesterdayStr) return true;
+
+  // ── Date string: "jun 3", "2025", "03/06" ──
+  var dateStr = oDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toLowerCase();
+  if (dateStr.includes(q)) return true;
+
+  // ── Time: "14:30", "2:30" ──
+  var timeStr = oDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }).toLowerCase();
+  if (timeStr.includes(q)) return true;
+
+  // ── Order status ──
+  if ((o.status || '').toLowerCase().includes(q)) return true;
+
+  // ── Order ID (last 4 chars) ──
+  var shortId = String(o.id).slice(-4);
+  if (shortId.includes(q)) return true;
+
+  // ── Website orders ──
+  if (q === 'web' || q === 'website') {
+    var notesLower = (o.notes || '').toLowerCase();
+    if (notesLower.includes('website')) return true;
+  }
+
+  return false;
 }
 
 // ══════════════════════════════════════════
@@ -1013,18 +1117,9 @@ async function loadOrders() {
 function renderOrdersGrid() {
   var grid       = document.getElementById('ordersGrid');
   var countLabel = document.getElementById('ordersCountLabel');
-  var q          = ordersQuery.toLowerCase().trim();
+  var q          = ordersQuery.trim();
 
-  var data = _lastOrdersData;
-  if (q) {
-    data = data.filter(function(o) {
-      var tNum  = (o.restaurant_tables && o.restaurant_tables.table_number) ? String(o.restaurant_tables.table_number) : '';
-      var parts = (o.notes || '').split('|');
-      var guest = (parts[0] || '').toLowerCase();
-      var items = (o.order_items || []).map(function(i) { return i.menu_items ? i.menu_items.name.toLowerCase() : ''; }).join(' ');
-      return tNum.includes(q) || guest.includes(q) || items.includes(q);
-    });
-  }
+  var data = _lastOrdersData.filter(function(o) { return orderMatchesQuery(o, q); });
 
   if (!data.length) {
     grid.innerHTML = '<div class="orders-empty">' + (q ? 'No orders match "' + escHtml(q) + '"' : 'No orders found') + '</div>';
@@ -1042,7 +1137,7 @@ function renderOrdersGrid() {
   grid.innerHTML = displayList.map(function(item) {
     var o   = item.order, seq = item.seqNum;
     var items = o.order_items || [];
-    var tl    = (o.restaurant_tables && o.restaurant_tables.table_number) ? 'T' + o.restaurant_tables.table_number : 'Web';
+    var tl    = (o.restaurant_tables && o.restaurant_tables.table_number != null) ? 'T' + o.restaurant_tables.table_number : 'Web';
     var time  = new Date(o.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
     var parts = (o.notes || '').split('|');
     var guestName = (parts[0] || '').trim(), guestNote = (parts[3] || '').trim(), payMethod = (parts[2] || '').trim();
@@ -1116,14 +1211,14 @@ function filterOrders(s, btn) {
 }
 
 // ══════════════════════════════════════════
-// CSV EXPORT — Orders (manager+ only)
+// CSV EXPORT
 // ══════════════════════════════════════════
 function exportOrdersCSV() {
   if (!_lastOrdersData.length) { showToast('No orders to export'); return; }
   var rows = [['#', 'Order ID', 'Table', 'Status', 'Total', 'Guest', 'Payment', 'Note', 'Date']];
   _lastOrdersData.forEach(function(o, i) {
     var parts = (o.notes || '').split('|');
-    var tl    = (o.restaurant_tables && o.restaurant_tables.table_number) ? 'Table ' + o.restaurant_tables.table_number : 'Website';
+    var tl    = (o.restaurant_tables && o.restaurant_tables.table_number != null) ? 'Table ' + o.restaurant_tables.table_number : 'Website';
     rows.push([i + 1, o.id, tl, o.status, '₼' + Number(o.total).toFixed(2), (parts[0] || '').trim(), (parts[2] || '').trim(), (parts[3] || '').trim(), new Date(o.created_at).toLocaleString()]);
   });
   downloadCSV(rows, 'orders-' + new Date().toISOString().slice(0, 10) + '.csv');
@@ -1213,7 +1308,7 @@ async function loadWaiterCalls() {
     var bd = document.getElementById('bdot-waiter'); if (bd) { bd.textContent = count; bd.style.display = count ? 'block' : 'none'; }
     var html = count
       ? calls.map(function(c) {
-          var tn   = (c.restaurant_tables && c.restaurant_tables.table_number) ? c.restaurant_tables.table_number : '?';
+          var tn   = (c.restaurant_tables && c.restaurant_tables.table_number != null) ? c.restaurant_tables.table_number : '?';
           var time = new Date(c.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
           return '<div class="wcall-row"><div><div class="wcall-table">Table ' + tn + '</div><div class="wcall-reason">' + escHtml(c.reason || '') + '</div><div class="wcall-time">' + time + '</div></div><div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0;"><span class="wcall-badge">Waiting</span><button class="refresh-btn" onclick="dismissWaiterCall(\'' + c.id + '\')">✓ Done</button></div></div>';
         }).join('')
@@ -1412,7 +1507,8 @@ setInterval(loadWaiterCalls, 15000);
 // BOOT
 // ══════════════════════════════════════════
 writeAudit('LOGIN', 'Admin session started');
-loadWaiterCalls(); // load waiter calls on boot since it's the default page
+loadWaiterCalls();
 </script>
 </body>
 </html>
+ENDOFFILE
