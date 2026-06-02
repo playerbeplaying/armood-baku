@@ -13,6 +13,18 @@
 }
 html,body{height:100%;}
 body{font-family:'Inter',sans-serif;background:var(--off);display:flex;min-height:100vh;overflow:hidden;}
+
+/* ── HTTPS WARNING BANNER ── */
+.https-warn{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:#b45309;color:white;
+  font-size:0.78rem;font-weight:500;
+  padding:0.55rem 1rem;
+  text-align:center;
+  display:none;
+}
+.https-warn.show{display:block;}
+
 .left{width:42%;background:var(--slate);display:flex;flex-direction:column;justify-content:space-between;padding:3rem;position:relative;overflow:hidden;}
 .left::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(63,131,248,0.18) 0%,transparent 70%);top:-100px;left:-150px;pointer-events:none;}
 .left::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(26,86,219,0.22) 0%,transparent 70%);bottom:-80px;right:-100px;pointer-events:none;}
@@ -27,11 +39,13 @@ body{font-family:'Inter',sans-serif;background:var(--off);display:flex;min-heigh
 .left-stat span{display:block;font-size:1.6rem;font-weight:600;color:white;font-variant-numeric:tabular-nums;}
 .left-stat small{font-size:0.72rem;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.1em;}
 .left-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+
 .right{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;}
 .login-box{width:100%;max-width:400px;}
 .login-box-header{margin-bottom:2.5rem;}
 .login-box-header h1{font-size:1.8rem;font-weight:600;color:var(--slate);margin-bottom:0.3rem;}
 .login-box-header p{font-size:0.88rem;color:var(--muted);}
+
 .form-field{margin-bottom:1.1rem;}
 .form-field label{display:block;font-size:0.75rem;font-weight:500;color:var(--slate2);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:0.5rem;}
 .input-wrap{position:relative;}
@@ -39,22 +53,47 @@ body{font-family:'Inter',sans-serif;background:var(--off);display:flex;min-heigh
 .form-field input{width:100%;padding:0.8rem 1rem 0.8rem 2.6rem;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:0.9rem;color:var(--slate);background:white;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
 .form-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,0.1);}
 .form-field input::placeholder{color:#cbd5e1;}
+.form-field input:disabled{background:#f1f5f9;cursor:not-allowed;}
+
 .btn-login{width:100%;padding:0.85rem;background:var(--blue);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.15s,box-shadow 0.2s;margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;box-shadow:0 4px 14px rgba(26,86,219,0.3);}
-.btn-login:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,86,219,0.35);}
-.btn-login:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.btn-login:hover:not(:disabled){background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,86,219,0.35);}
+.btn-login:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
 .btn-arrow{transition:transform 0.2s;}
-.btn-login:hover .btn-arrow{transform:translateX(3px);}
-.error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:0.8rem 1rem;font-size:0.83rem;color:#dc2626;margin-bottom:1rem;display:none;align-items:center;gap:0.6rem;}
-.error-box.show{display:flex;}
-.login-footer{margin-top:2rem;font-size:0.78rem;color:var(--muted);text-align:center;}
+.btn-login:hover:not(:disabled) .btn-arrow{transform:translateX(3px);}
+
+/* ── ERROR / LOCKOUT BOXES ── */
+.alert-box{border-radius:8px;padding:0.8rem 1rem;font-size:0.83rem;margin-bottom:1rem;display:none;align-items:flex-start;gap:0.6rem;line-height:1.5;}
+.alert-box.show{display:flex;}
+.alert-error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;}
+.alert-warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e;}
+
+/* ── ATTEMPT DOTS ── */
+.attempt-indicator{display:flex;align-items:center;gap:0.4rem;margin-bottom:1rem;justify-content:flex-end;}
+.attempt-dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background 0.2s;}
+.attempt-dot.used{background:#f87171;}
+.attempt-label{font-size:0.68rem;color:var(--muted);letter-spacing:0.04em;}
+
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
 .btn-login.loading .spinner{display:block;}
 .btn-login.loading .btn-text,.btn-login.loading .btn-arrow{display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
-@media(max-width:768px){.left{display:none;}body{display:block;}.right{min-height:100vh;}}
+
+.login-footer{margin-top:2rem;font-size:0.78rem;color:var(--muted);text-align:center;line-height:1.7;}
+
+@media(max-width:768px){
+  .left{display:none;}
+  body{display:block;}
+  .right{min-height:100vh;}
+}
 </style>
 </head>
 <body>
+
+<!-- HTTPS warning — shown via JS if on http:// -->
+<div class="https-warn" id="httpsWarn">
+  ⚠ You are on an insecure connection (HTTP). Admin login should only be used over HTTPS.
+</div>
+
 <div class="left">
   <div class="left-grid"></div>
   <div class="left-logo">
@@ -70,81 +109,301 @@ body{font-family:'Inter',sans-serif;background:var(--off);display:flex;min-heigh
     <div class="left-stat"><span>5</span><small>Tables</small></div>
   </div>
 </div>
+
 <div class="right">
   <div class="login-box">
     <div class="login-box-header">
       <h1>Welcome back</h1>
       <p>Sign in to your admin account to continue</p>
     </div>
-    <div class="error-box" id="errorBox">⚠ <span id="errorText">Email or password is incorrect.</span></div>
+
+    <!-- Generic error — never says "wrong password" vs "wrong email" -->
+    <div class="alert-box alert-error" id="errorBox">
+      ⚠ <span id="errorText">Incorrect credentials. Please try again.</span>
+    </div>
+
+    <!-- Lockout warning -->
+    <div class="alert-box alert-warn" id="lockoutBox">
+      🔒 <span id="lockoutText">Too many failed attempts. Please wait before trying again.</span>
+    </div>
+
+    <!-- Attempt dots (5 max before lockout) -->
+    <div class="attempt-indicator" id="attemptIndicator" style="display:none;">
+      <span class="attempt-label">Attempts</span>
+      <div class="attempt-dot" id="dot1"></div>
+      <div class="attempt-dot" id="dot2"></div>
+      <div class="attempt-dot" id="dot3"></div>
+      <div class="attempt-dot" id="dot4"></div>
+      <div class="attempt-dot" id="dot5"></div>
+    </div>
+
     <div class="form-field">
       <label>Email Address</label>
-      <div class="input-wrap"><span class="icon">✉</span><input type="email" id="email" placeholder="admin@restoran.az" autocomplete="email"></div>
+      <div class="input-wrap">
+        <span class="icon">✉</span>
+        <input type="email" id="email" placeholder="admin@restoran.az" autocomplete="email">
+      </div>
     </div>
     <div class="form-field">
       <label>Password</label>
-      <div class="input-wrap"><span class="icon">🔒</span><input type="password" id="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <div class="input-wrap">
+        <span class="icon">🔒</span>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
     </div>
+
     <button class="btn-login" id="btnLogin">
       <div class="spinner"></div>
       <span class="btn-text">Sign In</span>
       <span class="btn-arrow">→</span>
     </button>
-    <div class="login-footer">Restoran Restaurant System · Admin Portal</div>
+
+    <div class="login-footer">
+      Restoran Restaurant System · Admin Portal<br>
+      <span style="font-size:0.72rem;color:#94a3b8;">Restricted access — authorised personnel only</span>
+    </div>
   </div>
 </div>
+
 <script>
-const SUPABASE_URL = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
+const SUPABASE_URL  = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 
-if (localStorage.getItem('armood_session')) window.location.href = 'admin.html';
-
-function updateTime(){
-  document.getElementById('liveTime').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+// ── REDIRECT IF ALREADY LOGGED IN ──
+if (localStorage.getItem('armood_session')) {
+  window.location.href = 'admin.html';
 }
-updateTime(); setInterval(updateTime,1000);
 
-const btn = document.getElementById('btnLogin');
-const errBox = document.getElementById('errorBox');
-const errText = document.getElementById('errorText');
+// ── HTTPS CHECK ──
+if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  document.getElementById('httpsWarn').classList.add('show');
+  // nudge the right panel down so warning isn't overlapping
+  document.querySelector('.right').style.paddingTop = '3.5rem';
+}
 
-function showError(msg){ errText.textContent = msg; errBox.classList.add('show'); }
-function hideError(){ errBox.classList.remove('show'); }
+// ── CLOCK ──
+function updateTime() {
+  document.getElementById('liveTime').textContent =
+    new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+updateTime();
+setInterval(updateTime, 1000);
 
-document.getElementById('password').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+// ══════════════════════════════════════
+// RATE LIMITING — stored in localStorage
+// 5 failed attempts → 15 min lockout
+// ══════════════════════════════════════
+const MAX_ATTEMPTS  = 5;
+const LOCKOUT_MS    = 15 * 60 * 1000; // 15 minutes
+const STORAGE_KEY   = 'armood_login_attempts';
+
+function getAttemptData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { count: 0, lockedUntil: null };
+  } catch(e) {
+    return { count: 0, lockedUntil: null };
+  }
+}
+
+function saveAttemptData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function recordFailedAttempt() {
+  const data = getAttemptData();
+  data.count = (data.count || 0) + 1;
+  if (data.count >= MAX_ATTEMPTS) {
+    data.lockedUntil = Date.now() + LOCKOUT_MS;
+    data.count = MAX_ATTEMPTS; // cap it
+  }
+  saveAttemptData(data);
+  return data;
+}
+
+function clearAttempts() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+function isLockedOut() {
+  const data = getAttemptData();
+  if (!data.lockedUntil) return false;
+  if (Date.now() < data.lockedUntil) return true;
+  // Lockout expired — clear it
+  clearAttempts();
+  return false;
+}
+
+function getRemainingLockoutSeconds() {
+  const data = getAttemptData();
+  if (!data.lockedUntil) return 0;
+  return Math.max(0, Math.ceil((data.lockedUntil - Date.now()) / 1000));
+}
+
+// ── UPDATE ATTEMPT DOTS ──
+function updateAttemptDots() {
+  const data = getAttemptData();
+  const count = data.count || 0;
+  if (count === 0) {
+    document.getElementById('attemptIndicator').style.display = 'none';
+    return;
+  }
+  document.getElementById('attemptIndicator').style.display = 'flex';
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById('dot' + i);
+    dot.classList.toggle('used', i <= count);
+  }
+}
+
+// ── LOCKOUT COUNTDOWN ──
+let countdownInterval = null;
+
+function startLockoutCountdown() {
+  const btn = document.getElementById('btnLogin');
+  const lockoutBox = document.getElementById('lockoutBox');
+  const lockoutText = document.getElementById('lockoutText');
+  const inputs = [document.getElementById('email'), document.getElementById('password')];
+
+  lockoutBox.classList.add('show');
+  document.getElementById('errorBox').classList.remove('show');
+  btn.disabled = true;
+  inputs.forEach(i => i.disabled = true);
+
+  function tick() {
+    const secs = getRemainingLockoutSeconds();
+    if (secs <= 0) {
+      // Lockout over
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      lockoutBox.classList.remove('show');
+      btn.disabled = false;
+      inputs.forEach(i => i.disabled = false);
+      clearAttempts();
+      updateAttemptDots();
+      lockoutText.textContent = 'Too many failed attempts. Please wait before trying again.';
+      return;
+    }
+    const mins = Math.floor(secs / 60);
+    const s = secs % 60;
+    lockoutText.textContent = `Too many failed attempts. Try again in ${mins}:${String(s).padStart(2,'0')}.`;
+  }
+
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+// ── ON PAGE LOAD: check if already locked out ──
+(function checkOnLoad() {
+  updateAttemptDots();
+  if (isLockedOut()) {
+    startLockoutCountdown();
+  }
+})();
+
+// ── UI HELPERS ──
+const btn      = document.getElementById('btnLogin');
+const errBox   = document.getElementById('errorBox');
+const errText  = document.getElementById('errorText');
+
+// Always use same generic message — never reveal if email exists
+function showError(msg) {
+  errText.textContent = msg || 'Incorrect credentials. Please try again.';
+  errBox.classList.add('show');
+}
+function hideError() {
+  errBox.classList.remove('show');
+}
+
+// ── ENTER KEY on both fields ──
+document.getElementById('email').addEventListener('keydown',    e => { if (e.key === 'Enter') login(); });
+document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 btn.addEventListener('click', login);
 
-async function login(){
-  const email = document.getElementById('email').value.trim();
+// ── LOGIN FUNCTION ──
+async function login() {
+  // Block if locked out
+  if (isLockedOut()) {
+    startLockoutCountdown();
+    return;
+  }
+
+  const email    = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
+
   hideError();
-  if(!email||!password){ showError('Please fill in both fields.'); return; }
-  btn.disabled=true; btn.classList.add('loading');
-  try{
-    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
-      method:'POST',
-      headers:{'apikey':SUPABASE_ANON,'Content-Type':'application/json'},
-      body:JSON.stringify({email,password})
+
+  // Basic client-side validation — generic message, no specifics
+  if (!email || !password) {
+    showError('Please fill in both fields.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+
+  try {
+    // Step 1: Supabase auth
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
     });
     const data = await res.json();
-    if(data.error||!data.access_token){ showError('Invalid email or password.'); btn.disabled=false; btn.classList.remove('loading'); return; }
 
-    const adminRes = await fetch(`${SUPABASE_URL}/rest/v1/admins?email=eq.${encodeURIComponent(email)}&select=*`,{
-      headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${data.access_token}`}
-    });
+    // ── FAILED AUTH ──
+    // Always show the same message regardless of whether it's wrong email or wrong password
+    if (data.error || !data.access_token) {
+      const attemptData = recordFailedAttempt();
+      updateAttemptDots();
+
+      if (attemptData.count >= MAX_ATTEMPTS) {
+        btn.classList.remove('loading');
+        startLockoutCountdown();
+        return;
+      }
+
+      const remaining = MAX_ATTEMPTS - attemptData.count;
+      showError(
+        remaining === 1
+          ? 'Incorrect credentials. 1 attempt remaining before temporary lockout.'
+          : `Incorrect credentials. ${remaining} attempts remaining.`
+      );
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      return;
+    }
+
+    // Step 2: Check admins table
+    const adminRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/admins?email=eq.${encodeURIComponent(email)}&select=*`,
+      { headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${data.access_token}` } }
+    );
     const adminData = await adminRes.json();
-    if(!Array.isArray(adminData)||!adminData.length){ showError('This account does not have admin access.'); btn.disabled=false; btn.classList.remove('loading'); return; }
 
-    /* Save token + refresh_token so admin.html can silently renew when expired */
+    // ── NOT AN ADMIN ──
+    // Same generic message — don't reveal "account exists but no access"
+    if (!Array.isArray(adminData) || !adminData.length) {
+      recordFailedAttempt();
+      updateAttemptDots();
+      showError('Incorrect credentials. Please try again.');
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      return;
+    }
+
+    // ── SUCCESS ──
+    clearAttempts(); // reset lockout counter on successful login
     localStorage.setItem('armood_session', JSON.stringify({
-      token: data.access_token,
+      token:         data.access_token,
       refresh_token: data.refresh_token,
-      user: adminData[0]
+      user:          adminData[0]
     }));
-    window.location.href='admin.html';
-  }catch(e){
-    showError('Connection error. Please try again.');
-    btn.disabled=false; btn.classList.remove('loading');
+    window.location.href = 'admin.html';
+
+  } catch(e) {
+    // Network/fetch error — don't count as a failed attempt
+    showError('Connection error. Please check your internet and try again.');
+    btn.disabled = false;
+    btn.classList.remove('loading');
   }
 }
 </script>
