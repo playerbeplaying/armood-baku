@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/table.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -52,7 +53,12 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .menu-card:active{transform:scale(0.99);}
 .menu-card.unavail{opacity:0.4;pointer-events:none;}
 .menu-card.has-item{border-color:rgba(191,78,30,0.35);background:var(--terra-pale);}
-.menu-emoji{width:50px;height:50px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.75rem;flex-shrink:0;}
+
+/* IMAGE / EMOJI thumbnail */
+.menu-thumb{width:56px;height:56px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.75rem;flex-shrink:0;overflow:hidden;}
+.menu-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.menu-thumb .fallback-emoji{font-size:1.75rem;line-height:1;}
+
 .menu-info{flex:1;min-width:0;}
 .menu-name{font-family:var(--ff-head);font-size:0.97rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:0.2rem;}
 .menu-desc{font-size:0.74rem;color:var(--muted);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -88,6 +94,11 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .cart-empty{text-align:center;padding:1.75rem;color:var(--muted2);font-size:0.85rem;line-height:1.6;}
 .cart-row{display:flex;align-items:center;gap:0.7rem;padding:0.55rem 0;border-bottom:1px solid var(--border);}
 .cart-row:last-of-type{border-bottom:none;}
+
+/* Cart row thumbnail */
+.cart-row-thumb{width:32px;height:32px;border-radius:6px;overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.cart-row-thumb img{width:100%;height:100%;object-fit:cover;}
+
 .cart-row-name{flex:1;font-size:0.84rem;color:var(--ink2);}
 .cart-row-qty{font-size:0.75rem;color:var(--muted);}
 .cart-row-price{font-family:var(--ff-head);font-size:0.9rem;color:var(--terra);}
@@ -258,13 +269,10 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
         <button class="otype active" id="otTable">🍽️ Masada</button>
         <button class="otype" id="otPickup">📦 Özüm Alacağam</button>
       </div>
-
-      <!-- FIX: name is now optional, phone removed entirely -->
       <div class="sform-group">
         <label class="sform-label">Adınız (ixtiyari)</label>
         <input class="sform-input" type="text" id="coName" placeholder="Adınız (ixtiyari)">
       </div>
-
       <div class="order-summary-box">
         <div class="osb-title">Sifariş Detalları</div>
         <div id="coLines"></div>
@@ -282,7 +290,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
         <input class="sform-input" type="text" id="coNote" placeholder="Allerji, tercihlər...">
       </div>
       <button class="btn-submit" id="btnSubmit">Mətbəxə Göndər →</button>
-
       <p class="sheet-privacy">
         Sifariş verməklə siz bizim
         <a href="privacy.html" target="_blank">Məxfilik Siyasətini</a>
@@ -338,6 +345,18 @@ document.getElementById('footerYear').textContent=new Date().getFullYear();
 
 const token=new URLSearchParams(location.search).get('t');
 
+// Helper: render a thumbnail — shows image if available, else emoji
+function thumbHtml(item, size='56px', radius='10px') {
+  if (item.image_url) {
+    return `<div class="menu-thumb" style="width:${size};height:${size};border-radius:${radius};">
+      <img src="${item.image_url}" alt="${item.name}" loading="lazy" onerror="this.parentElement.innerHTML='<span class=\\'fallback-emoji\\'>${item.emoji||'🍽️'}</span>'">
+    </div>`;
+  }
+  return `<div class="menu-thumb" style="width:${size};height:${size};border-radius:${radius};">
+    <span class="fallback-emoji">${item.emoji||'🍽️'}</span>
+  </div>`;
+}
+
 async function markTableActive(){
   if(!tableData)return;
   await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`,{
@@ -366,10 +385,8 @@ function resetIdleTimer(){
     if(hasOrdered)return;
     document.getElementById('idleBanner').classList.add('show');
     if(tableData){
-      // FIX: server-side check — only reset if no active orders exist for this table
       const activeOrders=await api(`orders?table_id=eq.${tableData.id}&status=in.(pending,confirmed,ready)&select=id`);
       if(Array.isArray(activeOrders)&&activeOrders.length>0){
-        // Orders exist — customer has actually ordered, don't reset
         hasOrdered=true;
         document.getElementById('idleBanner').classList.remove('show');
         return;
@@ -383,8 +400,6 @@ function resetIdleTimer(){
   },IDLE_MS);
 }
 
-// FIX: sendLeaveBeacon only resets table if hasOrdered is false
-// hasOrdered is set true immediately on successful order submission
 function sendLeaveBeacon(){
   if(!tableData||hasOrdered)return;
   try{
@@ -433,7 +448,7 @@ function renderMenu(){
     const ua=!item.available;
     const hasItem=qty>0;
     return `<div class="menu-card${ua?' unavail':''}${hasItem?' has-item':''}">
-      <div class="menu-emoji">${item.emoji||'🍽️'}</div>
+      ${thumbHtml(item)}
       <div class="menu-info">
         <div class="menu-name">${item.name}${item.is_popular?'<span class="menu-badge">Populyar</span>':''}</div>
         <div class="menu-desc">${ua?'<span style="color:var(--red);font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;">Mövcud deyil</span>':(item.description||'')}</div>
@@ -473,13 +488,18 @@ function updateCart(){
   const empty=document.getElementById('cartEmpty');
   if(!items.length){rows.innerHTML='';foot.style.display='none';empty.style.display='block';return;}
   empty.style.display='none';foot.style.display='block';
-  rows.innerHTML=items.map(({item,qty})=>`
-    <div class="cart-row">
-      <span class="cart-row-name">${item.emoji||''} ${item.name}</span>
+  rows.innerHTML=items.map(({item,qty})=>{
+    const thumbContent = item.image_url
+      ? `<img src="${item.image_url}" alt="${item.name}" onerror="this.parentElement.innerHTML='${item.emoji||'🍽️'}'">`
+      : (item.emoji||'🍽️');
+    return `<div class="cart-row">
+      <div class="cart-row-thumb">${thumbContent}</div>
+      <span class="cart-row-name">${item.name}</span>
       <span class="cart-row-qty">${qty}×</span>
       <span class="cart-row-price">₼${(qty*Number(item.price)).toFixed(2)}</span>
       <button class="cart-del" onclick="removeItem('${item.id}')">✕</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function removeItem(id){delete cart[id];renderMenu();updateCart();}
@@ -510,8 +530,6 @@ function resetAfterOrder(){
   document.getElementById('coNote').value='';
 }
 
-// FIX: use dedicated columns instead of pipe-separated notes string
-// name is optional, phone removed entirely
 async function submitOrder(){
   const name=document.getElementById('coName').value.trim();
   const note=document.getElementById('coNote').value.trim();
