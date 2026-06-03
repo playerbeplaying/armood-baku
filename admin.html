@@ -1441,33 +1441,35 @@ async function saveStaff() {
   var role  = document.getElementById('staffRole').value;
   if (!name || !email || !pass) { showToast('Fill all fields'); return; }
   if (pass.length < 6) { showToast('Password min 6 chars'); return; }
+ 
   try {
-    var sr  = await fetch(SUPABASE_URL + '/auth/v1/signup', { method: 'POST', headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pass }) });
-    var sd  = await sr.json();
-    var uid = sd.id || (sd.user && sd.user.id) || null;
-    if (sd.error) {
-      var em = sd.error.message || '';
-      if (em.toLowerCase().indexOf('already') >= 0 || em.toLowerCase().indexOf('registered') >= 0) {
-        var lr = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { 'apikey': SUPABASE_ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pass }) });
-        var ld = await lr.json();
-        if (ld.error || !ld.user) { showToast('User exists but signin failed'); return; }
-        uid = ld.user.id;
-      } else { showToast('Signup error: ' + em); return; }
+    // Call the Edge Function instead of the public /auth/v1/signup endpoint.
+    // The Edge Function verifies the caller is a director and uses
+    // service_role internally — works even with public signups disabled.
+    var res = await fetch(SUPABASE_URL + '/functions/v1/create-admin-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + authToken,  // caller's JWT — verified server-side
+      },
+      body: JSON.stringify({ email: email, password: pass, full_name: name, role: role })
+    });
+ 
+    var data = await res.json();
+ 
+    if (!res.ok || data.error) {
+      showToast('Error: ' + (data.error || 'Unknown error'));
+      return;
     }
-    if (!uid) { showToast('Could not get user ID'); return; }
-    var ex = await api('admins?id=eq.' + uid + '&select=id');
-    if (Array.isArray(ex) && ex.length) { showToast('Already an admin'); closeModal('staffModal'); return; }
-    var ins = await api('admins', { method: 'POST', body: JSON.stringify({ id: uid, email: email, full_name: name, role: role }) });
-    if (ins && (ins.code || ins.error)) { showToast('Admin record failed'); return; }
+ 
     writeAudit('STAFF_ADD', name + ' (' + email + ') as ' + role);
-    showToast('Admin added!'); closeModal('staffModal'); loadStaff();
-  } catch(e) { showToast('Error: ' + e.message); }
-}
-async function removeStaff(id, nameLabel) {
-  if (!confirm('Remove ' + nameLabel + ' from admins?')) return;
-  await api('admins?id=eq.' + id, { method: 'DELETE' });
-  writeAudit('STAFF_REMOVE', 'Removed: ' + nameLabel);
-  showToast('Removed'); loadStaff();
+    showToast('Admin added!');
+    closeModal('staffModal');
+    loadStaff();
+ 
+  } catch(e) {
+    showToast('Error: ' + e.message);
+  }
 }
 
 // ══════════════════════════════════════════
