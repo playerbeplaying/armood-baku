@@ -813,14 +813,11 @@ async function submitOrder() {
       method: 'POST',
       headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
       body: JSON.stringify({
-        table_id: null,
-        status: 'pending',
-        total,
-        customer_name: name || null,
-        payment_method: payment,
-        order_type: orderType + '_website',
-        notes: [address, note].filter(Boolean).join(' | ') || null
-      })
+  table_id: null,
+  status: 'pending',
+  total,
+  notes: `${name} | ${phone} | ${payment} | ${address || 'Pickup'} | ${note} | ${orderType} | WEBSITE`
+})
     });
     const oData = await orderRes.json();
     const orderId = oData[0]?.id;
