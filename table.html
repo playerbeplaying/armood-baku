@@ -66,14 +66,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .q-btn:hover{background:var(--terra);color:white;border-color:var(--terra);}
 .q-num{font-size:0.95rem;font-weight:600;color:var(--ink);min-width:18px;text-align:center;}
 
-/* ── PAGE FOOTER (privacy link) ── */
-.page-footer{
-  padding:1.5rem 1.25rem;
-  text-align:center;
-  border-top:1px solid var(--border);
-  background:var(--bg2);
-  margin-bottom:calc(var(--cart-h) + 10px);
-}
+.page-footer{padding:1.5rem 1.25rem;text-align:center;border-top:1px solid var(--border);background:var(--bg2);margin-bottom:calc(var(--cart-h) + 10px);}
 .page-footer p{font-size:0.72rem;color:var(--muted2);line-height:1.8;}
 .page-footer a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border2);transition:color 0.2s,border-color 0.2s;}
 .page-footer a:hover{color:var(--terra);border-color:var(--terra);}
@@ -129,21 +122,14 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .sform-label{font-size:0.7rem;font-weight:600;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:0.4rem;display:block;}
 .sform-input{width:100%;padding:0.72rem 0.95rem;border:1.5px solid var(--border);border-radius:10px;font-family:var(--ff-body);font-size:0.9rem;color:var(--ink);background:var(--white);outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
 .sform-input:focus{border-color:var(--terra);}
-.sform-row{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
 .order-summary-box{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1rem 1.05rem;margin:0.7rem 0;}
 .osb-title{font-size:0.68rem;font-weight:600;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.6rem;}
 .osb-line{display:flex;justify-content:space-between;font-size:0.82rem;color:var(--ink2);padding:0.22rem 0;}
 .osb-total{display:flex;justify-content:space-between;font-size:0.95rem;font-weight:700;color:var(--ink);border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem;}
 .osb-total span:last-child{color:var(--terra);font-family:var(--ff-head);}
-
-/* ── privacy notice inside checkout sheet ── */
-.sheet-privacy{
-  font-size:0.68rem;color:var(--muted2);text-align:center;
-  margin-top:0.85rem;line-height:1.7;
-}
+.sheet-privacy{font-size:0.68rem;color:var(--muted2);text-align:center;margin-top:0.85rem;line-height:1.7;}
 .sheet-privacy a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--border2);}
 .sheet-privacy a:hover{color:var(--terra);border-color:var(--terra);}
-
 .btn-submit{width:100%;background:var(--terra);color:white;border:none;border-radius:12px;font-family:var(--ff-body);font-size:0.9rem;font-weight:600;padding:1rem;cursor:pointer;transition:background 0.2s,transform 0.12s;margin-top:0.5rem;}
 .btn-submit:hover{background:var(--terra-hover);}
 .btn-submit:active{transform:scale(0.98);}
@@ -216,7 +202,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 
   <div class="menu-list" id="menuList"></div>
 
-  <!-- ── PAGE FOOTER with privacy link ── -->
   <div class="page-footer">
     <p>
       Sifariş verməklə siz bizim
@@ -273,16 +258,13 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
         <button class="otype active" id="otTable">🍽️ Masada</button>
         <button class="otype" id="otPickup">📦 Özüm Alacağam</button>
       </div>
-      <div class="sform-row">
-        <div class="sform-group">
-          <label class="sform-label">Adınız</label>
-          <input class="sform-input" type="text" id="coName" placeholder="Adınız">
-        </div>
-        <div class="sform-group">
-          <label class="sform-label">Telefon (ixtiyari)</label>
-          <input class="sform-input" type="tel" id="coPhone" placeholder="050 000 00 00">
-        </div>
+
+      <!-- FIX: name is now optional, phone removed entirely -->
+      <div class="sform-group">
+        <label class="sform-label">Adınız (ixtiyari)</label>
+        <input class="sform-input" type="text" id="coName" placeholder="Adınız (ixtiyari)">
       </div>
+
       <div class="order-summary-box">
         <div class="osb-title">Sifariş Detalları</div>
         <div id="coLines"></div>
@@ -301,13 +283,12 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       </div>
       <button class="btn-submit" id="btnSubmit">Mətbəxə Göndər →</button>
 
-      <!-- ── privacy notice ── -->
       <p class="sheet-privacy">
         Sifariş verməklə siz bizim
         <a href="privacy.html" target="_blank">Məxfilik Siyasətini</a>
         və
         <a href="terms.html" target="_blank">İstifadə Şərtlərini</a>
-        qəbul etmiş olursunuz. Adınız yalnız sifarişi işləmək üçün istifadə edilir.
+        qəbul etmiş olursunuz.
       </p>
     </div>
     <div id="sheetSuccess" class="success-view" style="display:none;">
@@ -353,7 +334,6 @@ let idleTimeout=null;
 const IDLE_MS=5*60*1000;
 const HEARTBEAT_MS=25*1000;
 
-// Footer year
 document.getElementById('footerYear').textContent=new Date().getFullYear();
 
 const token=new URLSearchParams(location.search).get('t');
@@ -386,6 +366,14 @@ function resetIdleTimer(){
     if(hasOrdered)return;
     document.getElementById('idleBanner').classList.add('show');
     if(tableData){
+      // FIX: server-side check — only reset if no active orders exist for this table
+      const activeOrders=await api(`orders?table_id=eq.${tableData.id}&status=in.(pending,confirmed,ready)&select=id`);
+      if(Array.isArray(activeOrders)&&activeOrders.length>0){
+        // Orders exist — customer has actually ordered, don't reset
+        hasOrdered=true;
+        document.getElementById('idleBanner').classList.remove('show');
+        return;
+      }
       await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`,{
         method:'PATCH',
         headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
@@ -395,6 +383,8 @@ function resetIdleTimer(){
   },IDLE_MS);
 }
 
+// FIX: sendLeaveBeacon only resets table if hasOrdered is false
+// hasOrdered is set true immediately on successful order submission
 function sendLeaveBeacon(){
   if(!tableData||hasOrdered)return;
   try{
@@ -517,16 +507,15 @@ function resetAfterOrder(){
   cartOpen=false;
   document.getElementById('cartNote').value='';
   document.getElementById('coName').value='';
-  document.getElementById('coPhone').value='';
   document.getElementById('coNote').value='';
 }
 
+// FIX: use dedicated columns instead of pipe-separated notes string
+// name is optional, phone removed entirely
 async function submitOrder(){
   const name=document.getElementById('coName').value.trim();
-  const phone=document.getElementById('coPhone').value.trim();
   const note=document.getElementById('coNote').value.trim();
   const payment=document.getElementById('coPayment').value;
-  if(!name){toast('Adınızı daxil edin','warn');return;}
   const items=Object.values(cart);
   const total=items.reduce((s,c)=>s+c.qty*Number(c.item.price),0);
   const btn=document.getElementById('btnSubmit');
@@ -535,7 +524,15 @@ async function submitOrder(){
     const orderRes=await fetch(`${SUPABASE_URL}/rest/v1/orders`,{
       method:'POST',
       headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json','Prefer':'return=representation'},
-      body:JSON.stringify({table_id:tableData.id,status:'pending',total,notes:`${name}|${phone}|${payment}|${note}|${orderType}`})
+      body:JSON.stringify({
+        table_id:tableData.id,
+        status:'pending',
+        total,
+        customer_name:name||null,
+        payment_method:payment,
+        order_type:orderType,
+        notes:note||null
+      })
     });
     const oData=await orderRes.json();
     const orderId=oData[0]?.id;
@@ -543,7 +540,7 @@ async function submitOrder(){
     await fetch(`${SUPABASE_URL}/rest/v1/order_items`,{
       method:'POST',
       headers:{'apikey':SUPABASE_ANON,'Authorization':`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json'},
-      body:JSON.stringify(items.map(({item,qty})=>({order_id:orderId,menu_item_id:item.id,quantity:qty,price_at_order:Number(item.price),added_by:name})))
+      body:JSON.stringify(items.map(({item,qty})=>({order_id:orderId,menu_item_id:item.id,quantity:qty,price_at_order:Number(item.price),added_by:name||'Guest'})))
     });
     await fetch(`${SUPABASE_URL}/rest/v1/restaurant_tables?id=eq.${tableData.id}`,{
       method:'PATCH',
