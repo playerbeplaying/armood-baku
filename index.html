@@ -684,7 +684,7 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
 <!-- COOKIE CONSENT BANNER -->
 <div id="cookieBanner" role="region" aria-label="Cookie razılığı">
   <p>
-    Bu sayt sifarişlər, rezervasiyalar və saytın düzgün işləməsi üçün cookies istifadə edir.
+    Bu sayt sifarişlər, rezervasiyalar və saytın düzgün işləməsi üçün brauzer yaddaşından (localStorage) istifadə edir.
     Daha ətraflı məlumat üçün <a href="privacy.html">Məxfilik Siyasətimizə</a> baxın.
   </p>
   <div class="cookie-actions">
@@ -895,7 +895,6 @@ async function submitOrder() {
   const payment = document.getElementById('co-payment').value;
 
   if (!name) { showToast('Adınızı daxil edin', 'warn'); return; }
-  if (!phone) { showToast('Telefon nömrənizi daxil edin', 'warn'); return; }
   if (orderType === 'delivery' && !address) { showToast('Çatdırılma ünvanını daxil edin', 'warn'); return; }
 
   const items = Object.values(cart);
@@ -920,7 +919,10 @@ async function submitOrder() {
         table_id: null,
         status: 'pending',
         total,
-        notes: `${name} | ${phone} | ${payment} | ${address || 'Pickup'} | ${note} | ${orderType} | WEBSITE`
+          customer_name: name || null,
+        payment_method: payment,
+        order_type: orderType + '_website',
+        notes: [address, note].filter(Boolean).join(' | ') || null
       })
     });
     const oData = await orderRes.json();
@@ -1030,10 +1032,61 @@ document.getElementById('typePickup').addEventListener('click', () => {
 document.getElementById('checkoutSubmit').addEventListener('click', submitOrder);
 document.getElementById('newOrderBtn').addEventListener('click', closeCheckout);
 
-document.getElementById('resForm').addEventListener('submit', e => {
+ document.getElementById('resForm').addEventListener('submit', async e => {
     e.preventDefault();
-    showToast('✓ Rezervasiya sorğunuz göndərildi!', 'success');
-    e.target.reset();
+    const form = e.target;
+    const inputs = form.querySelectorAll('input, select, textarea');
+    const submitBtn = form.querySelector('.res-submit');
+ 
+    // Gather values by position (name, phone, date, time, party, occasion, notes)
+    const fields = [...inputs];
+    const name    = fields[0]?.value.trim();
+    const phone   = fields[1]?.value.trim();
+    const date    = fields[2]?.value;
+    const time    = fields[3]?.value;
+    const party   = fields[4]?.value;
+    const occasion= fields[5]?.value;
+    const notes   = fields[6]?.value.trim();
+ 
+    if (!name || !phone || !date || !time) {
+      showToast('Ad, telefon, tarix və saatı doldurun', 'warn');
+      return;
+    }
+ 
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Göndərilir...';
+ 
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/reservations`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON,
+          'Authorization': `Bearer ${SUPABASE_ANON}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          full_name:  name,
+          phone:      phone,
+          date:       date,
+          time:       time,
+          party_size: party,
+          occasion:   occasion || null,
+          notes:      notes   || null,
+          status:     'pending'
+        })
+      });
+ 
+      if (!res.ok) throw new Error('Failed');
+ 
+      showToast('✓ Rezervasiya sorğunuz göndərildi!', 'success');
+      form.reset();
+    } catch(err) {
+      showToast('Xəta baş verdi. Zəhmət olmasa, bizə zəng edin.', 'warn');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Rezervasiya Et →';
+    }
   });
 
 window.addEventListener('scroll', () => {
