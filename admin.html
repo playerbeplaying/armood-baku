@@ -477,28 +477,9 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <button class="modal-close" onclick="closeModal('menuModal')">✕</button>
     <h3 id="menuModalTitle">Add Menu Item</h3>
     <input type="hidden" id="menuEditId">
-    <input type="hidden" id="menuImageUrl">
-
-    <!-- Image upload area -->
-    <div class="form-group">
-      <label>Image</label>
-      <div id="imageUploadArea" style="border:2px dashed var(--border2);border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;transition:border-color 0.2s;position:relative;" onclick="document.getElementById('menuImageFile').click()">
-        <div id="imagePreview" style="display:none;margin-bottom:0.6rem;">
-          <img id="previewImg" src="" style="max-height:140px;border-radius:8px;object-fit:cover;max-width:100%;">
-        </div>
-        <div id="imageUploadPlaceholder">
-          <div style="font-size:1.8rem;margin-bottom:0.3rem;">🖼️</div>
-          <div style="font-size:0.8rem;color:var(--muted);font-weight:500;">Click to upload image</div>
-          <div style="font-size:0.7rem;color:var(--muted2);margin-top:0.2rem;">JPG, PNG, WEBP — max 2MB</div>
-        </div>
-        <input type="file" id="menuImageFile" accept="image/*" style="display:none;" onchange="handleImageSelect(this)">
-      </div>
-      <button type="button" id="removeImageBtn" style="display:none;margin-top:0.4rem;background:transparent;border:1px solid var(--border2);color:var(--muted);border-radius:6px;font-size:0.75rem;padding:0.3rem 0.7rem;cursor:pointer;font-family:var(--ff-body);" onclick="removeImage()">✕ Remove image</button>
-    </div>
-
     <div class="form-row">
       <div class="form-group"><label>Name</label><input type="text" id="menuName" placeholder="Item name"></div>
-      <div class="form-group"><label>Emoji (fallback)</label><input type="text" id="menuEmoji" placeholder="🍽️" maxlength="2"></div>
+      <div class="form-group"><label>Emoji</label><input type="text" id="menuEmoji" placeholder="🍽️" maxlength="2"></div>
     </div>
     <div class="form-group"><label>Description</label><textarea id="menuDesc" placeholder="Short description..." style="min-height:55px;resize:vertical;"></textarea></div>
     <div class="form-row">
@@ -506,7 +487,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="form-group"><label>Category</label><select id="menuCat"><option value="seheri">Breakfast</option><option value="ana">Main Dishes</option><option value="salatlar">Salads</option><option value="icecekler">Drinks</option></select></div>
     </div>
     <div style="display:flex;gap:0.6rem;margin-top:0.4rem;">
-      <button class="btn-primary" id="menuSaveBtn" onclick="saveMenuItem()">Save</button>
+      <button class="btn-primary" onclick="saveMenuItem()">Save</button>
       <button class="btn-outline-sm" onclick="closeModal('menuModal')">Cancel</button>
     </div>
   </div>
