@@ -477,9 +477,28 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <button class="modal-close" onclick="closeModal('menuModal')">✕</button>
     <h3 id="menuModalTitle">Add Menu Item</h3>
     <input type="hidden" id="menuEditId">
+    <input type="hidden" id="menuImageUrl">
+
+    <!-- Image upload area -->
+    <div class="form-group">
+      <label>Image</label>
+      <div id="imageUploadArea" style="border:2px dashed var(--border2);border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;transition:border-color 0.2s;position:relative;" onclick="document.getElementById('menuImageFile').click()">
+        <div id="imagePreview" style="display:none;margin-bottom:0.6rem;">
+          <img id="previewImg" src="" style="max-height:140px;border-radius:8px;object-fit:cover;max-width:100%;">
+        </div>
+        <div id="imageUploadPlaceholder">
+          <div style="font-size:1.8rem;margin-bottom:0.3rem;">🖼️</div>
+          <div style="font-size:0.8rem;color:var(--muted);font-weight:500;">Click to upload image</div>
+          <div style="font-size:0.7rem;color:var(--muted2);margin-top:0.2rem;">JPG, PNG, WEBP — max 2MB</div>
+        </div>
+        <input type="file" id="menuImageFile" accept="image/*" style="display:none;" onchange="handleImageSelect(this)">
+      </div>
+      <button type="button" id="removeImageBtn" style="display:none;margin-top:0.4rem;background:transparent;border:1px solid var(--border2);color:var(--muted);border-radius:6px;font-size:0.75rem;padding:0.3rem 0.7rem;cursor:pointer;font-family:var(--ff-body);" onclick="removeImage()">✕ Remove image</button>
+    </div>
+
     <div class="form-row">
       <div class="form-group"><label>Name</label><input type="text" id="menuName" placeholder="Item name"></div>
-      <div class="form-group"><label>Emoji</label><input type="text" id="menuEmoji" placeholder="🍽️" maxlength="2"></div>
+      <div class="form-group"><label>Emoji (fallback)</label><input type="text" id="menuEmoji" placeholder="🍽️" maxlength="2"></div>
     </div>
     <div class="form-group"><label>Description</label><textarea id="menuDesc" placeholder="Short description..." style="min-height:55px;resize:vertical;"></textarea></div>
     <div class="form-row">
@@ -487,7 +506,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="form-group"><label>Category</label><select id="menuCat"><option value="seheri">Breakfast</option><option value="ana">Main Dishes</option><option value="salatlar">Salads</option><option value="icecekler">Drinks</option></select></div>
     </div>
     <div style="display:flex;gap:0.6rem;margin-top:0.4rem;">
-      <button class="btn-primary" onclick="saveMenuItem()">Save</button>
+      <button class="btn-primary" id="menuSaveBtn" onclick="saveMenuItem()">Save</button>
       <button class="btn-outline-sm" onclick="closeModal('menuModal')">Cancel</button>
     </div>
   </div>
@@ -1106,40 +1125,43 @@ async function dismissWaiterCall(id) {
   if (_currentPanelTableId) renderPanelContent(_currentPanelTableId);
 }
 var menuItems = [];
-async function loadMenu() {
-  var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
-  menuItems = Array.isArray(items) ? items : [];
-  document.getElementById('menuCount').textContent = menuItems.length;
-  var grid = document.getElementById('menuManageGrid');
-  if (!menuItems.length) { grid.innerHTML = '<div class="loading-state">Menu is empty</div>'; return; }
-  grid.innerHTML = menuItems.map(function(item) {
-    return '<div class="menu-item-row"><span class="menu-emoji">' + (item.emoji || '🍽️') + '</span><div class="menu-info"><div class="menu-name">' + escHtml(item.name) + '</div><div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div></div>'
-      + '<button class="toggle ' + (item.available ? 'on' : '') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>'
-      + '<button class="refresh-btn" onclick=\'openEditMenu(' + JSON.stringify(item) + ')\'>Edit</button>'
-      + '<button class="refresh-btn" style="border-color:var(--red-light);color:var(--red);" onclick="deleteMenuItem(\'' + item.id + '\')">Del</button>'
-    + '</div>';
-  }).join('');
+
+function handleImageSelect(input) {
+  var file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('Image must be under 2MB'); input.value = ''; return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('previewImg').src = e.target.result;
+    document.getElementById('imagePreview').style.display = 'block';
+    document.getElementById('imageUploadPlaceholder').style.display = 'none';
+    document.getElementById('removeImageBtn').style.display = 'inline-block';
+    document.getElementById('imageUploadArea').style.borderColor = 'var(--terra)';
+  };
+  reader.readAsDataURL(file);
 }
-async function toggleItem(id, cur) {
-  await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ available: !cur }) });
-  var item = menuItems.find(function(m) { return String(m.id) === String(id); });
-  writeAudit('MENU_TOGGLE', (item ? item.name : id) + ' → ' + (!cur ? 'enabled' : 'disabled'));
-  showToast(cur ? 'Disabled' : 'Enabled'); loadMenu();
+
+function removeImage() {
+  document.getElementById('menuImageFile').value = '';
+  document.getElementById('menuImageUrl').value = '';
+  document.getElementById('previewImg').src = '';
+  document.getElementById('imagePreview').style.display = 'none';
+  document.getElementById('imageUploadPlaceholder').style.display = 'block';
+  document.getElementById('removeImageBtn').style.display = 'none';
+  document.getElementById('imageUploadArea').style.borderColor = 'var(--border2)';
 }
-async function deleteMenuItem(id) {
-  var item = menuItems.find(function(m) { return String(m.id) === String(id); });
-  if (!confirm('Delete "' + (item ? item.name : 'this item') + '"?')) return;
-  await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ is_active: false }) });
-  writeAudit('MENU_DELETE', 'Deleted: ' + (item ? item.name : id));
-  showToast('Item deleted'); loadMenu();
-}
+
 function openAddMenu() {
   document.getElementById('menuModalTitle').textContent = 'Add Menu Item';
   document.getElementById('menuEditId').value = '';
-  ['menuName', 'menuEmoji', 'menuDesc', 'menuPrice'].forEach(function(id) { document.getElementById(id).value = ''; });
+  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('menuCat').value = 'ana';
+  document.getElementById('menuSaveBtn').textContent = 'Save';
+  document.getElementById('menuSaveBtn').disabled = false;
+  removeImage();
   document.getElementById('menuModal').classList.add('open');
 }
+
 function openEditMenu(item) {
   document.getElementById('menuModalTitle').textContent = 'Edit Item';
   document.getElementById('menuEditId').value   = item.id;
@@ -1148,16 +1170,106 @@ function openEditMenu(item) {
   document.getElementById('menuDesc').value     = item.description || '';
   document.getElementById('menuPrice').value    = item.price;
   document.getElementById('menuCat').value      = item.category;
+  document.getElementById('menuImageUrl').value = item.image_url || '';
+  document.getElementById('menuSaveBtn').textContent = 'Save';
+  document.getElementById('menuSaveBtn').disabled = false;
+  if (item.image_url) {
+    document.getElementById('previewImg').src = item.image_url;
+    document.getElementById('imagePreview').style.display = 'block';
+    document.getElementById('imageUploadPlaceholder').style.display = 'none';
+    document.getElementById('removeImageBtn').style.display = 'inline-block';
+    document.getElementById('imageUploadArea').style.borderColor = 'var(--terra)';
+  } else {
+    removeImage();
+  }
   document.getElementById('menuModal').classList.add('open');
 }
+
+async function uploadMenuImage(file, itemName) {
+  var ext      = file.name.split('.').pop().toLowerCase();
+  var safeName = itemName.toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
+  var path     = safeName + '-' + Date.now() + '.' + ext;
+  var res = await fetch(SUPABASE_URL + '/storage/v1/object/menu-images/' + path, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_ANON,
+      'Authorization': 'Bearer ' + authToken,
+      'Content-Type': file.type,
+      'x-upsert': 'true'
+    },
+    body: file
+  });
+  if (!res.ok) { var err = await res.json(); throw new Error(err.message || 'Upload failed'); }
+  return SUPABASE_URL + '/storage/v1/object/public/menu-images/' + path;
+}
+
 async function saveMenuItem() {
-  var id   = document.getElementById('menuEditId').value;
-  var data = { name: document.getElementById('menuName').value.trim(), emoji: document.getElementById('menuEmoji').value.trim() || '🍽️', description: document.getElementById('menuDesc').value.trim(), price: parseFloat(document.getElementById('menuPrice').value), category: document.getElementById('menuCat').value, available: true, is_active: true };
-  if (!data.name || !data.price) { showToast('Name and price required'); return; }
-  if (id) await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify(data) });
-  else    await api('menu_items', { method: 'POST', body: JSON.stringify(data) });
-  writeAudit(id ? 'MENU_EDIT' : 'MENU_ADD', data.name + ' · ₼' + data.price);
-  showToast(id ? 'Updated' : 'Added'); closeModal('menuModal'); loadMenu();
+  var id    = document.getElementById('menuEditId').value;
+  var name  = document.getElementById('menuName').value.trim();
+  var price = parseFloat(document.getElementById('menuPrice').value);
+  if (!name || !price) { showToast('Name and price required'); return; }
+  var btn = document.getElementById('menuSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    var imageUrl  = document.getElementById('menuImageUrl').value || null;
+    var fileInput = document.getElementById('menuImageFile');
+    if (fileInput.files && fileInput.files[0]) {
+      imageUrl = await uploadMenuImage(fileInput.files[0], name);
+    }
+    var data = {
+      name: name,
+      emoji: document.getElementById('menuEmoji').value.trim() || '🍽️',
+      description: document.getElementById('menuDesc').value.trim(),
+      price: price,
+      category: document.getElementById('menuCat').value,
+      available: true,
+      is_active: true,
+      image_url: imageUrl
+    };
+    if (id) await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify(data) });
+    else    await api('menu_items', { method: 'POST', body: JSON.stringify(data) });
+    writeAudit(id ? 'MENU_EDIT' : 'MENU_ADD', data.name + ' · ₼' + data.price);
+    showToast(id ? 'Updated' : 'Added');
+    closeModal('menuModal');
+    loadMenu();
+  } catch(e) {
+    showToast('Error: ' + e.message);
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+}
+
+async function loadMenu() {
+  var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
+  menuItems = Array.isArray(items) ? items : [];
+  document.getElementById('menuCount').textContent = menuItems.length;
+  var grid = document.getElementById('menuManageGrid');
+  if (!menuItems.length) { grid.innerHTML = '<div class="loading-state">Menu is empty</div>'; return; }
+  grid.innerHTML = menuItems.map(function(item) {
+    var imgHtml = item.image_url
+      ? '<img src="' + item.image_url + '" style="width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;" onerror="this.style.display=\'none\'">'
+      : '<span class="menu-emoji">' + (item.emoji || '🍽️') + '</span>';
+    return '<div class="menu-item-row">' + imgHtml
+      + '<div class="menu-info"><div class="menu-name">' + escHtml(item.name) + '</div><div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div></div>'
+      + '<button class="toggle ' + (item.available ? 'on' : '') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>'
+      + '<button class="refresh-btn" onclick=\'openEditMenu(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>Edit</button>'
+      + '<button class="refresh-btn" style="border-color:var(--red-light);color:var(--red);" onclick="deleteMenuItem(\'' + item.id + '\')">Del</button>'
+      + '</div>';
+  }).join('');
+}
+
+async function toggleItem(id, cur) {
+  await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ available: !cur }) });
+  var item = menuItems.find(function(m) { return String(m.id) === String(id); });
+  writeAudit('MENU_TOGGLE', (item ? item.name : id) + ' → ' + (!cur ? 'enabled' : 'disabled'));
+  showToast(cur ? 'Disabled' : 'Enabled'); loadMenu();
+}
+
+async function deleteMenuItem(id) {
+  var item = menuItems.find(function(m) { return String(m.id) === String(id); });
+  if (!confirm('Delete "' + (item ? item.name : 'this item') + '"?')) return;
+  await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ is_active: false }) });
+  writeAudit('MENU_DELETE', 'Deleted: ' + (item ? item.name : id));
+  showToast('Item deleted'); loadMenu();
 }
 var STATIC_QR = [null,
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable1.png',
