@@ -1,4 +1,4 @@
-cat > /mnt/user-data/outputs/admin.html << 'ENDOFFILE'
+cat > /tmp/admin_original.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="az">
 <head>
@@ -30,13 +30,9 @@ cat > /mnt/user-data/outputs/admin.html << 'ENDOFFILE'
 html{scroll-behavior:smooth;}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-
-/* INACTIVITY WARNING */
 .inactivity-warn{position:fixed;top:0;left:0;right:0;z-index:600;background:#92400e;color:white;font-size:0.8rem;font-weight:500;padding:0.6rem 1.2rem;text-align:center;display:none;border-bottom:2px solid #fbbf24;}
 .inactivity-warn.show{display:block;}
 .inactivity-warn strong{font-weight:700;}
-
-/* TOP NAV */
 .topnav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1rem 0 0;z-index:100;box-shadow:0 1px 3px rgba(30,24,16,0.05);}
 .topnav-left{display:flex;align-items:center;padding:0 1.2rem;height:100%;}
 .topnav-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none;}
@@ -51,8 +47,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-logout{padding:0.35rem 0.75rem;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.75rem;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .btn-logout:hover{border-color:var(--red);color:var(--red);background:var(--red-light);}
 .topnav-clock{font-size:0.72rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;}
-
-/* LAYOUT */
 .layout{display:flex;margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h));}
 .sidebar{width:var(--sidebar-w);background:white;border-right:1px solid var(--border);padding:1.2rem 0;flex-shrink:0;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;}
 .sidebar-section{padding:0 0.75rem;margin-bottom:0.5rem;}
@@ -63,21 +57,16 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .nav-item-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
 .nav-badge{margin-left:auto;background:var(--red);color:white;font-size:0.65rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;min-width:18px;text-align:center;}
 .main{flex:1;padding:1.5rem;overflow-x:hidden;background:var(--bg);min-width:0;}
-
-/* BOTTOM NAV — FIX: use block not flex for the nav container items */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bottom-nav-h);background:white;border-top:1px solid var(--border);z-index:100;box-shadow:0 -2px 10px rgba(30,24,16,0.06);}
 .bottom-nav-inner{display:flex;height:100%;align-items:stretch;}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:all 0.15s;color:var(--muted);-webkit-tap-highlight-color:transparent;position:relative;}
 .bnav-item.active{color:var(--terra);}
 .bnav-item:active{background:var(--bg2);}
-/* FIX: bnav-item hidden by default with display:none needs to show as flex, not block */
 .bnav-item[style*="display:none"]{display:none!important;}
 .bnav-item.show-flex{display:flex!important;}
 .bnav-icon{font-size:1.3rem;line-height:1;}
 .bnav-label{font-size:0.6rem;font-weight:600;letter-spacing:0.02em;}
 .bnav-dot{position:absolute;top:6px;right:calc(50% - 14px);background:var(--red);color:white;font-size:0.55rem;font-weight:700;padding:0.1rem 0.3rem;border-radius:10px;min-width:16px;text-align:center;display:none;}
-
-/* MORE SHEET */
 .more-menu-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.45);z-index:150;align-items:flex-end;justify-content:stretch;}
 .more-menu-overlay.open{display:flex;}
 .more-menu-sheet{background:white;border-radius:16px 16px 0 0;padding:1rem 1rem 1.5rem;width:100%;}
@@ -87,14 +76,10 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .more-menu-item:active{background:var(--bg2);}
 .more-menu-item.active{background:var(--terra-pale);color:var(--terra);}
 .more-menu-item-icon{font-size:1.1rem;width:24px;text-align:center;}
-
-/* PAGES */
 .page{display:none;}.page.active{display:block;}
 .page-header{margin-bottom:1.5rem;}
 .page-title{font-family:var(--ff-head);font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:0.2rem;}
 .page-sub{font-size:0.82rem;color:var(--muted);}
-
-/* STAT GRID */
 .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.75rem;margin-bottom:1.5rem;}
 .stat-card{background:white;border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:0.4rem;}
 .stat-card-top{display:flex;align-items:center;justify-content:space-between;}
@@ -103,8 +88,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .stat-icon.terra{background:var(--terra-pale);}.stat-icon.green{background:var(--green-pale);}.stat-icon.amber{background:var(--amber-light);}.stat-icon.purple{background:var(--purple-light);}
 .stat-val{font-size:1.6rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1;}
 .stat-trend{font-size:0.7rem;color:var(--muted);}
-
-/* TABLE GRID */
 .tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.75rem;margin-bottom:1.5rem;}
 .table-pill{background:white;border:2px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;transition:box-shadow 0.2s,border-color 0.2s,transform 0.15s;display:flex;flex-direction:column;gap:0.45rem;user-select:none;-webkit-tap-highlight-color:transparent;position:relative;}
 .table-pill:hover{box-shadow:0 4px 16px rgba(30,24,16,0.1);transform:translateY(-1px);}
@@ -122,8 +105,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .tp-total{font-family:var(--ff-head);font-size:1.05rem;font-weight:700;color:var(--terra);}
 .tp-meta{font-size:0.68rem;color:var(--muted);}
 .tp-waiter-badge{position:absolute;top:8px;right:8px;font-size:0.9rem;}
-
-/* TABLE DETAIL PANEL */
 .panel-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.3);z-index:200;backdrop-filter:blur(2px);}
 .panel-overlay.open{display:block;}
 .table-panel{position:fixed;top:var(--nav-h);right:0;bottom:0;width:var(--panel-w);max-width:100vw;background:white;border-left:1px solid var(--border);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.35s var(--ease);box-shadow:-8px 0 32px rgba(30,24,16,0.12);overflow:hidden;}
@@ -183,16 +164,12 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .panel-empty{text-align:center;padding:2rem;color:var(--muted2);font-size:0.83rem;}
 .panel-waiter-strip{display:flex;align-items:center;gap:0.5rem;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:0.85rem;font-size:0.78rem;color:#92400e;font-weight:500;}
 .panel-waiter-dismiss{margin-left:auto;padding:0.22rem 0.55rem;border-radius:5px;background:#fbbf24;border:none;color:white;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:var(--ff-body);}
-
-/* FIX: Mobile panel slides up from bottom */
 @media(max-width:768px){
   .table-panel{top:auto;bottom:0;right:0;left:0;width:100%;height:85vh;border-left:none;border-top:1px solid var(--border);border-radius:16px 16px 0 0;transform:translateY(100%);}
   .table-panel.panel-open{transform:translateY(0);}
   .panel-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0.6rem auto -0.2rem;display:block;}
 }
 @media(min-width:769px){.panel-handle{display:none;}}
-
-/* ORDERS PAGE */
 .orders-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem;}
 .filter-tabs{display:flex;gap:0.35rem;flex-wrap:wrap;}
 .ftab{padding:0.3rem 0.7rem;font-size:0.75rem;font-weight:500;border-radius:7px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
@@ -237,8 +214,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .oc-act-btn.danger:hover{background:var(--red);color:white;}
 .orders-empty{text-align:center;padding:3rem;color:var(--muted2);font-size:0.88rem;}
 .orders-count-label{font-size:0.75rem;color:var(--muted);margin-bottom:0.6rem;font-weight:500;}
-
-/* SEARCH BAR */
 .search-bar{display:flex;align-items:center;gap:0.5rem;background:white;border:1.5px solid var(--border);border-radius:9px;padding:0.45rem 0.8rem;margin-bottom:0.9rem;transition:border-color 0.2s;}
 .search-bar:focus-within{border-color:var(--terra);}
 .search-bar span{font-size:0.9rem;color:var(--muted2);}
@@ -247,12 +222,8 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .search-clear{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:0.85rem;padding:0;line-height:1;display:none;}
 .search-clear.show{display:block;}
 .search-clear:hover{color:var(--red);}
-
-/* SEARCH HINT */
 .search-hint{font-size:0.7rem;color:var(--muted2);margin-bottom:0.6rem;padding:0 0.1rem;}
 .search-hint span{display:inline-block;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:0.05rem 0.35rem;font-size:0.68rem;margin:0 0.15rem;}
-
-/* GENERAL CARDS */
 .card{background:white;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .menu-item-row{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.2rem;border-bottom:1px solid rgba(224,213,197,0.5);}
 .menu-item-row:last-child{border-bottom:none;}
@@ -263,8 +234,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .toggle{position:relative;width:36px;height:20px;background:var(--border2);border:none;border-radius:10px;cursor:pointer;transition:background 0.2s;flex-shrink:0;}
 .toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:white;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
 .toggle.on{background:var(--terra);}.toggle.on::after{transform:translateX(16px);}
-
-/* WAITER CALLS */
 .wcall-row{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1.1rem;border-bottom:1px solid rgba(224,213,197,0.5);gap:0.5rem;}
 .wcall-row:last-child{border-bottom:none;}
 .wcall-table{font-size:0.88rem;font-weight:600;color:var(--ink);}
@@ -272,8 +241,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .wcall-time{font-size:0.68rem;color:var(--muted2);margin-top:0.1rem;}
 .wcall-badge{font-size:0.63rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:20px;background:#fef3c7;color:#92400e;animation:wpulse 2s infinite;}
 @keyframes wpulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
-
-/* STAFF */
 .staff-row{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.2rem;border-bottom:1px solid rgba(224,213,197,0.5);}
 .staff-row:last-child{border-bottom:none;}
 .staff-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--terra),var(--terra-light));color:white;font-size:0.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -286,14 +253,10 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .role-chef{background:var(--green-pale);color:var(--green);}
 .role-waiter{background:var(--amber-light);color:var(--gold);}
 .role-custom{background:var(--purple-light);color:var(--purple);}
-
-/* QR */
 .qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.2rem;}
 .qr-card{background:white;border:1px solid var(--border);border-radius:12px;padding:1.2rem;text-align:center;}
 .qr-table-label{font-family:var(--ff-head);font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:0.25rem;}
 .qr-url{font-size:0.6rem;color:var(--muted);word-break:break-all;margin-bottom:0.7rem;}
-
-/* AUDIT LOG */
 .audit-row{display:flex;align-items:flex-start;gap:0.75rem;padding:0.75rem 1.1rem;border-bottom:1px solid rgba(224,213,197,0.4);font-size:0.8rem;}
 .audit-row:last-child{border-bottom:none;}
 .audit-time{color:var(--muted2);font-variant-numeric:tabular-nums;flex-shrink:0;min-width:55px;font-size:0.72rem;padding-top:0.1rem;}
@@ -301,8 +264,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .audit-action{color:var(--muted);flex:1;line-height:1.5;}
 .audit-action strong{color:var(--ink);font-weight:500;}
 .audit-icon{font-size:1rem;flex-shrink:0;width:20px;text-align:center;}
-
-/* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.5);z-index:300;align-items:flex-end;justify-content:stretch;backdrop-filter:blur(3px);}
 .modal-overlay.open{display:flex;}
 .modal{background:white;border-radius:16px 16px 0 0;padding:1.5rem 1.2rem 2rem;width:100%;max-height:90vh;overflow-y:auto;position:relative;}
@@ -318,8 +279,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .btn-primary:hover{background:var(--terra-hover);}
 .btn-outline-sm{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;cursor:pointer;font-family:var(--ff-body);font-size:0.88rem;font-weight:500;padding:0.75rem 1.4rem;transition:all 0.2s;}
 .btn-outline-sm:hover{border-color:var(--ink2);color:var(--ink);}
-
-/* MISC */
 .toast{position:fixed;bottom:calc(var(--bottom-nav-h) + 0.75rem);right:1rem;left:1rem;background:var(--ink);color:white;padding:0.75rem 1rem;border-radius:10px;font-size:0.82rem;font-weight:500;z-index:400;opacity:0;transform:translateY(8px);transition:all 0.3s;box-shadow:0 8px 24px rgba(30,24,16,0.2);text-align:center;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
 .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.6rem;}
@@ -327,8 +286,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .loading-state{text-align:center;padding:2.5rem;color:var(--muted);font-size:0.83rem;}
 .refresh-btn{display:flex;align-items:center;gap:0.35rem;padding:0.35rem 0.7rem;border:1.5px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:var(--ff-body);font-size:0.75rem;font-weight:500;cursor:pointer;transition:all 0.15s;}
 .refresh-btn:hover{border-color:var(--terra);color:var(--terra);}
-
-/* ══ RESPONSIVE ══ */
 @media(min-width:900px){
   :root{--nav-h:64px;}
   .topnav{padding:0 1.5rem 0 0;}
@@ -345,7 +302,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   .page-header{margin-bottom:1.8rem;}
 }
 @media(max-width:899px){
-  /* FIX: hide sidebar, show bottom nav */
   .sidebar{display:none!important;}
   .bottom-nav{display:block!important;}
   .layout{padding-bottom:var(--bottom-nav-h);}
@@ -360,13 +316,10 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 </style>
 </head>
 <body>
-
-<!-- Inactivity warning banner -->
 <div class="inactivity-warn" id="inactivityWarn">
   ⏱ You've been inactive. You will be logged out in <strong id="inactivityCountdown">60</strong> seconds.
   <button onclick="resetInactivityTimer()" style="margin-left:1rem;padding:0.2rem 0.6rem;border-radius:5px;border:none;background:white;color:#92400e;font-size:0.75rem;font-weight:700;cursor:pointer;">Stay Logged In</button>
 </div>
-
 <nav class="topnav">
   <div class="topnav-left">
     <a class="topnav-logo" href="#"><div class="logo-mark">A</div><span class="logo-name">Rest<em>oran</em></span></a>
@@ -380,7 +333,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <button class="btn-logout" id="btnLogout">Sign out</button>
   </div>
 </nav>
-
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-section">
@@ -398,23 +350,16 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="nav-item director-only" data-page="staff" style="display:none"><span class="nav-item-icon">👥</span>Staff</div>
     </div>
   </aside>
-
   <main class="main">
-
-    <!-- WAITER CALLS -->
     <div class="page active" id="page-waiter">
       <div class="page-header"><div class="page-title">Waiter Calls</div><div class="page-sub">Customers requesting assistance</div></div>
       <div class="sec-header"><span class="sec-title">Active Calls</span><button class="refresh-btn" onclick="loadWaiterCalls()">↻ Refresh</button></div>
       <div class="card" id="waiterCallsPage"><div class="loading-state">Loading...</div></div>
     </div>
-
-    <!-- TABLES -->
     <div class="page" id="page-tables">
       <div class="page-header"><div class="page-title">Tables</div><div class="page-sub">Click a table to view its orders</div></div>
       <div class="tables-grid" id="tablesGrid"><div class="loading-state">Loading...</div></div>
     </div>
-
-    <!-- ORDERS -->
     <div class="page" id="page-orders">
       <div class="page-header"><div class="page-title">Orders</div><div class="page-sub">All orders across all tables</div></div>
       <div class="orders-toolbar">
@@ -430,7 +375,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
           <button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button>
         </div>
       </div>
-      <!-- IMPROVED SEARCH: covers table name like T1, guest name, item name, price, date -->
       <div class="search-bar">
         <span>🔍</span>
         <input type="text" id="ordersSearch" placeholder="T1, guest name, item, ₼12.50, today…" oninput="onOrdersSearch(this.value)">
@@ -440,8 +384,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div id="ordersCountLabel" class="orders-count-label"></div>
       <div id="ordersGrid"><div class="loading-state">Loading...</div></div>
     </div>
-
-    <!-- DASHBOARD (manager+) -->
     <div class="page" id="page-dashboard">
       <div class="page-header"><div class="page-title">Dashboard</div><div class="page-sub" id="dashDate">Loading...</div></div>
       <div class="stat-grid">
@@ -458,22 +400,16 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="sec-header"><span class="sec-title">Live Tables</span><button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button></div>
       <div class="tables-grid" id="dashTables"><div class="loading-state">Loading tables...</div></div>
     </div>
-
-    <!-- MENU (manager+) -->
     <div class="page" id="page-menu">
       <div class="page-header"><div class="page-title">Menu</div><div class="page-sub">Add, edit and manage menu items</div></div>
       <div class="sec-header"><span class="sec-title">Items (<span id="menuCount">0</span>)</span><button class="btn-primary" onclick="openAddMenu()">+ Add Item</button></div>
       <div class="card" id="menuManageGrid"><div class="loading-state">Loading...</div></div>
     </div>
-
-    <!-- QR (manager+) -->
     <div class="page" id="page-qr">
       <div class="page-header"><div class="page-title">QR Codes</div><div class="page-sub">Print one per table — customers scan to order</div></div>
       <div style="margin-bottom:1.2rem;"><button class="btn-primary" onclick="window.print()">🖨️ Print All</button></div>
       <div class="qr-grid" id="qrGrid"><div class="loading-state">Loading...</div></div>
     </div>
-
-    <!-- AUDIT LOG (director only) -->
     <div class="page" id="page-audit">
       <div class="page-header"><div class="page-title">Audit Log</div><div class="page-sub">All admin actions — who did what and when</div></div>
       <div class="sec-header">
@@ -490,18 +426,13 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       </div>
       <div class="card" id="auditList"><div class="loading-state">Loading...</div></div>
     </div>
-
-    <!-- STAFF (director only) -->
     <div class="page" id="page-staff">
       <div class="page-header"><div class="page-title">Staff</div><div class="page-sub">Manage admin accounts</div></div>
       <div class="sec-header"><span class="sec-title">Admins</span><button class="btn-primary" onclick="openAddStaff()">+ Add Admin</button></div>
       <div class="card" id="staffList"><div class="loading-state">Loading...</div></div>
     </div>
-
   </main>
 </div>
-
-<!-- MOBILE BOTTOM NAV — FIX: manager-only item shown via JS, not CSS class conflict -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <div class="bnav-item active" data-page="waiter">
@@ -515,14 +446,11 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <span class="bnav-dot" id="bdot-orders"></span>
       <span class="bnav-icon">📋</span><span class="bnav-label">Orders</span>
     </div>
-    <!-- FIX: id only, visibility controlled by JS after role check -->
     <div class="bnav-item" id="bnavMore" data-page="__more__" style="display:none">
       <span class="bnav-icon">⋯</span><span class="bnav-label">More</span>
     </div>
   </div>
 </nav>
-
-<!-- MORE SHEET (manager+ only) -->
 <div class="more-menu-overlay" id="moreMenuOverlay" onclick="closeMoreMenu(event)">
   <div class="more-menu-sheet">
     <div class="more-menu-handle"></div>
@@ -534,8 +462,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <div class="more-menu-item director-only" data-page="staff" style="display:none"><span class="more-menu-item-icon">👥</span>Staff</div>
   </div>
 </div>
-
-<!-- TABLE DETAIL PANEL -->
 <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
 <div class="table-panel" id="tablePanel">
   <div class="panel-handle"></div>
@@ -546,8 +472,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   <div class="panel-body" id="panelBody"><div class="loading-state">Loading orders...</div></div>
   <div class="panel-table-actions" id="panelActions"></div>
 </div>
-
-<!-- MENU MODAL -->
 <div class="modal-overlay" id="menuModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('menuModal')">✕</button>
@@ -568,8 +492,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     </div>
   </div>
 </div>
-
-<!-- STAFF MODAL -->
 <div class="modal-overlay" id="staffModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
@@ -592,27 +514,16 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast">Done</div>
-
 <script>
-// ══════════════════════════════════════════
-// HTTPS REDIRECT
-// ══════════════════════════════════════════
 if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
   location.replace('https:' + location.href.substring(location.protocol.length));
 }
-
-// ══════════════════════════════════════════
-// CONFIG & SESSION
-// ══════════════════════════════════════════
 var SUPABASE_URL  = 'https://kkncvrstqoqtsxzdhxdh.supabase.co';
 var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrbmN2cnN0cW9xdHN4emRoeGRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTY2ODcsImV4cCI6MjA5NTczMjY4N30.ZRYtZpz5KAmn5Z4h5trryqzhvJZ6LVff6r5Bk21VBXg';
 var currentUser   = null, authToken = SUPABASE_ANON, refreshToken = null;
 var _refreshing   = false, _refreshQueue = [];
-
 var ROLE_RANK = { waiter: 0, chef: 0, custom: 0, manager: 1, director: 2 };
-
 (function() {
   var raw = localStorage.getItem('armood_session');
   if (!raw) { window.location.href = 'admin-login.html'; return; }
@@ -622,37 +533,25 @@ var ROLE_RANK = { waiter: 0, chef: 0, custom: 0, manager: 1, director: 2 };
   authToken     = s.token || SUPABASE_ANON;
   refreshToken  = s.refresh_token || null;
   if (!currentUser) { window.location.href = 'admin-login.html'; return; }
-
   var role  = currentUser.role || 'waiter';
   var rank  = ROLE_RANK[role] !== undefined ? ROLE_RANK[role] : 0;
   var uname = currentUser.full_name || currentUser.email || 'Admin';
-
   var roleLabels = { director: 'Director', manager: 'Manager', chef: 'Chef', waiter: 'Waiter', custom: 'Host' };
   document.getElementById('adminName').textContent    = uname;
   document.getElementById('adminRole').textContent    = roleLabels[role] || role;
   document.getElementById('userInitials').textContent = uname.split(' ').map(function(w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
-
-  // ── FIX: Show manager-only sections properly ──
   if (rank >= 1) {
-    // Sidebar management section
     var sidebarSec = document.getElementById('sidebarManagerSection');
     if (sidebarSec) sidebarSec.style.display = 'block';
-
-    // Bottom nav "More" button — use flex (it's a flex column item)
     var bnavMore = document.getElementById('bnavMore');
     if (bnavMore) bnavMore.style.display = 'flex';
-
-    // CSV export button
     var csvBtn = document.getElementById('csvExportBtn');
     if (csvBtn) csvBtn.style.display = 'flex';
   }
-
-  // Show director-only items
   if (rank >= 2) {
     document.querySelectorAll('.director-only').forEach(function(el) { el.style.display = 'flex'; });
   }
 })();
-
 async function _doRefresh() {
   if (!refreshToken) { localStorage.removeItem('armood_session'); window.location.href = 'admin-login.html'; return false; }
   try {
@@ -667,7 +566,6 @@ async function _doRefresh() {
     return true;
   } catch(e) { localStorage.removeItem('armood_session'); window.location.href = 'admin-login.html'; return false; }
 }
-
 async function api(path, opts) {
   opts = opts || {};
   var method = opts.method || 'GET';
@@ -689,10 +587,6 @@ async function api(path, opts) {
     return res.data || null;
   } catch(e) { return null; }
 }
-
-// ══════════════════════════════════════════
-// AUDIT TRAIL
-// ══════════════════════════════════════════
 async function writeAudit(action, details) {
   if (!currentUser) return;
   try {
@@ -707,23 +601,17 @@ async function writeAudit(action, details) {
     });
   } catch(e) {}
 }
-
-// ══════════════════════════════════════════
-// INACTIVITY AUTO-LOGOUT
-// ══════════════════════════════════════════
 var INACTIVE_MS   = 15 * 60 * 1000;
 var COUNTDOWN_SEC = 60;
 var _inactivityTimer    = null;
 var _countdownInterval  = null;
 var _countdownLeft      = COUNTDOWN_SEC;
-
 function resetInactivityTimer() {
   clearTimeout(_inactivityTimer);
   clearInterval(_countdownInterval);
   _countdownLeft = COUNTDOWN_SEC;
   document.getElementById('inactivityWarn').classList.remove('show');
   document.getElementById('inactivityCountdown').textContent = COUNTDOWN_SEC;
-
   _inactivityTimer = setTimeout(function() {
     document.getElementById('inactivityWarn').classList.add('show');
     _countdownLeft    = COUNTDOWN_SEC;
@@ -739,27 +627,17 @@ function resetInactivityTimer() {
     }, 1000);
   }, INACTIVE_MS);
 }
-
 ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'].forEach(function(ev) {
   document.addEventListener(ev, resetInactivityTimer, { passive: true });
 });
 resetInactivityTimer();
-
-// ══════════════════════════════════════════
-// CLOCK & LOGOUT
-// ══════════════════════════════════════════
 function updateClock() { document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
 updateClock(); setInterval(updateClock, 1000);
-
 document.getElementById('btnLogout').addEventListener('click', function() {
   writeAudit('LOGOUT', 'Manual logout');
   localStorage.removeItem('armood_session');
   window.location.href = 'admin-login.html';
 });
-
-// ══════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════
 function navigateTo(pg) {
   closePanel();
   document.querySelectorAll('.nav-item[data-page]').forEach(function(i) { i.classList.remove('active'); });
@@ -773,7 +651,6 @@ function navigateTo(pg) {
   if (pageEl) pageEl.classList.add('active');
   loadPage(pg); window.scrollTo(0, 0);
 }
-
 document.querySelectorAll('.nav-item[data-page]').forEach(function(item) { item.addEventListener('click', function() { navigateTo(item.dataset.page); }); });
 document.querySelectorAll('.bnav-item[data-page]').forEach(function(item) {
   item.addEventListener('click', function() {
@@ -791,7 +668,6 @@ document.querySelectorAll('.more-menu-item[data-page]').forEach(function(item) {
 });
 function openMoreMenu()  { document.getElementById('moreMenuOverlay').classList.add('open'); }
 function closeMoreMenu(e){ if (!e || e.target === document.getElementById('moreMenuOverlay')) document.getElementById('moreMenuOverlay').classList.remove('open'); }
-
 function loadPage(p) {
   if      (p === 'dashboard') loadDashboard();
   else if (p === 'tables')    loadTables();
@@ -802,14 +678,9 @@ function loadPage(p) {
   else if (p === 'staff')     loadStaff();
   else if (p === 'audit')     loadAuditLog();
 }
-
-// ══════════════════════════════════════════
-// GLOBAL DATA
-// ══════════════════════════════════════════
 var allTables = [], allOrders = [];
 window._waiterCallsByTable  = {};
 window._waiterCallIdByTable = {};
-
 async function autoCleanupStalePresence(tables) {
   var now = Date.now(), STALE_MS = 5 * 60 * 1000;
   var stale = tables.filter(function(t) {
@@ -821,7 +692,6 @@ async function autoCleanupStalePresence(tables) {
     await Promise.all(stale.map(function(t) { return api('restaurant_tables?id=eq.' + t.id, { method: 'PATCH', body: JSON.stringify({ status: 'empty' }) }); }));
   }
 }
-
 async function fetchCoreData() {
   var res = await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
@@ -835,10 +705,6 @@ async function fetchCoreData() {
   allTables = tables; allOrders = orders;
   return { tables: tables, orders: orders };
 }
-
-// ══════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════
 async function loadDashboard() {
   document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   var todayOrdersRes = await api('orders?select=id,total,status,created_at&order=created_at.desc&limit=500');
@@ -859,15 +725,10 @@ async function loadDashboard() {
   renderTablePills(tables, orders, document.getElementById('dashTables'));
   await loadWaiterCalls();
 }
-
-// ══════════════════════════════════════════
-// TABLES PAGE
-// ══════════════════════════════════════════
 async function loadTables() {
   var { tables, orders } = await fetchCoreData();
   renderTablePills(tables, orders, document.getElementById('tablesGrid'));
 }
-
 function renderTablePills(tables, orders, container) {
   if (!tables || !tables.length) { container.innerHTML = '<div class="loading-state">No tables found</div>'; return; }
   container.innerHTML = tables.map(function(t) {
@@ -885,10 +746,6 @@ function renderTablePills(tables, orders, container) {
     return '<div class="' + pillCls + '" onclick="openTablePanel(\'' + t.id + '\')" data-table-id="' + t.id + '">' + innerHtml + '</div>';
   }).join('');
 }
-
-// ══════════════════════════════════════════
-// TABLE DETAIL PANEL
-// ══════════════════════════════════════════
 var _currentPanelTableId = null;
 function openTablePanel(tableId) {
   _currentPanelTableId = tableId;
@@ -904,7 +761,6 @@ function openTablePanel(tableId) {
   document.getElementById('panelBody').innerHTML = '<div class="loading-state">Loading orders...</div>';
   renderPanelContent(tableId);
 }
-
 function renderPanelContent(tableId) {
   var table   = allTables.find(function(t) { return String(t.id) === String(tableId); });
   if (!table) return;
@@ -915,12 +771,10 @@ function renderPanelContent(tableId) {
   var wcId = window._waiterCallIdByTable && window._waiterCallIdByTable[tableId];
   var waiterHtml = wc ? '<div class="panel-waiter-strip">🔔 ' + escHtml(typeof wc === 'string' ? wc : 'Waiter requested') + (wcId ? '<button class="panel-waiter-dismiss" onclick="dismissWaiterCall(\'' + wcId + '\')">✓ Done</button>' : '') + '</div>' : '';
   var bodyHtml   = waiterHtml;
-
   if (tOrders.length) {
     var grandTotal = tOrders.reduce(function(s, o) { return s + Number(o.total); }, 0);
     var grandItems = tOrders.reduce(function(s, o) { return s + (o.order_items || []).reduce(function(a, i) { return a + i.quantity; }, 0); }, 0);
     bodyHtml += '<div class="panel-grand"><div><div class="panel-grand-label">Table Total</div><div class="panel-grand-sub">' + tOrders.length + ' order' + (tOrders.length !== 1 ? 's' : '') + ' · ' + grandItems + ' item' + (grandItems !== 1 ? 's' : '') + '</div></div><div class="panel-grand-val"><small>₼</small>' + grandTotal.toFixed(2) + '</div></div>';
-
     tOrders.forEach(function(o) {
       var spMap = { pending: 'obs-pending', confirmed: 'obs-confirmed', ready: 'obs-ready', paid: 'obs-paid' };
       var slMap = { pending: '⏳ Pending', confirmed: '✓ Confirmed', ready: '🍽 Ready!', paid: '💳 Paid' };
@@ -951,14 +805,12 @@ function renderPanelContent(tableId) {
   } else {
     bodyHtml += '<div class="panel-empty">' + (table.status === 'active' ? '👀 Customer is browsing the menu…' : '🪑 No active orders for this table.') + '</div>';
   }
-
   body.innerHTML = bodyHtml;
   var actHtml = '';
   if (table.status !== 'empty') actHtml += '<button class="panel-btn danger" onclick="clearTable(\'' + tableId + '\')">🗑 Clear & Reset</button>';
   actHtml += '<button class="panel-btn" onclick="markTableEmpty(\'' + tableId + '\')">↩ Force Empty</button>';
   actionsEl.innerHTML = actHtml;
 }
-
 function toggleDotsMenu(e, orderId) {
   e.stopPropagation();
   document.querySelectorAll('.ob-dots-menu.open').forEach(function(m) { if (m.id !== 'dots-' + orderId) m.classList.remove('open'); });
@@ -966,17 +818,12 @@ function toggleDotsMenu(e, orderId) {
   if (menu) menu.classList.toggle('open');
 }
 document.addEventListener('click', function() { document.querySelectorAll('.ob-dots-menu.open').forEach(function(m) { m.classList.remove('open'); }); });
-
 function closePanel() {
   _currentPanelTableId = null;
   document.getElementById('panelOverlay').classList.remove('open');
   document.getElementById('tablePanel').classList.remove('panel-open');
   document.querySelectorAll('.table-pill').forEach(function(p) { p.classList.remove('tp-selected'); });
 }
-
-// ══════════════════════════════════════════
-// ORDER STATUS (panel)
-// ══════════════════════════════════════════
 async function panelUpdateOrder(orderId, status) {
   await api('orders?id=eq.' + orderId, { method: 'PATCH', body: JSON.stringify({ status: status }) });
   var ord      = allOrders.find(function(o) { return String(o.id) === String(orderId); });
@@ -991,7 +838,6 @@ async function panelUpdateOrder(orderId, status) {
   }
   await refreshAndRepaint();
 }
-
 async function clearTable(tableId) {
   if (!confirm('Cancel all active orders and clear this table?')) return;
   var t = allTables.find(function(t) { return String(t.id) === String(tableId); });
@@ -1001,7 +847,6 @@ async function clearTable(tableId) {
   showToast('Table cleared'); closePanel();
   await refreshAndRepaint();
 }
-
 async function markTableEmpty(tableId) {
   var t = allTables.find(function(t) { return String(t.id) === String(tableId); });
   writeAudit('TABLE_FORCE_EMPTY', 'Force-emptied Table ' + (t ? t.table_number : tableId));
@@ -1009,7 +854,6 @@ async function markTableEmpty(tableId) {
   showToast('Table reset to empty'); closePanel();
   await refreshAndRepaint();
 }
-
 async function refreshAndRepaint() {
   var { tables, orders } = await fetchCoreData();
   var dashTables  = document.getElementById('dashTables');
@@ -1018,29 +862,15 @@ async function refreshAndRepaint() {
   if (tablesGrid  && tablesGrid.querySelector('.table-pill'))  renderTablePills(tables, orders, tablesGrid);
   if (_currentPanelTableId) renderPanelContent(_currentPanelTableId);
 }
-
-// ══════════════════════════════════════════
-// ══ IMPROVED SEARCH LOGIC ══
-// Matches: "T1" → table 1, "T3" → table 3,
-//          guest name, item name, price (12.50),
-//          date keywords (today, yesterday)
-// ══════════════════════════════════════════
 function orderMatchesQuery(o, q) {
   if (!q) return true;
   q = q.toLowerCase().trim();
-
-  // ── Table name: "T1", "t1", "table 1", "1" ──
   var tableNum = (o.restaurant_tables && o.restaurant_tables.table_number != null)
     ? String(o.restaurant_tables.table_number) : '';
-  // "T1" → strip leading T/table and compare number
   var qStripped = q.replace(/^t(able)?\s*/i, '');
   if (tableNum && qStripped && tableNum === qStripped) return true;
-  // plain number match
   if (tableNum && q === tableNum) return true;
-  // "T" + number prefix: T1 matches table 1, T10 matches table 10
   if (/^t\d+$/i.test(q) && tableNum === q.slice(1)) return true;
-
-  // ── Guest name (in notes, pipe-separated) ──
   var parts     = (o.notes || '').split('|');
   var guestName = (parts[0] || '').toLowerCase().trim();
   var guestNote = (parts[3] || '').toLowerCase().trim();
@@ -1048,63 +878,40 @@ function orderMatchesQuery(o, q) {
   if (guestName.includes(q)) return true;
   if (guestNote.includes(q)) return true;
   if (payMethod.includes(q)) return true;
-
-  // ── Item names ──
   var items = o.order_items || [];
   for (var i = 0; i < items.length; i++) {
     var iname = items[i].menu_items ? items[i].menu_items.name.toLowerCase() : '';
     if (iname.includes(q)) return true;
   }
-
-  // ── Price / total: "12.50", "12", "₼12" ──
   var priceQ = q.replace(/^₼/, '');
   var totalStr = Number(o.total).toFixed(2);
   if (totalStr.includes(priceQ) || totalStr === priceQ) return true;
-  // also match per-item prices
   for (var j = 0; j < items.length; j++) {
     var itemPrice = Number(items[j].price_at_order || 0).toFixed(2);
     if (itemPrice.includes(priceQ)) return true;
   }
-
-  // ── Date keywords ──
   var oDate    = new Date(o.created_at);
   var todayStr = new Date().toDateString();
   var yesterdayStr = new Date(Date.now() - 86400000).toDateString();
   if (q === 'today' && oDate.toDateString() === todayStr) return true;
   if ((q === 'yesterday' || q === 'dünən') && oDate.toDateString() === yesterdayStr) return true;
-
-  // ── Date string: "jun 3", "2025", "03/06" ──
   var dateStr = oDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toLowerCase();
   if (dateStr.includes(q)) return true;
-
-  // ── Time: "14:30", "2:30" ──
   var timeStr = oDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }).toLowerCase();
   if (timeStr.includes(q)) return true;
-
-  // ── Order status ──
   if ((o.status || '').toLowerCase().includes(q)) return true;
-
-  // ── Order ID (last 4 chars) ──
   var shortId = String(o.id).slice(-4);
   if (shortId.includes(q)) return true;
-
-  // ── Website orders ──
   if (q === 'web' || q === 'website') {
     var notesLower = (o.notes || '').toLowerCase();
     if (notesLower.includes('website')) return true;
   }
-
   return false;
 }
-
-// ══════════════════════════════════════════
-// ORDERS PAGE
-// ══════════════════════════════════════════
 var ordersFilter  = 'all';
 var ordersQuery   = '';
 var _expandedOrders = {};
 var _lastOrdersData = [];
-
 async function loadOrders() {
   var path = ordersFilter === 'all'
     ? 'orders?select=*,order_items(*,menu_items(name,emoji)),restaurant_tables(table_number)&order=created_at.asc&limit=200'
@@ -1113,27 +920,21 @@ async function loadOrders() {
   _lastOrdersData = Array.isArray(orders) ? orders : [];
   renderOrdersGrid();
 }
-
 function renderOrdersGrid() {
   var grid       = document.getElementById('ordersGrid');
   var countLabel = document.getElementById('ordersCountLabel');
   var q          = ordersQuery.trim();
-
   var data = _lastOrdersData.filter(function(o) { return orderMatchesQuery(o, q); });
-
   if (!data.length) {
     grid.innerHTML = '<div class="orders-empty">' + (q ? 'No orders match "' + escHtml(q) + '"' : 'No orders found') + '</div>';
     if (countLabel) countLabel.textContent = '';
     return;
   }
-
   var numbered    = data.map(function(o, i) { return { order: o, seqNum: i + 1 }; });
   var displayList = numbered.slice().reverse();
   if (countLabel) countLabel.textContent = data.length + ' order' + (data.length !== 1 ? 's' : '') + (q ? ' matching "' + escHtml(q) + '"' : '');
-
   var statusBadgeMap = { pending: 'orb-pending', confirmed: 'orb-confirmed', ready: 'orb-ready', paid: 'orb-paid', cancelled: 'orb-cancelled' };
   var statusLabelMap = { pending: 'Pending', confirmed: 'Confirmed', ready: '🍽 Ready', paid: 'Paid', cancelled: 'Cancelled' };
-
   grid.innerHTML = displayList.map(function(item) {
     var o   = item.order, seq = item.seqNum;
     var items = o.order_items || [];
@@ -1175,7 +976,6 @@ function renderOrdersGrid() {
     + '</div>';
   }).join('');
 }
-
 function onOrdersSearch(val) {
   ordersQuery = val;
   document.getElementById('ordersClearBtn').classList.toggle('show', val.length > 0);
@@ -1187,13 +987,11 @@ function clearOrdersSearch() {
   document.getElementById('ordersClearBtn').classList.remove('show');
   renderOrdersGrid();
 }
-
 function toggleOrderRow(orderId) {
   _expandedOrders[orderId] = !_expandedOrders[orderId];
   var row = document.getElementById('orow-' + orderId);
   if (row) row.classList.toggle('expanded', !!_expandedOrders[orderId]);
 }
-
 async function updateOrderStatusOrders(orderId, status) {
   await api('orders?id=eq.' + orderId, { method: 'PATCH', body: JSON.stringify({ status: status }) });
   var ord = _lastOrdersData.find(function(o) { return String(o.id) === String(orderId); });
@@ -1202,17 +1000,12 @@ async function updateOrderStatusOrders(orderId, status) {
   showToast('Order → ' + statusLabel(status));
   loadOrders();
 }
-
 function filterOrders(s, btn) {
   ordersFilter = s; _expandedOrders = {};
   document.querySelectorAll('.ftab').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
   loadOrders();
 }
-
-// ══════════════════════════════════════════
-// CSV EXPORT
-// ══════════════════════════════════════════
 function exportOrdersCSV() {
   if (!_lastOrdersData.length) { showToast('No orders to export'); return; }
   var rows = [['#', 'Order ID', 'Table', 'Status', 'Total', 'Guest', 'Payment', 'Note', 'Date']];
@@ -1225,19 +1018,13 @@ function exportOrdersCSV() {
   writeAudit('EXPORT_CSV', 'Exported ' + _lastOrdersData.length + ' orders to CSV');
   showToast('CSV downloaded');
 }
-
-// ══════════════════════════════════════════
-// AUDIT LOG (director only)
-// ══════════════════════════════════════════
 var _lastAuditData = [];
 var _auditQuery    = '';
-
 async function loadAuditLog() {
   var logs = await api('admin_audit_log?select=*&order=created_at.desc&limit=200');
   _lastAuditData = Array.isArray(logs) ? logs : [];
   renderAuditList();
 }
-
 function renderAuditList() {
   var list = document.getElementById('auditList');
   var q    = _auditQuery.toLowerCase().trim();
@@ -1265,7 +1052,6 @@ function renderAuditList() {
     + '</div>';
   }).join('');
 }
-
 function onAuditSearch(val) {
   _auditQuery = val;
   document.getElementById('auditClearBtn').classList.toggle('show', val.length > 0);
@@ -1277,7 +1063,6 @@ function clearAuditSearch() {
   document.getElementById('auditClearBtn').classList.remove('show');
   renderAuditList();
 }
-
 function exportAuditCSV() {
   if (!_lastAuditData.length) { showToast('No audit data to export'); return; }
   var rows = [['Time', 'Admin', 'Action', 'Details']];
@@ -1287,10 +1072,6 @@ function exportAuditCSV() {
   downloadCSV(rows, 'audit-log-' + new Date().toISOString().slice(0, 10) + '.csv');
   showToast('Audit log exported');
 }
-
-// ══════════════════════════════════════════
-// WAITER CALLS
-// ══════════════════════════════════════════
 async function loadWaiterCalls() {
   try {
     var calls = await api('waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc');
@@ -1317,7 +1098,6 @@ async function loadWaiterCalls() {
     var p = document.getElementById('waiterCallsPage'); if (p) p.innerHTML = html;
   } catch(e) {}
 }
-
 async function dismissWaiterCall(id) {
   await api('waiter_calls?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ status: 'seen' }) });
   writeAudit('WAITER_DISMISS', 'Dismissed waiter call #' + String(id).slice(-4));
@@ -1325,10 +1105,6 @@ async function dismissWaiterCall(id) {
   await loadWaiterCalls();
   if (_currentPanelTableId) renderPanelContent(_currentPanelTableId);
 }
-
-// ══════════════════════════════════════════
-// MENU
-// ══════════════════════════════════════════
 var menuItems = [];
 async function loadMenu() {
   var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
@@ -1383,10 +1159,6 @@ async function saveMenuItem() {
   writeAudit(id ? 'MENU_EDIT' : 'MENU_ADD', data.name + ' · ₼' + data.price);
   showToast(id ? 'Updated' : 'Added'); closeModal('menuModal'); loadMenu();
 }
-
-// ══════════════════════════════════════════
-// QR
-// ══════════════════════════════════════════
 var STATIC_QR = [null,
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable1.png',
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable2.png',
@@ -1413,12 +1185,7 @@ function downloadQR(num) {
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
   showToast('Downloading QR for Table ' + num);
 }
-
-// ══════════════════════════════════════════
-// STAFF
-// ══════════════════════════════════════════
 var ROLE_LABELS = { director: 'Director', manager: 'Manager', chef: 'Chef', waiter: 'Waiter', custom: 'Host' };
-
 async function loadStaff() {
   if (currentUser.role !== 'director') { document.getElementById('staffList').innerHTML = '<div class="loading-state">Directors only</div>'; return; }
   var staff = await api('admins?select=*&order=created_at');
@@ -1441,40 +1208,34 @@ async function saveStaff() {
   var role  = document.getElementById('staffRole').value;
   if (!name || !email || !pass) { showToast('Fill all fields'); return; }
   if (pass.length < 6) { showToast('Password min 6 chars'); return; }
- 
   try {
-    // Call the Edge Function instead of the public /auth/v1/signup endpoint.
-    // The Edge Function verifies the caller is a director and uses
-    // service_role internally — works even with public signups disabled.
     var res = await fetch(SUPABASE_URL + '/functions/v1/create-admin-user', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + authToken,  // caller's JWT — verified server-side
+        'Authorization': 'Bearer ' + authToken,
       },
       body: JSON.stringify({ email: email, password: pass, full_name: name, role: role })
     });
- 
     var data = await res.json();
- 
     if (!res.ok || data.error) {
       showToast('Error: ' + (data.error || 'Unknown error'));
       return;
     }
- 
     writeAudit('STAFF_ADD', name + ' (' + email + ') as ' + role);
     showToast('Admin added!');
     closeModal('staffModal');
     loadStaff();
- 
   } catch(e) {
     showToast('Error: ' + e.message);
   }
 }
-
-// ══════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════
+async function removeStaff(id, nameLabel) {
+  if (!confirm('Remove ' + nameLabel + ' from admins?')) return;
+  await api('admins?id=eq.' + id, { method: 'DELETE' });
+  writeAudit('STAFF_REMOVE', 'Removed: ' + nameLabel);
+  showToast('Removed'); loadStaff();
+}
 function statusLabel(s) { return { pending: 'Pending', confirmed: 'Confirmed', ready: 'Ready', paid: 'Paid', cancelled: 'Cancelled' }[s] || s; }
 function catLabel(c)    { return { seheri: 'Breakfast', ana: 'Main', salatlar: 'Salads', icecekler: 'Drinks' }[c] || c; }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -1491,12 +1252,7 @@ function downloadCSV(rows, filename) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
-
 document.querySelectorAll('.modal-overlay').forEach(function(ov) { ov.addEventListener('click', function(e) { if (e.target === ov) ov.classList.remove('open'); }); });
-
-// ══════════════════════════════════════════
-// AUTO REFRESH
-// ══════════════════════════════════════════
 setInterval(function() {
   if      (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
   else if (document.getElementById('page-tables').classList.contains('active'))    loadTables();
@@ -1504,13 +1260,8 @@ setInterval(function() {
   else if (document.getElementById('page-waiter').classList.contains('active'))    loadWaiterCalls();
 }, 30000);
 setInterval(loadWaiterCalls, 15000);
-
-// ══════════════════════════════════════════
-// BOOT
-// ══════════════════════════════════════════
 writeAudit('LOGIN', 'Admin session started');
 loadWaiterCalls();
 </script>
 </body>
 </html>
-ENDOFFILE
