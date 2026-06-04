@@ -578,19 +578,49 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
       <p>Telefon ilə də əlaqə saxlaya bilərsiniz: <a href="tel:+994000000000" style="color:var(--terra)">0?? ??? ?? ??</a></p>
     </div>
     <form class="res-form reveal" id="resForm" style="transition-delay:0.1s">
-      <div class="form-group"><label>Ad Soyad</label><input type="text" placeholder="Adınızı daxil edin" required></div>
-      <div class="form-group"><label>Telefon</label><input type="tel" placeholder="050 000 00 00" required></div>
-      <div class="form-group"><label>Tarix</label><input type="date" required></div>
-      <div class="form-group"><label>Saat</label><input type="time" min="09:00" max="23:00" required></div>
-      <div class="form-group"><label>Nəfər sayı</label>
-        <select><option>1 nəfər</option><option>2 nəfər</option><option selected>3–4 nəfər</option><option>5–6 nəfər</option><option>7–10 nəfər</option><option>10+ nəfər</option></select>
-      </div>
-      <div class="form-group"><label>Xüsusi istək</label>
-        <select><option>Yoxdur</option><option>Ad günü</option><option>Romantik axşam</option><option>İş görüşməsi</option><option>Ailə toplanışı</option></select>
-      </div>
-      <div class="form-group full"><label>Qeyd (ixtiyari)</label><textarea placeholder="Əlavə istəklərinizi yazın..."></textarea></div>
-      <button type="submit" class="res-submit">Rezervasiya Et →</button>
-    </form>
+  <div class="form-group">
+    <label>Ad Soyad *</label>
+    <input type="text" name="full_name" placeholder="Adınızı daxil edin" required autocomplete="name">
+  </div>
+  <div class="form-group">
+    <label>Telefon *</label>
+    <input type="tel" name="phone" placeholder="050 000 00 00" required autocomplete="tel">
+  </div>
+  <div class="form-group">
+    <label>Tarix *</label>
+    <input type="date" name="date" required>
+  </div>
+  <div class="form-group">
+    <label>Saat *</label>
+    <input type="time" name="time" min="09:00" max="23:00" required>
+  </div>
+  <div class="form-group">
+    <label>Nəfər sayı</label>
+    <select name="party_size">
+      <option>1 nəfər</option>
+      <option>2 nəfər</option>
+      <option selected>3–4 nəfər</option>
+      <option>5–6 nəfər</option>
+      <option>7–10 nəfər</option>
+      <option>10+ nəfər</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Xüsusi istək</label>
+    <select name="occasion">
+      <option value="">Yoxdur</option>
+      <option value="Ad günü">Ad günü</option>
+      <option value="Romantik axşam">Romantik axşam</option>
+      <option value="İş görüşməsi">İş görüşməsi</option>
+      <option value="Ailə toplanışı">Ailə toplanışı</option>
+    </select>
+  </div>
+  <div class="form-group full">
+    <label>Qeyd (ixtiyari)</label>
+    <textarea name="notes" placeholder="Əlavə istəklərinizi yazın..."></textarea>
+  </div>
+  <button type="submit" class="res-submit">Rezervasiya Et →</button>
+</form>
   </div>
 </section>
 
@@ -883,32 +913,47 @@ document.getElementById('typePickup').addEventListener('click', () => {
 document.getElementById('checkoutSubmit').addEventListener('click', submitOrder);
 document.getElementById('newOrderBtn').addEventListener('click', closeCheckout);
 
-document.getElementById('resForm').addEventListener('submit', async e => {
+document.getElementById('resForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const form = e.target;
-  const fields = [...form.querySelectorAll('input, select, textarea')];
-  const name = fields[0]?.value.trim(), phone = fields[1]?.value.trim(),
-        date = fields[2]?.value, time = fields[3]?.value,
-        party = fields[4]?.value, occasion = fields[5]?.value, notes = fields[6]?.value.trim();
-  if (!name || !phone || !date || !time) { showToast('Ad, telefon, tarix və saatı doldurun', 'warn'); return; }
-  const submitBtn = form.querySelector('.res-submit');
+  var form  = e.target;
+  var name  = form.full_name.value.trim();
+  var phone = form.phone.value.trim();
+  var date  = form.date.value;
+  var time  = form.time.value;
+  if (!name || !phone || !date || !time) {
+    showToast('Ad, telefon, tarix və saatı doldurun', 'warn'); return;
+  }
+  var submitBtn = form.querySelector('.res-submit');
   submitBtn.disabled = true; submitBtn.textContent = 'Göndərilir...';
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/reservations`, {
+    var res = await fetch(`${SUPABASE_URL}/rest/v1/reservations`, {
       method: 'POST',
-      headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ full_name: name, phone, date, time, party_size: party, occasion: occasion||null, notes: notes||null, status: 'pending' })
+      headers: {
+        'apikey': SUPABASE_ANON,
+        'Authorization': `Bearer ${SUPABASE_ANON}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        full_name:  name,
+        phone:      phone,
+        date:       date,
+        time:       time,
+        party_size: form.party_size.value,
+        occasion:   form.occasion.value || null,
+        notes:      form.notes.value.trim() || null,
+        status:     'pending'
+      })
     });
-    if (!res.ok) throw new Error('Failed');
+    if (!res.ok) { var err = await res.json(); throw new Error(err.message || res.status); }
     showToast('✓ Rezervasiya sorğunuz göndərildi!', 'success');
     form.reset();
   } catch(err) {
-    showToast('Xəta baş verdi. Zəhmət olmasa, bizə zəng edin.', 'warn');
+    showToast('Xəta: ' + err.message, 'warn');
   } finally {
     submitBtn.disabled = false; submitBtn.textContent = 'Rezervasiya Et →';
   }
 });
-
 window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', scrollY > 60);
 });
