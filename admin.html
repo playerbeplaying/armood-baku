@@ -61,8 +61,6 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:all 0.15s;color:var(--muted);-webkit-tap-highlight-color:transparent;position:relative;}
 .bnav-item.active{color:var(--terra);}
 .bnav-item:active{background:var(--bg2);}
-.bnav-item[style*="display:none"]{display:none!important;}
-.bnav-item.show-flex{display:flex!important;}
 .bnav-icon{font-size:1.3rem;line-height:1;}
 .bnav-label{font-size:0.6rem;font-weight:600;letter-spacing:0.02em;}
 .bnav-dot{position:absolute;top:6px;right:calc(50% - 14px);background:var(--red);color:white;font-size:0.55rem;font-weight:700;padding:0.1rem 0.3rem;border-radius:10px;min-width:16px;text-align:center;display:none;}
@@ -263,6 +261,14 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .audit-action{color:var(--muted);flex:1;line-height:1.5;}
 .audit-action strong{color:var(--ink);font-weight:500;}
 .audit-icon{font-size:1rem;flex-shrink:0;width:20px;text-align:center;}
+/* Image upload area */
+.image-upload-area{border:2px dashed var(--border2);border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;margin-bottom:0.9rem;}
+.image-upload-area:hover{border-color:var(--terra);background:var(--terra-pale);}
+.image-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.image-upload-placeholder{color:var(--muted);font-size:0.8rem;}
+.image-upload-placeholder span{font-size:1.5rem;display:block;margin-bottom:0.3rem;}
+.image-preview{display:none;position:relative;}
+.image-preview img{width:100%;max-height:140px;object-fit:cover;border-radius:8px;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(30,24,16,0.5);z-index:300;align-items:flex-end;justify-content:stretch;backdrop-filter:blur(3px);}
 .modal-overlay.open{display:flex;}
 .modal{background:white;border-radius:16px 16px 0 0;padding:1.5rem 1.2rem 2rem;width:100%;max-height:90vh;overflow-y:auto;position:relative;}
@@ -276,6 +282,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
 .btn-primary{background:var(--terra);color:white;border:none;border-radius:8px;cursor:pointer;font-family:var(--ff-body);font-size:0.88rem;font-weight:600;padding:0.75rem 1.4rem;transition:background 0.2s;}
 .btn-primary:hover{background:var(--terra-hover);}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;}
 .btn-outline-sm{background:transparent;border:1.5px solid var(--border);color:var(--muted);border-radius:8px;cursor:pointer;font-family:var(--ff-body);font-size:0.88rem;font-weight:500;padding:0.75rem 1.4rem;transition:all 0.2s;}
 .btn-outline-sm:hover{border-color:var(--ink2);color:var(--ink);}
 .toast{position:fixed;bottom:calc(var(--bottom-nav-h) + 0.75rem);right:1rem;left:1rem;background:var(--ink);color:white;padding:0.75rem 1rem;border-radius:10px;font-size:0.82rem;font-weight:500;z-index:400;opacity:0;transform:translateY(8px);transition:all 0.3s;box-shadow:0 8px 24px rgba(30,24,16,0.2);text-align:center;pointer-events:none;}
@@ -471,11 +478,28 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
   <div class="panel-body" id="panelBody"><div class="loading-state">Loading orders...</div></div>
   <div class="panel-table-actions" id="panelActions"></div>
 </div>
+
+<!-- ═══ MENU ITEM MODAL — fixed with image upload ═══ -->
 <div class="modal-overlay" id="menuModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('menuModal')">✕</button>
     <h3 id="menuModalTitle">Add Menu Item</h3>
     <input type="hidden" id="menuEditId">
+    <input type="hidden" id="menuImageUrl">
+
+    <!-- Image upload area -->
+    <div class="image-upload-area" id="imageUploadArea">
+      <input type="file" id="menuImageFile" accept="image/*" onchange="handleImageSelect(this)">
+      <div class="image-upload-placeholder" id="imageUploadPlaceholder">
+        <span>🖼️</span>
+        Tap to upload photo <br><small style="color:var(--muted2);">JPG, PNG, WebP · max 2MB</small>
+      </div>
+      <div class="image-preview" id="imagePreview">
+        <img id="previewImg" src="" alt="Preview">
+      </div>
+    </div>
+    <button class="refresh-btn" id="removeImageBtn" style="display:none;margin-bottom:0.9rem;border-color:var(--red-light);color:var(--red);" onclick="removeImage()">✕ Remove image</button>
+
     <div class="form-row">
       <div class="form-group"><label>Name</label><input type="text" id="menuName" placeholder="Item name"></div>
       <div class="form-group"><label>Emoji</label><input type="text" id="menuEmoji" placeholder="🍽️" maxlength="2"></div>
@@ -483,14 +507,23 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <div class="form-group"><label>Description</label><textarea id="menuDesc" placeholder="Short description..." style="min-height:55px;resize:vertical;"></textarea></div>
     <div class="form-row">
       <div class="form-group"><label>Price (₼)</label><input type="number" id="menuPrice" placeholder="0.00" step="0.50" min="0"></div>
-      <div class="form-group"><label>Category</label><select id="menuCat"><option value="seheri">Breakfast</option><option value="ana">Main Dishes</option><option value="salatlar">Salads</option><option value="icecekler">Drinks</option></select></div>
+      <div class="form-group"><label>Category</label>
+        <select id="menuCat">
+          <option value="seheri">Breakfast</option>
+          <option value="ana">Main Dishes</option>
+          <option value="salatlar">Salads</option>
+          <option value="icecekler">Drinks</option>
+        </select>
+      </div>
     </div>
     <div style="display:flex;gap:0.6rem;margin-top:0.4rem;">
-      <button class="btn-primary" onclick="saveMenuItem()">Save</button>
+      <button class="btn-primary" id="menuSaveBtn" onclick="saveMenuItem()">Save</button>
       <button class="btn-outline-sm" onclick="closeModal('menuModal')">Cancel</button>
     </div>
   </div>
 </div>
+
+<!-- ═══ STAFF MODAL ═══ -->
 <div class="modal-overlay" id="staffModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
@@ -513,6 +546,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     </div>
   </div>
 </div>
+
 <div class="toast" id="toast">Done</div>
 <script>
 if (location.protocol === 'http:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
@@ -523,6 +557,7 @@ var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 var currentUser   = null, authToken = SUPABASE_ANON, refreshToken = null;
 var _refreshing   = false, _refreshQueue = [];
 var ROLE_RANK = { waiter: 0, chef: 0, custom: 0, manager: 1, director: 2 };
+
 (function() {
   var raw = localStorage.getItem('armood_session');
   if (!raw) { window.location.href = 'admin-login.html'; return; }
@@ -551,6 +586,7 @@ var ROLE_RANK = { waiter: 0, chef: 0, custom: 0, manager: 1, director: 2 };
     document.querySelectorAll('.director-only').forEach(function(el) { el.style.display = 'flex'; });
   }
 })();
+
 async function _doRefresh() {
   if (!refreshToken) { localStorage.removeItem('armood_session'); window.location.href = 'admin-login.html'; return false; }
   try {
@@ -565,6 +601,7 @@ async function _doRefresh() {
     return true;
   } catch(e) { localStorage.removeItem('armood_session'); window.location.href = 'admin-login.html'; return false; }
 }
+
 async function api(path, opts) {
   opts = opts || {};
   var method = opts.method || 'GET';
@@ -574,18 +611,22 @@ async function api(path, opts) {
       headers: Object.assign({ 'apikey': SUPABASE_ANON, 'Authorization': 'Bearer ' + tok, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }, opts.headers || {}),
       body: opts.body
     });
+    if (res.status === 204) return [];
     return { status: res.status, data: await res.json() };
   }
   try {
     var res = await go(authToken);
-    if (res.data && res.data.message && res.data.message.indexOf('JWT expired') >= 0) {
+    if (res && res.data && res.data.message && res.data.message.indexOf('JWT expired') >= 0) {
       if (_refreshing) { await new Promise(function(resolve) { _refreshQueue.push(resolve); }); }
       else { _refreshing = true; var ok = await _doRefresh(); _refreshing = false; _refreshQueue.forEach(function(fn) { fn(); }); _refreshQueue = []; if (!ok) return null; }
       res = await go(authToken);
     }
-    return res.data || null;
-  } catch(e) { return null; }
+    // Return array directly if it is one, otherwise .data
+    if (Array.isArray(res)) return res;
+    return (res && res.data) ? res.data : null;
+  } catch(e) { console.error('API error:', path, e); return null; }
 }
+
 async function writeAudit(action, details) {
   if (!currentUser) return;
   try {
@@ -600,6 +641,8 @@ async function writeAudit(action, details) {
     });
   } catch(e) {}
 }
+
+// ── Inactivity timer ──────────────────────────────────────────
 var INACTIVE_MS   = 15 * 60 * 1000;
 var COUNTDOWN_SEC = 60;
 var _inactivityTimer    = null;
@@ -630,13 +673,18 @@ function resetInactivityTimer() {
   document.addEventListener(ev, resetInactivityTimer, { passive: true });
 });
 resetInactivityTimer();
+
+// ── Clock ─────────────────────────────────────────────────────
 function updateClock() { document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
 updateClock(); setInterval(updateClock, 1000);
+
 document.getElementById('btnLogout').addEventListener('click', function() {
   writeAudit('LOGOUT', 'Manual logout');
   localStorage.removeItem('armood_session');
   window.location.href = 'admin-login.html';
 });
+
+// ── Navigation ────────────────────────────────────────────────
 function navigateTo(pg) {
   closePanel();
   document.querySelectorAll('.nav-item[data-page]').forEach(function(i) { i.classList.remove('active'); });
@@ -667,6 +715,7 @@ document.querySelectorAll('.more-menu-item[data-page]').forEach(function(item) {
 });
 function openMoreMenu()  { document.getElementById('moreMenuOverlay').classList.add('open'); }
 function closeMoreMenu(e){ if (!e || e.target === document.getElementById('moreMenuOverlay')) document.getElementById('moreMenuOverlay').classList.remove('open'); }
+
 function loadPage(p) {
   if      (p === 'dashboard') loadDashboard();
   else if (p === 'tables')    loadTables();
@@ -677,9 +726,12 @@ function loadPage(p) {
   else if (p === 'staff')     loadStaff();
   else if (p === 'audit')     loadAuditLog();
 }
+
+// ── Core data ─────────────────────────────────────────────────
 var allTables = [], allOrders = [];
 window._waiterCallsByTable  = {};
 window._waiterCallIdByTable = {};
+
 async function autoCleanupStalePresence(tables) {
   var now = Date.now(), STALE_MS = 5 * 60 * 1000;
   var stale = tables.filter(function(t) {
@@ -691,6 +743,7 @@ async function autoCleanupStalePresence(tables) {
     await Promise.all(stale.map(function(t) { return api('restaurant_tables?id=eq.' + t.id, { method: 'PATCH', body: JSON.stringify({ status: 'empty' }) }); }));
   }
 }
+
 async function fetchCoreData() {
   var res = await Promise.all([
     api('restaurant_tables?select=*&order=table_number'),
@@ -704,6 +757,8 @@ async function fetchCoreData() {
   allTables = tables; allOrders = orders;
   return { tables: tables, orders: orders };
 }
+
+// ── Dashboard ─────────────────────────────────────────────────
 async function loadDashboard() {
   document.getElementById('dashDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   var todayOrdersRes = await api('orders?select=id,total,status,created_at&order=created_at.desc&limit=500');
@@ -724,10 +779,13 @@ async function loadDashboard() {
   renderTablePills(tables, orders, document.getElementById('dashTables'));
   await loadWaiterCalls();
 }
+
+// ── Tables ────────────────────────────────────────────────────
 async function loadTables() {
   var { tables, orders } = await fetchCoreData();
   renderTablePills(tables, orders, document.getElementById('tablesGrid'));
 }
+
 function renderTablePills(tables, orders, container) {
   if (!tables || !tables.length) { container.innerHTML = '<div class="loading-state">No tables found</div>'; return; }
   container.innerHTML = tables.map(function(t) {
@@ -745,6 +803,8 @@ function renderTablePills(tables, orders, container) {
     return '<div class="' + pillCls + '" onclick="openTablePanel(\'' + t.id + '\')" data-table-id="' + t.id + '">' + innerHtml + '</div>';
   }).join('');
 }
+
+// ── Table panel ───────────────────────────────────────────────
 var _currentPanelTableId = null;
 function openTablePanel(tableId) {
   _currentPanelTableId = tableId;
@@ -760,6 +820,7 @@ function openTablePanel(tableId) {
   document.getElementById('panelBody').innerHTML = '<div class="loading-state">Loading orders...</div>';
   renderPanelContent(tableId);
 }
+
 function renderPanelContent(tableId) {
   var table   = allTables.find(function(t) { return String(t.id) === String(tableId); });
   if (!table) return;
@@ -810,6 +871,7 @@ function renderPanelContent(tableId) {
   actHtml += '<button class="panel-btn" onclick="markTableEmpty(\'' + tableId + '\')">↩ Force Empty</button>';
   actionsEl.innerHTML = actHtml;
 }
+
 function toggleDotsMenu(e, orderId) {
   e.stopPropagation();
   document.querySelectorAll('.ob-dots-menu.open').forEach(function(m) { if (m.id !== 'dots-' + orderId) m.classList.remove('open'); });
@@ -817,12 +879,14 @@ function toggleDotsMenu(e, orderId) {
   if (menu) menu.classList.toggle('open');
 }
 document.addEventListener('click', function() { document.querySelectorAll('.ob-dots-menu.open').forEach(function(m) { m.classList.remove('open'); }); });
+
 function closePanel() {
   _currentPanelTableId = null;
   document.getElementById('panelOverlay').classList.remove('open');
   document.getElementById('tablePanel').classList.remove('panel-open');
   document.querySelectorAll('.table-pill').forEach(function(p) { p.classList.remove('tp-selected'); });
 }
+
 async function panelUpdateOrder(orderId, status) {
   await api('orders?id=eq.' + orderId, { method: 'PATCH', body: JSON.stringify({ status: status }) });
   var ord      = allOrders.find(function(o) { return String(o.id) === String(orderId); });
@@ -837,6 +901,7 @@ async function panelUpdateOrder(orderId, status) {
   }
   await refreshAndRepaint();
 }
+
 async function clearTable(tableId) {
   if (!confirm('Cancel all active orders and clear this table?')) return;
   var t = allTables.find(function(t) { return String(t.id) === String(tableId); });
@@ -846,6 +911,7 @@ async function clearTable(tableId) {
   showToast('Table cleared'); closePanel();
   await refreshAndRepaint();
 }
+
 async function markTableEmpty(tableId) {
   var t = allTables.find(function(t) { return String(t.id) === String(tableId); });
   writeAudit('TABLE_FORCE_EMPTY', 'Force-emptied Table ' + (t ? t.table_number : tableId));
@@ -853,6 +919,7 @@ async function markTableEmpty(tableId) {
   showToast('Table reset to empty'); closePanel();
   await refreshAndRepaint();
 }
+
 async function refreshAndRepaint() {
   var { tables, orders } = await fetchCoreData();
   var dashTables  = document.getElementById('dashTables');
@@ -861,11 +928,12 @@ async function refreshAndRepaint() {
   if (tablesGrid  && tablesGrid.querySelector('.table-pill'))  renderTablePills(tables, orders, tablesGrid);
   if (_currentPanelTableId) renderPanelContent(_currentPanelTableId);
 }
+
+// ── Orders ────────────────────────────────────────────────────
 function orderMatchesQuery(o, q) {
   if (!q) return true;
   q = q.toLowerCase().trim();
-  var tableNum = (o.restaurant_tables && o.restaurant_tables.table_number != null)
-    ? String(o.restaurant_tables.table_number) : '';
+  var tableNum = (o.restaurant_tables && o.restaurant_tables.table_number != null) ? String(o.restaurant_tables.table_number) : '';
   var qStripped = q.replace(/^t(able)?\s*/i, '');
   if (tableNum && qStripped && tableNum === qStripped) return true;
   if (tableNum && q === tableNum) return true;
@@ -907,10 +975,12 @@ function orderMatchesQuery(o, q) {
   }
   return false;
 }
+
 var ordersFilter  = 'all';
 var ordersQuery   = '';
 var _expandedOrders = {};
 var _lastOrdersData = [];
+
 async function loadOrders() {
   var path = ordersFilter === 'all'
     ? 'orders?select=*,order_items(*,menu_items(name,emoji)),restaurant_tables(table_number)&order=created_at.asc&limit=200'
@@ -919,6 +989,7 @@ async function loadOrders() {
   _lastOrdersData = Array.isArray(orders) ? orders : [];
   renderOrdersGrid();
 }
+
 function renderOrdersGrid() {
   var grid       = document.getElementById('ordersGrid');
   var countLabel = document.getElementById('ordersCountLabel');
@@ -975,6 +1046,7 @@ function renderOrdersGrid() {
     + '</div>';
   }).join('');
 }
+
 function onOrdersSearch(val) {
   ordersQuery = val;
   document.getElementById('ordersClearBtn').classList.toggle('show', val.length > 0);
@@ -1017,6 +1089,8 @@ function exportOrdersCSV() {
   writeAudit('EXPORT_CSV', 'Exported ' + _lastOrdersData.length + ' orders to CSV');
   showToast('CSV downloaded');
 }
+
+// ── Audit log ─────────────────────────────────────────────────
 var _lastAuditData = [];
 var _auditQuery    = '';
 async function loadAuditLog() {
@@ -1071,8 +1145,11 @@ function exportAuditCSV() {
   downloadCSV(rows, 'audit-log-' + new Date().toISOString().slice(0, 10) + '.csv');
   showToast('Audit log exported');
 }
+
+// ── Waiter calls ──────────────────────────────────────────────
 async function loadWaiterCalls() {
   try {
+    // Uses authenticated token — requires SELECT policy for authenticated role on waiter_calls
     var calls = await api('waiter_calls?status=eq.pending&select=*,restaurant_tables(table_number)&order=created_at.desc');
     if (!Array.isArray(calls)) calls = [];
     window._waiterCallsByTable  = {};
@@ -1095,8 +1172,9 @@ async function loadWaiterCalls() {
       : '<div class="loading-state" style="padding:1.5rem;">No active waiter calls 👌</div>';
     var d = document.getElementById('waiterCallsDash'); if (d) d.innerHTML = html;
     var p = document.getElementById('waiterCallsPage'); if (p) p.innerHTML = html;
-  } catch(e) {}
+  } catch(e) { console.error('loadWaiterCalls error:', e); }
 }
+
 async function dismissWaiterCall(id) {
   await api('waiter_calls?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ status: 'seen' }) });
   writeAudit('WAITER_DISMISS', 'Dismissed waiter call #' + String(id).slice(-4));
@@ -1104,7 +1182,12 @@ async function dismissWaiterCall(id) {
   await loadWaiterCalls();
   if (_currentPanelTableId) renderPanelContent(_currentPanelTableId);
 }
+
+// ── Menu ──────────────────────────────────────────────────────
 var menuItems = [];
+
+// Safely get element — avoids null crashes
+function $id(id) { return document.getElementById(id); }
 
 function handleImageSelect(input) {
   var file = input.files[0];
@@ -1112,57 +1195,57 @@ function handleImageSelect(input) {
   if (file.size > 2 * 1024 * 1024) { showToast('Image must be under 2MB'); input.value = ''; return; }
   var reader = new FileReader();
   reader.onload = function(e) {
-    document.getElementById('previewImg').src = e.target.result;
-    document.getElementById('imagePreview').style.display = 'block';
-    document.getElementById('imageUploadPlaceholder').style.display = 'none';
-    document.getElementById('removeImageBtn').style.display = 'inline-block';
-    document.getElementById('imageUploadArea').style.borderColor = 'var(--terra)';
+    $id('previewImg').src = e.target.result;
+    $id('imagePreview').style.display = 'block';
+    $id('imageUploadPlaceholder').style.display = 'none';
+    $id('removeImageBtn').style.display = 'inline-flex';
+    $id('imageUploadArea').style.borderColor = 'var(--terra)';
   };
   reader.readAsDataURL(file);
 }
 
 function removeImage() {
-  document.getElementById('menuImageFile').value = '';
-  document.getElementById('menuImageUrl').value = '';
-  document.getElementById('previewImg').src = '';
-  document.getElementById('imagePreview').style.display = 'none';
-  document.getElementById('imageUploadPlaceholder').style.display = 'block';
-  document.getElementById('removeImageBtn').style.display = 'none';
-  document.getElementById('imageUploadArea').style.borderColor = 'var(--border2)';
+  var fi = $id('menuImageFile'); if (fi) fi.value = '';
+  var iu = $id('menuImageUrl'); if (iu) iu.value = '';
+  var pi = $id('previewImg'); if (pi) pi.src = '';
+  var ip = $id('imagePreview'); if (ip) ip.style.display = 'none';
+  var pl = $id('imageUploadPlaceholder'); if (pl) pl.style.display = 'block';
+  var rb = $id('removeImageBtn'); if (rb) rb.style.display = 'none';
+  var ua = $id('imageUploadArea'); if (ua) ua.style.borderColor = 'var(--border2)';
 }
 
 function openAddMenu() {
-  document.getElementById('menuModalTitle').textContent = 'Add Menu Item';
-  document.getElementById('menuEditId').value = '';
-  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(function(id){ document.getElementById(id).value=''; });
-  document.getElementById('menuCat').value = 'ana';
-  document.getElementById('menuSaveBtn').textContent = 'Save';
-  document.getElementById('menuSaveBtn').disabled = false;
+  $id('menuModalTitle').textContent = 'Add Menu Item';
+  $id('menuEditId').value = '';
+  ['menuName','menuEmoji','menuDesc','menuPrice'].forEach(function(id){ $id(id).value=''; });
+  $id('menuCat').value = 'ana';
+  $id('menuSaveBtn').textContent = 'Save';
+  $id('menuSaveBtn').disabled = false;
   removeImage();
-  document.getElementById('menuModal').classList.add('open');
+  $id('menuModal').classList.add('open');
 }
 
 function openEditMenu(item) {
-  document.getElementById('menuModalTitle').textContent = 'Edit Item';
-  document.getElementById('menuEditId').value   = item.id;
-  document.getElementById('menuName').value     = item.name;
-  document.getElementById('menuEmoji').value    = item.emoji || '';
-  document.getElementById('menuDesc').value     = item.description || '';
-  document.getElementById('menuPrice').value    = item.price;
-  document.getElementById('menuCat').value      = item.category;
-  document.getElementById('menuImageUrl').value = item.image_url || '';
-  document.getElementById('menuSaveBtn').textContent = 'Save';
-  document.getElementById('menuSaveBtn').disabled = false;
+  $id('menuModalTitle').textContent = 'Edit Item';
+  $id('menuEditId').value   = item.id;
+  $id('menuName').value     = item.name;
+  $id('menuEmoji').value    = item.emoji || '';
+  $id('menuDesc').value     = item.description || '';
+  $id('menuPrice').value    = item.price;
+  $id('menuCat').value      = item.category;
+  $id('menuImageUrl').value = item.image_url || '';
+  $id('menuSaveBtn').textContent = 'Save';
+  $id('menuSaveBtn').disabled = false;
   if (item.image_url) {
-    document.getElementById('previewImg').src = item.image_url;
-    document.getElementById('imagePreview').style.display = 'block';
-    document.getElementById('imageUploadPlaceholder').style.display = 'none';
-    document.getElementById('removeImageBtn').style.display = 'inline-block';
-    document.getElementById('imageUploadArea').style.borderColor = 'var(--terra)';
+    $id('previewImg').src = item.image_url;
+    $id('imagePreview').style.display = 'block';
+    $id('imageUploadPlaceholder').style.display = 'none';
+    $id('removeImageBtn').style.display = 'inline-flex';
+    $id('imageUploadArea').style.borderColor = 'var(--terra)';
   } else {
     removeImage();
   }
-  document.getElementById('menuModal').classList.add('open');
+  $id('menuModal').classList.add('open');
 }
 
 async function uploadMenuImage(file, itemName) {
@@ -1184,24 +1267,24 @@ async function uploadMenuImage(file, itemName) {
 }
 
 async function saveMenuItem() {
-  var id    = document.getElementById('menuEditId').value;
-  var name  = document.getElementById('menuName').value.trim();
-  var price = parseFloat(document.getElementById('menuPrice').value);
+  var id    = $id('menuEditId').value;
+  var name  = $id('menuName').value.trim();
+  var price = parseFloat($id('menuPrice').value);
   if (!name || !price) { showToast('Name and price required'); return; }
-  var btn = document.getElementById('menuSaveBtn');
-  btn.disabled = true; btn.textContent = 'Saving...';
+  var btn = $id('menuSaveBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
   try {
-    var imageUrl  = document.getElementById('menuImageUrl').value || null;
-    var fileInput = document.getElementById('menuImageFile');
-    if (fileInput.files && fileInput.files[0]) {
+    var imageUrl  = $id('menuImageUrl').value || null;
+    var fileInput = $id('menuImageFile');
+    if (fileInput && fileInput.files && fileInput.files[0]) {
       imageUrl = await uploadMenuImage(fileInput.files[0], name);
     }
     var data = {
       name: name,
-      emoji: document.getElementById('menuEmoji').value.trim() || '🍽️',
-      description: document.getElementById('menuDesc').value.trim(),
+      emoji: $id('menuEmoji').value.trim() || '🍽️',
+      description: $id('menuDesc').value.trim(),
       price: price,
-      category: document.getElementById('menuCat').value,
+      category: $id('menuCat').value,
       available: true,
       is_active: true,
       image_url: imageUrl
@@ -1209,7 +1292,7 @@ async function saveMenuItem() {
     if (id) await api('menu_items?id=eq.' + id, { method: 'PATCH', body: JSON.stringify(data) });
     else    await api('menu_items', { method: 'POST', body: JSON.stringify(data) });
     writeAudit(id ? 'MENU_EDIT' : 'MENU_ADD', data.name + ' · ₼' + data.price);
-    showToast(id ? 'Updated' : 'Added');
+    showToast(id ? 'Updated!' : 'Item added!');
     closeModal('menuModal');
     loadMenu();
   } catch(e) {
@@ -1221,16 +1304,16 @@ async function saveMenuItem() {
 async function loadMenu() {
   var items = await api('menu_items?select=*&is_active=eq.true&order=category,name');
   menuItems = Array.isArray(items) ? items : [];
-  document.getElementById('menuCount').textContent = menuItems.length;
-  var grid = document.getElementById('menuManageGrid');
-  if (!menuItems.length) { grid.innerHTML = '<div class="loading-state">Menu is empty</div>'; return; }
+  $id('menuCount').textContent = menuItems.length;
+  var grid = $id('menuManageGrid');
+  if (!menuItems.length) { grid.innerHTML = '<div class="loading-state">Menu is empty. Add your first item!</div>'; return; }
   grid.innerHTML = menuItems.map(function(item) {
     var imgHtml = item.image_url
       ? '<img src="' + item.image_url + '" style="width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;" onerror="this.style.display=\'none\'">'
       : '<span class="menu-emoji">' + (item.emoji || '🍽️') + '</span>';
     return '<div class="menu-item-row">' + imgHtml
       + '<div class="menu-info"><div class="menu-name">' + escHtml(item.name) + '</div><div class="menu-meta">' + catLabel(item.category) + ' · ₼' + Number(item.price).toFixed(2) + '</div></div>'
-      + '<button class="toggle ' + (item.available ? 'on' : '') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')"></button>'
+      + '<button class="toggle ' + (item.available ? 'on' : '') + '" onclick="toggleItem(\'' + item.id + '\',' + item.available + ')" title="' + (item.available ? 'Disable' : 'Enable') + '"></button>'
       + '<button class="refresh-btn" onclick=\'openEditMenu(' + JSON.stringify(item).replace(/'/g,"&#39;") + ')\'>Edit</button>'
       + '<button class="refresh-btn" style="border-color:var(--red-light);color:var(--red);" onclick="deleteMenuItem(\'' + item.id + '\')">Del</button>'
       + '</div>';
@@ -1251,6 +1334,8 @@ async function deleteMenuItem(id) {
   writeAudit('MENU_DELETE', 'Deleted: ' + (item ? item.name : id));
   showToast('Item deleted'); loadMenu();
 }
+
+// ── QR codes ──────────────────────────────────────────────────
 var STATIC_QR = [null,
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable1.png',
   'https://raw.githubusercontent.com/playerbeplaying/armood-baku/main/qr/realtable2.png',
@@ -1260,7 +1345,7 @@ var STATIC_QR = [null,
 ];
 async function loadQR() {
   var tables = await api('restaurant_tables?select=id,table_number,token&order=table_number');
-  var grid   = document.getElementById('qrGrid');
+  var grid   = $id('qrGrid');
   if (!Array.isArray(tables) || !tables.length) { grid.innerHTML = '<div class="loading-state">No tables found</div>'; return; }
   var html = '';
   for (var i = 0; i < tables.length; i++) {
@@ -1277,11 +1362,13 @@ function downloadQR(num) {
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
   showToast('Downloading QR for Table ' + num);
 }
+
+// ── Staff ─────────────────────────────────────────────────────
 var ROLE_LABELS = { director: 'Director', manager: 'Manager', chef: 'Chef', waiter: 'Waiter', custom: 'Host' };
 async function loadStaff() {
-  if (currentUser.role !== 'director') { document.getElementById('staffList').innerHTML = '<div class="loading-state">Directors only</div>'; return; }
+  if (currentUser.role !== 'director') { $id('staffList').innerHTML = '<div class="loading-state">Directors only</div>'; return; }
   var staff = await api('admins?select=*&order=created_at');
-  var list  = document.getElementById('staffList');
+  var list  = $id('staffList');
   if (!Array.isArray(staff) || !staff.length) { list.innerHTML = '<div class="loading-state">No admins found</div>'; return; }
   list.innerHTML = staff.map(function(s) {
     var ini = (s.full_name || s.email).split(' ').map(function(w) { return w[0]; }).join('').slice(0, 2).toUpperCase();
@@ -1289,38 +1376,30 @@ async function loadStaff() {
   }).join('');
 }
 function openAddStaff() {
-  ['staffName', 'staffEmail', 'staffPassword'].forEach(function(id) { document.getElementById(id).value = ''; });
-  document.getElementById('staffRole').value = 'waiter';
-  document.getElementById('staffModal').classList.add('open');
+  ['staffName', 'staffEmail', 'staffPassword'].forEach(function(id) { $id(id).value = ''; });
+  $id('staffRole').value = 'waiter';
+  $id('staffModal').classList.add('open');
 }
 async function saveStaff() {
-  var name  = document.getElementById('staffName').value.trim();
-  var email = document.getElementById('staffEmail').value.trim();
-  var pass  = document.getElementById('staffPassword').value;
-  var role  = document.getElementById('staffRole').value;
+  var name  = $id('staffName').value.trim();
+  var email = $id('staffEmail').value.trim();
+  var pass  = $id('staffPassword').value;
+  var role  = $id('staffRole').value;
   if (!name || !email || !pass) { showToast('Fill all fields'); return; }
   if (pass.length < 6) { showToast('Password min 6 chars'); return; }
   try {
     var res = await fetch(SUPABASE_URL + '/functions/v1/create-admin-user', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + authToken,
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
       body: JSON.stringify({ email: email, password: pass, full_name: name, role: role })
     });
     var data = await res.json();
-    if (!res.ok || data.error) {
-      showToast('Error: ' + (data.error || 'Unknown error'));
-      return;
-    }
+    if (!res.ok || data.error) { showToast('Error: ' + (data.error || 'Unknown error')); return; }
     writeAudit('STAFF_ADD', name + ' (' + email + ') as ' + role);
     showToast('Admin added!');
     closeModal('staffModal');
     loadStaff();
-  } catch(e) {
-    showToast('Error: ' + e.message);
-  }
+  } catch(e) { showToast('Error: ' + e.message); }
 }
 async function removeStaff(id, nameLabel) {
   if (!confirm('Remove ' + nameLabel + ' from admins?')) return;
@@ -1328,12 +1407,14 @@ async function removeStaff(id, nameLabel) {
   writeAudit('STAFF_REMOVE', 'Removed: ' + nameLabel);
   showToast('Removed'); loadStaff();
 }
+
+// ── Helpers ───────────────────────────────────────────────────
 function statusLabel(s) { return { pending: 'Pending', confirmed: 'Confirmed', ready: 'Ready', paid: 'Paid', cancelled: 'Cancelled' }[s] || s; }
 function catLabel(c)    { return { seheri: 'Breakfast', ana: 'Main', salatlar: 'Salads', icecekler: 'Drinks' }[c] || c; }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModal(id) { $id(id).classList.remove('open'); }
 function escHtml(s)     { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function showToast(msg) {
-  var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  var t = $id('toast'); t.textContent = msg; t.classList.add('show');
   setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 function downloadCSV(rows, filename) {
@@ -1344,14 +1425,18 @@ function downloadCSV(rows, filename) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
 document.querySelectorAll('.modal-overlay').forEach(function(ov) { ov.addEventListener('click', function(e) { if (e.target === ov) ov.classList.remove('open'); }); });
+
+// ── Auto-refresh ──────────────────────────────────────────────
 setInterval(function() {
-  if      (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
-  else if (document.getElementById('page-tables').classList.contains('active'))    loadTables();
-  else if (document.getElementById('page-orders').classList.contains('active'))    loadOrders();
-  else if (document.getElementById('page-waiter').classList.contains('active'))    loadWaiterCalls();
+  if      ($id('page-dashboard').classList.contains('active')) loadDashboard();
+  else if ($id('page-tables').classList.contains('active'))    loadTables();
+  else if ($id('page-orders').classList.contains('active'))    loadOrders();
+  else if ($id('page-waiter').classList.contains('active'))    loadWaiterCalls();
 }, 30000);
 setInterval(loadWaiterCalls, 15000);
+
 writeAudit('LOGIN', 'Admin session started');
 loadWaiterCalls();
 </script>
