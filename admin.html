@@ -352,6 +352,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       <div class="nav-item" data-page="dashboard"><span class="nav-item-icon">📊</span>Dashboard</div>
       <div class="nav-item" data-page="menu"><span class="nav-item-icon">🗒️</span>Menu</div>
       <div class="nav-item" data-page="qr"><span class="nav-item-icon">📱</span>QR Codes</div>
+      <div class="nav-item director-only" data-page="reservations" style="display:none"><span class="nav-item-icon">📅</span>Reservations <span class="nav-badge" id="resBadge" style="display:none">0</span></div>
       <div class="nav-item director-only" data-page="audit" style="display:none"><span class="nav-item-icon">📜</span>Audit Log</div>
       <div class="nav-item director-only" data-page="staff" style="display:none"><span class="nav-item-icon">👥</span>Staff</div>
     </div>
@@ -432,6 +433,22 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
       </div>
       <div class="card" id="auditList"><div class="loading-state">Loading...</div></div>
     </div>
+    <div class="page" id="page-reservations">
+  <div class="page-header">
+    <div class="page-title">Reservations</div>
+    <div class="page-sub">Incoming table booking requests</div>
+  </div>
+  <div class="orders-toolbar">
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="filterRes('all',this)">All</button>
+      <button class="ftab" onclick="filterRes('pending',this)">Pending</button>
+      <button class="ftab" onclick="filterRes('confirmed',this)">Confirmed</button>
+      <button class="ftab" onclick="filterRes('cancelled',this)">Cancelled</button>
+    </div>
+    <button class="refresh-btn" onclick="loadReservations()">↻ Refresh</button>
+  </div>
+  <div id="resGrid"><div class="loading-state">Loading...</div></div>
+</div>
     <div class="page" id="page-staff">
       <div class="page-header"><div class="page-title">Staff</div><div class="page-sub">Manage admin accounts</div></div>
       <div class="sec-header"><span class="sec-title">Admins</span><button class="btn-primary" onclick="openAddStaff()">+ Add Admin</button></div>
@@ -464,6 +481,7 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--ink);min-height
     <div class="more-menu-item" data-page="dashboard"><span class="more-menu-item-icon">📊</span>Dashboard</div>
     <div class="more-menu-item" data-page="menu"><span class="more-menu-item-icon">🗒️</span>Menu</div>
     <div class="more-menu-item" data-page="qr"><span class="more-menu-item-icon">📱</span>QR Codes</div>
+    <div class="more-menu-item director-only" data-page="reservations" style="display:none"><span class="more-menu-item-icon">📅</span>Reservations</div>
     <div class="more-menu-item director-only" data-page="audit" style="display:none"><span class="more-menu-item-icon">📜</span>Audit Log</div>
     <div class="more-menu-item director-only" data-page="staff" style="display:none"><span class="more-menu-item-icon">👥</span>Staff</div>
   </div>
@@ -724,6 +742,7 @@ function loadPage(p) {
   else if (p === 'menu')      loadMenu();
   else if (p === 'qr')        loadQR();
   else if (p === 'staff')     loadStaff();
+  else if (p === 'reservations') loadReservations();
   else if (p === 'audit')     loadAuditLog();
 }
 
@@ -1362,7 +1381,60 @@ function downloadQR(num) {
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
   showToast('Downloading QR for Table ' + num);
 }
+// ── Reservations ──────────────────────────────────────────────
+var _resFilter = 'all';
+var _resData = [];
 
+async function loadReservations() {
+  var path = _resFilter === 'all'
+    ? 'reservations?select=*&order=date.asc,time.asc&limit=200'
+    : 'reservations?select=*&status=eq.' + _resFilter + '&order=date.asc,time.asc&limit=200';
+  var data = await api(path);
+  _resData = Array.isArray(data) ? data : [];
+  renderResGrid();
+  var pending = _resData.filter(function(r){ return r.status === 'pending'; }).length;
+  var badge = document.getElementById('resBadge');
+  if (badge) { badge.textContent = pending; badge.style.display = pending ? 'inline-block' : 'none'; }
+}
+
+function renderResGrid() {
+  var grid = document.getElementById('resGrid');
+  if (!_resData.length) { grid.innerHTML = '<div class="orders-empty">No reservations found</div>'; return; }
+  var statusColor = { pending: '#fef3c7;color:#92400e', confirmed: 'var(--green-pale);color:var(--green)', cancelled: 'var(--red-light);color:var(--red)' };
+  grid.innerHTML = _resData.map(function(r) {
+    var sc = statusColor[r.status] || statusColor.pending;
+    return '<div class="order-row" style="cursor:default;">'
+      + '<div class="or-summary" style="cursor:default;flex-wrap:wrap;gap:0.4rem;">'
+        + '<span style="font-weight:700;font-size:0.88rem;min-width:90px;">📅 ' + escHtml(r.date) + '</span>'
+        + '<span style="font-size:0.82rem;color:var(--muted);min-width:50px;">🕐 ' + escHtml(r.time) + '</span>'
+        + '<span style="font-size:0.82rem;font-weight:600;flex:1;">👤 ' + escHtml(r.full_name || '') + '</span>'
+        + '<span style="font-size:0.78rem;color:var(--muted);">📞 ' + escHtml(r.phone || '') + '</span>'
+        + '<span style="font-size:0.78rem;color:var(--muted);">👥 ' + escHtml(r.party_size || '') + '</span>'
+        + (r.occasion ? '<span style="font-size:0.75rem;background:var(--bg2);padding:0.1rem 0.4rem;border-radius:5px;">🎉 ' + escHtml(r.occasion) + '</span>' : '')
+        + (r.notes ? '<span style="font-size:0.75rem;color:var(--muted);font-style:italic;">📝 ' + escHtml(r.notes) + '</span>' : '')
+        + '<span style="font-size:0.68rem;font-weight:700;padding:0.2rem 0.55rem;border-radius:20px;background:' + sc + ';">' + (r.status || 'pending') + '</span>'
+      + '</div>'
+      + (r.status === 'pending' ? '<div style="display:flex;gap:0.4rem;padding:0.5rem 0.9rem;border-top:1px solid var(--border);background:var(--bg);">'
+        + '<button class="oc-act-btn confirm" onclick="updateRes(\'' + r.id + '\',\'confirmed\')">✓ Confirm</button>'
+        + '<button class="oc-act-btn danger" onclick="updateRes(\'' + r.id + '\',\'cancelled\')">✕ Cancel</button>'
+        + '</div>' : '')
+    + '</div>';
+  }).join('');
+}
+
+async function updateRes(id, status) {
+  await api('reservations?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ status: status }) });
+  writeAudit('RESERVATION_' + status.toUpperCase(), 'Reservation #' + String(id).slice(-4) + ' → ' + status);
+  showToast('Reservation ' + status);
+  loadReservations();
+}
+
+function filterRes(s, btn) {
+  _resFilter = s;
+  document.querySelectorAll('#page-reservations .ftab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  loadReservations();
+}
 // ── Staff ─────────────────────────────────────────────────────
 var ROLE_LABELS = { director: 'Director', manager: 'Manager', chef: 'Chef', waiter: 'Waiter', custom: 'Host' };
 async function loadStaff() {
