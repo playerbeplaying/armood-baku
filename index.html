@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Restoran — Rəsmi Sayt</title>
-<meta name="description" content="Restoran — Şəhərin mərkəzindəki autentik mətbəx. Keyfiyyətli yemək və gözəl atmosferi.">
+<title>Khamzeli Restaurant - Official Website</title>
+<meta name="description" content="Khamzeli Restaurant — Authentic cuisine in the heart of the city. Quality food, wonderful atmosphere, live music, and easy online ordering.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -45,7 +45,16 @@ nav.scrolled{background:rgba(250,248,244,0.97);backdrop-filter:blur(16px);-webki
 .mobile-menu a{font-family:var(--ff-head);font-size:2.2rem;font-weight:600;color:var(--ink);text-decoration:none;transition:color 0.2s;}
 .mobile-menu a:hover{color:var(--terra);}
 
-#hero{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--ink);}
+#hero {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(rgba(30, 24, 16, 0.65), rgba(30, 24, 16, 0.85)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1600') no-repeat center center;
+  background-size: cover;
+}
 .hero-texture{position:absolute;inset:0;opacity:0.04;background-image:repeating-linear-gradient(45deg,var(--terra) 0,var(--terra) 1px,transparent 0,transparent 50%);background-size:20px 20px;}
 .hero-blob{position:absolute;border-radius:50%;filter:blur(80px);}
 .hero-blob-1{width:500px;height:500px;background:rgba(191,78,30,0.18);top:-10%;right:-5%;animation:drift 10s ease-in-out infinite;}
@@ -74,8 +83,7 @@ section{padding:7rem 3.5rem;}
 .about-grid{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;}
 .about-visual{position:relative;}
 .about-img-wrap{aspect-ratio:3/4;background:var(--bg2);border-radius:4px;border:1px solid var(--border);overflow:hidden;position:relative;}
-.about-img-fill{position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent,transparent 4px,rgba(191,78,30,0.04) 4px,rgba(191,78,30,0.04) 8px);display:flex;align-items:center;justify-content:center;}
-.about-icon{font-size:5rem;opacity:0.12;font-family:var(--ff-head);color:var(--terra);}
+.about-img-wrap img{width:100%;height:100%;object-fit:cover;}
 .about-tag{position:absolute;bottom:-1.2rem;right:-1.2rem;background:var(--terra);color:var(--white);padding:1.2rem 1.4rem;text-align:center;line-height:1.3;border-radius:4px;font-family:var(--ff-head);}
 .about-tag span{display:block;font-size:1.8rem;font-weight:700;}
 .about-tag small{font-size:0.8rem;font-weight:500;opacity:0.9;}
@@ -94,7 +102,6 @@ section{padding:7rem 3.5rem;}
 .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;}
 .menu-card{background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;position:relative;transition:border-color 0.25s,transform 0.25s,box-shadow 0.25s;}
 .menu-card:hover{border-color:rgba(191,78,30,0.35);transform:translateY(-3px);box-shadow:0 8px 24px rgba(30,24,16,0.07);}
-/* Image takes full width at top of card */
 .menu-card-img{width:100%;height:180px;background:var(--bg2);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
 .menu-card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s var(--ease);}
 .menu-card:hover .menu-card-img img{transform:scale(1.04);}
@@ -130,10 +137,14 @@ section{padding:7rem 3.5rem;}
 .g-cell{background:var(--bg3);overflow:hidden;position:relative;cursor:pointer;border-radius:6px;}
 .g-cell::after{content:'';position:absolute;inset:0;background:rgba(191,78,30,0);transition:background 0.3s;}
 .g-cell:hover::after{background:rgba(191,78,30,0.1);}
-.g-cell-fill{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:linear-gradient(135deg,var(--bg2),var(--bg3));transition:transform 0.5s var(--ease);}
-.g-cell:hover .g-cell-fill{transform:scale(1.04);}
-.g-cell-1{grid-column:1/3;grid-row:1/3;}.g-cell-1 .g-cell-fill{font-size:3.5rem;}
-.g-cell-4{grid-column:3/5;grid-row:2/4;}.g-cell-4 .g-cell-fill{font-size:3.5rem;}
+.g-cell img {
+  width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s var(--ease);
+}
+.g-cell:hover img {
+  transform:scale(1.05);
+}
+.g-cell-1{grid-column:1/3;grid-row:1/3;}
+.g-cell-4{grid-column:3/5;grid-row:2/4;}
 .gallery-caption{text-align:center;margin-top:1.5rem;font-size:0.76rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);}
 .gallery-caption a{color:var(--terra);text-decoration:none;border-bottom:1px solid rgba(191,78,30,0.3);}
 .gallery-caption a:hover{border-color:var(--terra);}
@@ -172,7 +183,6 @@ section{padding:7rem 3.5rem;}
 .order-item:hover{border-color:rgba(191,78,30,0.25);}
 .order-item.unavail{opacity:0.4;pointer-events:none;}
 
-/* Order item thumbnail */
 .order-item-thumb{width:52px;height:52px;border-radius:10px;overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0;}
 .order-item-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
 
@@ -193,7 +203,6 @@ section{padding:7rem 3.5rem;}
 .cart-list{display:flex;flex-direction:column;gap:0.85rem;margin-bottom:1.3rem;}
 .cart-line{display:flex;align-items:flex-start;gap:0.7rem;}
 
-/* Cart line thumbnail */
 .cart-line-thumb{width:36px;height:36px;border-radius:7px;overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
 .cart-line-thumb img{width:100%;height:100%;object-fit:cover;}
 
@@ -329,28 +338,28 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
 <body>
 
 <nav id="nav">
-  <a href="#hero" class="nav-logo">Rest<em>oran</em></a>
+  <a href="#hero" class="nav-logo">Kham<em>zeli</em></a>
   <ul class="nav-links">
-    <li><a href="#about">Haqqımızda</a></li>
-    <li><a href="#menu">Menyu</a></li>
-    <li><a href="#reviews">Rəylər</a></li>
-    <li><a href="#gallery">Foto</a></li>
-    <li><a href="#info">Əlaqə</a></li>
-    <li><a href="#order" class="nav-cta">Sifariş Ver</a></li>
+    <li><a href="#about">About Us</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#info">Contact</a></li>
+    <li><a href="#order" class="nav-cta">Order Online</a></li>
   </ul>
-  <button class="burger" id="burgerBtn" aria-label="Menyu">
+  <button class="burger" id="burgerBtn" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#about" class="mm-link">Haqqımızda</a>
-  <a href="#menu" class="mm-link">Menyu</a>
-  <a href="#reviews" class="mm-link">Rəylər</a>
-  <a href="#gallery" class="mm-link">Foto</a>
-  <a href="#info" class="mm-link">Əlaqə</a>
-  <a href="#reservation" class="mm-link">Rezervasiya</a>
-  <a href="#order" class="mm-link">Sifariş Ver</a>
+  <a href="#about" class="mm-link">About Us</a>
+  <a href="#menu" class="mm-link">Menu</a>
+  <a href="#reviews" class="mm-link">Reviews</a>
+  <a href="#gallery" class="mm-link">Gallery</a>
+  <a href="#info" class="mm-link">Contact</a>
+  <a href="#reservation" class="mm-link">Reservation</a>
+  <a href="#order" class="mm-link">Order Online</a>
 </div>
 
 <section id="hero">
@@ -358,12 +367,12 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
   <div class="hero-blob hero-blob-1"></div>
   <div class="hero-blob hero-blob-2"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">Bakı · 2018 · Bistro</div>
-    <h1 class="hero-title">Hər Dəfə<br><em>Fərqli</em> Bir Zövq</h1>
-    <p class="hero-sub">Ənənəvi mətbəxin müasir yorumu · Canlı musiqi · Xüsusi atmosfer</p>
+    <div class="hero-eyebrow">Baku · 2018 · Bistro</div>
+    <h1 class="hero-title">A <em>Different</em><br>Taste Every Time</h1>
+    <p class="hero-sub">A modern take on traditional cuisine · Live music · Special atmosphere</p>
     <div class="hero-actions">
-      <a href="#menu" class="btn-prim">Menyuya Bax ↓</a>
-      <a href="#reservation" class="btn-sec">Masa Ayırt</a>
+      <a href="#menu" class="btn-prim">View Menu ↓</a>
+      <a href="#reservation" class="btn-sec">Book Table</a>
     </div>
   </div>
 </section>
@@ -372,19 +381,19 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
   <div class="about-grid">
     <div class="about-visual reveal">
       <div class="about-img-wrap">
-        <div class="about-img-fill"><div class="about-icon">✦</div></div>
+        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=800" alt="Khamzeli Bistro">
       </div>
-      <div class="about-tag"><span>?.?</span><small>Google Reytinqi</small></div>
+      <div class="about-tag"><span>4.8</span><small>Google Rating</small></div>
     </div>
     <div class="reveal" style="transition-delay:0.15s">
-      <p class="section-label">Bizim hekayəmiz</p>
-      <h2 class="section-title">Torpağın<br><em>Ləzzəti</em></h2>
-      <p class="about-body">Restoran — şəhərin mərkəzindəki unikal məkan. Yerli mədəniyyət və ənənələrdən ilhamlanaraq, biz ənənəvi mətbəxi müasir estetika ilə birləşdiririk. Hər bir yeməyimiz keyfiyyətli inqrediyentlərdən, hər bir anınız isə səmimi xidmətdən ibarətdir.</p>
-      <p class="about-body" style="margin-top:0.9rem;">Həftə sonları canlı musiqi, gözəl interyeri və xüsusi atmosferiylə Restoran, xoş vaxt keçirmək üçün ideal seçimdir — istər romantik nahar, istər dostlarla görüş, istərsə də ailə şamı.</p>
+      <p class="section-label">Our story</p>
+      <h2 class="section-title">Taste of the<br><em>Land</em></h2>
+      <p class="about-body">Khamzeli Restaurant is a unique space located in the heart of the city. Inspired by local culture and traditions, we blend traditional cuisine with a modern aesthetic. Each of our dishes is crafted from high-quality ingredients, and every moment is complete with friendly service.</p>
+      <p class="about-body" style="margin-top:0.9rem;">With live music on weekends, a beautiful interior, and a special atmosphere, Khamzeli Restaurant is the perfect choice for a great time — whether it is a romantic dinner, a get-together with friends, or a family gathering.</p>
       <div class="about-stats">
-        <div class="stat-item"><span class="stat-num">???</span><span class="stat-label">Google Rəyi</span></div>
-        <div class="stat-item"><span class="stat-num">?.?</span><span class="stat-label">Orta Reytinq</span></div>
-        <div class="stat-item"><span class="stat-num">?+</span><span class="stat-label">İl Təcrübə</span></div>
+        <div class="stat-item"><span class="stat-num">480+</span><span class="stat-label">Google Reviews</span></div>
+        <div class="stat-item"><span class="stat-num">4.8</span><span class="stat-label">Average Rating</span></div>
+        <div class="stat-item"><span class="stat-num">6+</span><span class="stat-label">Years Experience</span></div>
       </div>
     </div>
   </div>
@@ -393,14 +402,14 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
 <section id="menu">
   <div class="menu-inner">
     <div class="menu-header reveal">
-      <p class="section-label">Dadlı seçimlər</p>
-      <h2 class="section-title">Bizim <em>Menyu</em></h2>
+      <p class="section-label">Tasty options</p>
+      <h2 class="section-title">Our <em>Menu</em></h2>
       <div class="menu-cats" id="menuCatBtns">
-        <button class="cat-btn active" data-cat="all">Hamısı</button>
-        <button class="cat-btn" data-cat="seheri">Səhər yeməyi</button>
-        <button class="cat-btn" data-cat="ana">Ana yeməklər</button>
-        <button class="cat-btn" data-cat="salatlar">Salatlar</button>
-        <button class="cat-btn" data-cat="icecekler">İçkilər</button>
+        <button class="cat-btn active" data-cat="all">All</button>
+        <button class="cat-btn" data-cat="seheri">Breakfast</button>
+        <button class="cat-btn" data-cat="ana">Main dishes</button>
+        <button class="cat-btn" data-cat="salatlar">Salads</button>
+        <button class="cat-btn" data-cat="icecekler">Drinks</button>
       </div>
     </div>
     <div class="menu-grid" id="menuGrid"><div class="menu-loading"><div class="spinner"></div></div></div>
@@ -410,77 +419,77 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
 <section id="reviews">
   <div class="reviews-inner">
     <div class="reviews-header reveal">
-      <p class="section-label">Müştərilərimiz deyir</p>
-      <h2 class="section-title">Rəylər &amp; <em>Fikirlər</em></h2>
+      <p class="section-label">What our customers say</p>
+      <h2 class="section-title">Reviews &amp; <em>Feedback</em></h2>
       <div class="rating-big">
-        <span class="rating-num">?.?</span>
-        <div><div class="stars">★★★★☆</div><div class="rating-count">??? Google rəyinə əsasən</div></div>
+        <span class="rating-num">4.8</span>
+        <div><div class="stars">★★★★★</div><div class="rating-count">Based on 480+ Google reviews</div></div>
       </div>
     </div>
     <div class="reviews-grid">
-      <div class="review-card reveal"><div class="review-stars">★★★★★</div><p class="review-text">Yemək mükəmməl idi. Hər bir yeməkdə xüsusi bir diqqət var idi — ləzzətli və aşpazın ustalığını nümayiş etdirən bir menyudur.</p><div class="review-author"><div class="review-avatar">AH</div><div><div class="review-name">Ad Soyad</div><div class="review-role">Yerli Bələdçi</div></div></div></div>
-      <div class="review-card reveal" style="transition-delay:0.1s"><div class="review-stars">★★★★★</div><p class="review-text">Atmosfer çox təsir edicidir — dostlarla toplaşmaq və ya romantik axşam üçün ideal yer. Həftə sonları canlı musiqi də var.</p><div class="review-author"><div class="review-avatar">NM</div><div><div class="review-name">Ad Soyad</div><div class="review-role">Yerli Bələdçi</div></div></div></div>
-      <div class="review-card reveal" style="transition-delay:0.2s"><div class="review-stars">★★★★★</div><p class="review-text">Ətrafın ən yaxşı restoranı. Rahat interyeri, mehriban heyəti və sürətli xidməti ilə həmişəlik sevimli yerimə çevrilib.</p><div class="review-author"><div class="review-avatar">EK</div><div><div class="review-name">Ad Soyad</div><div class="review-role">Yerli Bələdçi</div></div></div></div>
+      <div class="review-card reveal"><div class="review-stars">★★★★★</div><p class="review-text">The food was excellent. There was a special attention to detail in every dish — a delicious menu that demonstrates the chef's expertise.</p><div class="review-author"><div class="review-avatar">JD</div><div><div class="review-name">John Doe</div><div class="review-role">Local Guide</div></div></div></div>
+      <div class="review-card reveal" style="transition-delay:0.1s"><div class="review-stars">★★★★★</div><p class="review-text">The atmosphere is very impressive — an ideal place to gather with friends or for a romantic evening. There's also live music on weekends.</p><div class="review-author"><div class="review-avatar">SM</div><div><div class="review-name">Sarah Miller</div><div class="review-role">Local Guide</div></div></div></div>
+      <div class="review-card reveal" style="transition-delay:0.2s"><div class="review-stars">★★★★★</div><p class="review-text">The best restaurant around. Cozy interior, friendly staff, and fast service, it has become my all-time favorite place.</p><div class="review-author"><div class="review-avatar">EK</div><div><div class="review-name">Emily K.</div><div class="review-role">Local Guide</div></div></div></div>
     </div>
   </div>
 </section>
 
 <div id="gallery">
   <div class="gallery-inner">
-    <div class="gallery-header reveal"><p class="section-label">Bizdən şəkillər</p><h2 class="section-title">Fotoqalereya</h2></div>
+    <div class="gallery-header reveal"><p class="section-label">Our photos</p><h2 class="section-title">Photo Gallery</h2></div>
     <div class="gallery-mosaic reveal">
-      <div class="g-cell g-cell-1"><div class="g-cell-fill">🍽️</div></div>
-      <div class="g-cell g-cell-2"><div class="g-cell-fill">🥗</div></div>
-      <div class="g-cell g-cell-3"><div class="g-cell-fill">☕</div></div>
-      <div class="g-cell g-cell-4"><div class="g-cell-fill">🎵</div></div>
-      <div class="g-cell g-cell-5"><div class="g-cell-fill">🍷</div></div>
-      <div class="g-cell g-cell-6"><div class="g-cell-fill">🥘</div></div>
-      <div class="g-cell g-cell-7"><div class="g-cell-fill">🌿</div></div>
+      <div class="g-cell g-cell-1"><img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800" alt="Gourmet Ribs and Plate"></div>
+      <div class="g-cell g-cell-2"><img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=400" alt="Fresh Salad"></div>
+      <div class="g-cell g-cell-3"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=400" alt="Specialty Espresso"></div>
+      <div class="g-cell g-cell-4"><img src="https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&q=80&w=800" alt="Live Jazz Club"></div>
+      <div class="g-cell g-cell-5"><img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&q=80&w=400" alt="Wine Selection"></div>
+      <div class="g-cell g-cell-6"><img src="https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&q=80&w=400" alt="Delicious Traditional Pot"></div>
+      <div class="g-cell g-cell-7"><img src="https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=400" alt="Cozy Aesthetic Space"></div>
     </div>
-    <p class="gallery-caption">Bizi izləyin → <a href="#" target="_blank">@restoran.az</a></p>
+    <p class="gallery-caption">Follow us on → <a href="https://instagram.com/khamzeli.restaurant" target="_blank">@khamzeli.restaurant</a></p>
   </div>
 </div>
 
 <section id="info">
   <div class="info-inner">
     <div style="text-align:center;margin-bottom:3.5rem;" class="reveal">
-      <p class="section-label">Bizimlə əlaqə yaradın</p>
-      <h2 class="section-title">Əlaqə &amp; <em>Ünvan</em></h2>
+      <p class="section-label">Get in touch with us</p>
+      <h2 class="section-title">Contact &amp; <em>Address</em></h2>
     </div>
     <div class="info-grid">
       <div class="reveal">
         <div class="info-block">
-          <p class="info-block-title">📍 Ünvan</p>
-          <div class="info-row"><span class="info-icon">🏛</span><span class="info-val">Küçə ünvanı, Bakı, Azərbaycan</span></div>
-          <div class="info-row"><span class="info-icon">📞</span><span class="info-val"><a href="tel:+994000000000">0?? ??? ?? ??</a></span></div>
-          <div class="info-row"><span class="info-icon">📧</span><span class="info-val"><a href="mailto:info@restoran.az">info@restoran.az</a></span></div>
-          <div class="info-row"><span class="info-icon">🌐</span><span class="info-val"><a href="#" target="_blank">www.restoran.az</a></span></div>
+          <p class="info-block-title">📍 Address</p>
+          <div class="info-row"><span class="info-icon">🏛</span><span class="info-val">Street Address, Baku, Azerbaijan</span></div>
+          <div class="info-row"><span class="info-icon">📞</span><span class="info-val"><a href="tel:+994501234567">+994 50 123 45 67</a></span></div>
+          <div class="info-row"><span class="info-icon">📧</span><span class="info-val"><a href="mailto:info@khamzeli.com">info@khamzeli.com</a></span></div>
+          <div class="info-row"><span class="info-icon">🌐</span><span class="info-val"><a href="https://khamzeli.com" target="_blank">www.khamzeli.com</a></span></div>
         </div>
         <div class="info-block">
-          <p class="info-block-title">🕐 İş saatları</p>
+          <p class="info-block-title">🕐 Opening Hours</p>
           <div class="hours-grid">
-            <span class="hours-day">Bazar ertəsi</span><span class="hours-time">09:00 – 23:00</span>
-            <span class="hours-day">Çərşənbə axşamı</span><span class="hours-time">09:00 – 23:00</span>
-            <span class="hours-day">Çərşənbə</span><span class="hours-time">09:00 – 23:00</span>
-            <span class="hours-day">Cümə axşamı</span><span class="hours-time">09:00 – 23:00</span>
-            <span class="hours-day">Cümə</span><span class="hours-time">09:00 – 00:00</span>
-            <span class="hours-day hours-today">Şənbə</span><span class="hours-time hours-today">09:00 – 00:00 <span class="open-chip">Açıqdır</span></span>
-            <span class="hours-day">Bazar</span><span class="hours-time">10:00 – 22:00</span>
+            <span class="hours-day">Monday</span><span class="hours-time">09:00 – 23:00</span>
+            <span class="hours-day">Tuesday</span><span class="hours-time">09:00 – 23:00</span>
+            <span class="hours-day">Wednesday</span><span class="hours-time">09:00 – 23:00</span>
+            <span class="hours-day">Thursday</span><span class="hours-time">09:00 – 23:00</span>
+            <span class="hours-day">Friday</span><span class="hours-time">09:00 – 00:00</span>
+            <span class="hours-day hours-today">Saturday</span><span class="hours-time hours-today">09:00 – 00:00 <span class="open-chip">Open</span></span>
+            <span class="hours-day">Sunday</span><span class="hours-time">10:00 – 22:00</span>
           </div>
         </div>
         <div class="info-block">
-          <p class="info-block-title">✨ Xidmətlər</p>
-          <div class="info-row"><span class="info-icon">🍴</span><span class="info-val"><strong>İçəridə servis</strong> — Masa arxasında servis</span></div>
-          <div class="info-row"><span class="info-icon">📦</span><span class="info-val"><strong>Paket servis</strong> — Evə aparılması üçün</span></div>
-          <div class="info-row"><span class="info-icon">🛵</span><span class="info-val"><strong>Çatdırılma</strong> — Ünvanınıza gətirilir</span></div>
-          <div class="info-row"><span class="info-icon">💵</span><span class="info-val"><strong>Qiymət aralığı:</strong> ₼15 – ₼40 (nəfər başına)</span></div>
+          <p class="info-block-title">✨ Services</p>
+          <div class="info-row"><span class="info-icon">🍴</span><span class="info-val"><strong>Dine-in</strong> — Table service</span></div>
+          <div class="info-row"><span class="info-icon">📦</span><span class="info-val"><strong>Takeaway</strong> — For takeout</span></div>
+          <div class="info-row"><span class="info-icon">🛵</span><span class="info-val"><strong>Delivery</strong> — Transported to your address</span></div>
+          <div class="info-row"><span class="info-icon">💵</span><span class="info-val"><strong>Price scale:</strong> ₼15 – ₼40 (per person)</span></div>
         </div>
       </div>
       <div class="reveal" style="transition-delay:0.15s">
         <div class="map-placeholder">
           <div class="map-icon">📍</div>
-          <p>Küçə ünvanı, Bakı, Azərbaycan</p>
-          <a href="https://maps.google.com" target="_blank" class="map-btn">Google Maps-də Aç →</a>
+          <p>Street Address, Baku, Azerbaijan</p>
+          <a href="https://maps.google.com" target="_blank" class="map-btn">Open on Google Maps →</a>
         </div>
       </div>
     </div>
@@ -490,34 +499,34 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
 <section id="order">
   <div class="order-inner">
     <div class="order-header reveal">
-      <p class="section-label">Evdən sifariş edin</p>
-      <h2 class="section-title">Online <em>Sifariş</em></h2>
+      <p class="section-label">Order from home</p>
+      <h2 class="section-title">Online <em>Ordering</em></h2>
     </div>
     <div class="order-layout">
       <div>
         <div class="order-cats" id="orderCats">
-          <button class="cat-btn active" data-ocat="all">Hamısı</button>
-          <button class="cat-btn" data-ocat="seheri">Səhər yeməyi</button>
-          <button class="cat-btn" data-ocat="ana">Ana yeməklər</button>
-          <button class="cat-btn" data-ocat="salatlar">Salatlar</button>
-          <button class="cat-btn" data-ocat="icecekler">İçkilər</button>
+          <button class="cat-btn active" data-ocat="all">All</button>
+          <button class="cat-btn" data-ocat="seheri">Breakfast</button>
+          <button class="cat-btn" data-ocat="ana">Main dishes</button>
+          <button class="cat-btn" data-ocat="salatlar">Salads</button>
+          <button class="cat-btn" data-ocat="icecekler">Drinks</button>
         </div>
         <div class="order-items" id="orderItems"><div class="menu-loading"><div class="spinner"></div></div></div>
       </div>
       <div class="cart-panel reveal" style="transition-delay:0.15s">
-        <div class="cart-title">Səbət <span class="cart-badge" id="cartCount">0</span></div>
-        <div id="cartEmpty" class="cart-empty"><span class="cart-empty-icon">🛒</span>Səbətiniz boşdur.<br>Yemək seçin!</div>
+        <div class="cart-title">Cart <span class="cart-badge" id="cartCount">0</span></div>
+        <div id="cartEmpty" class="cart-empty"><span class="cart-empty-icon">🛒</span>Your cart is empty.<br>Choose some delicious food!</div>
         <div id="cartFilled" style="display:none">
           <div class="cart-list" id="cartList"></div>
           <hr class="cart-divider">
           <div class="cart-summary">
-            <div class="cart-row-s"><span>Aralıq cəm</span><span id="cartSubtotal">₼0.00</span></div>
-            <div class="cart-row-s"><span>Çatdırılma</span><span id="cartDelivery">₼3.00</span></div>
-            <div class="cart-row-s total"><span>Cəmi</span><span id="cartTotal">₼0.00</span></div>
+            <div class="cart-row-s"><span>Subtotal</span><span id="cartSubtotal">₼0.00</span></div>
+            <div class="cart-row-s"><span>Delivery</span><span id="cartDelivery">₼3.00</span></div>
+            <div class="cart-row-s total"><span>Total</span><span id="cartTotal">₼0.00</span></div>
           </div>
-          <p class="cart-delivery-note">Minimum sifariş: ₼15 · ~30–45 dəq</p>
-          <button class="cart-checkout" id="cartCheckout">Sifarişi Tamamla →</button>
-          <button class="cart-clear" id="cartClearBtn">Səbəti Sil</button>
+          <p class="cart-delivery-note">Minimum order: ₼15 · ~30–45 min</p>
+          <button class="cart-checkout" id="cartCheckout">Complete Order →</button>
+          <button class="cart-clear" id="cartClearBtn">Clear Cart</button>
         </div>
       </div>
     </div>
@@ -529,42 +538,42 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
     <button class="checkout-close" id="checkoutClose">✕</button>
     <div class="checkout-modal">
       <div id="checkoutFormWrap">
-        <h3>Sifarişi <em style="color:var(--terra);font-style:italic;">Tamamla</em></h3>
-        <p class="sub">Məlumatlarınızı daxil edin, tezliklə sizinlə əlaqə saxlayacağıq.</p>
+        <h3>Complete <em style="color:var(--terra);font-style:italic;">Order</em></h3>
+        <p class="sub">Please enter your details, we will contact you shortly.</p>
         <div class="checkout-type">
-          <button class="type-btn active" id="typeDelivery">🛵 Çatdırılma</button>
-          <button class="type-btn" id="typePickup">🏪 Özüm alacağam</button>
+          <button class="type-btn active" id="typeDelivery">🛵 Delivery</button>
+          <button class="type-btn" id="typePickup">🏪 Pickup</button>
         </div>
         <div class="checkout-form">
           <div class="checkout-row">
-            <div class="form-group"><label>Ad Soyad</label><input type="text" id="co-name" placeholder="Adınızı daxil edin" required></div>
-            <div class="form-group"><label>Telefon</label><input type="tel" id="co-phone" placeholder="050 000 00 00" required></div>
+            <div class="form-group"><label>Full Name</label><input type="text" id="co-name" placeholder="Enter your name" required></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="co-phone" placeholder="050 000 00 00" required></div>
           </div>
           <div class="form-group" id="co-addr-group">
-            <label>Çatdırılma Ünvanı</label>
-            <input type="text" id="co-address" placeholder="Küçə, ev nömrəsi, mənzil">
+            <label>Delivery Address</label>
+            <input type="text" id="co-address" placeholder="Street, house number, apartment">
           </div>
-          <div class="form-group"><label>Qeyd (ixtiyari)</label><textarea id="co-note" placeholder="Xüsusi istəklərinizi yazın..."></textarea></div>
+          <div class="form-group"><label>Notes (optional)</label><textarea id="co-note" placeholder="Write your special requests..."></textarea></div>
           <div class="checkout-order-summary">
-            <p>Sifarişiniz</p>
+            <p>Your Order</p>
             <div id="co-summary-lines"></div>
-            <div class="checkout-total-line"><span>Cəmi</span><span id="co-total">₼0.00</span></div>
+            <div class="checkout-total-line"><span>Total</span><span id="co-total">₼0.00</span></div>
           </div>
           <div class="form-group">
-            <label>Ödəniş üsulu</label>
+            <label>Payment method</label>
             <select id="co-payment">
-              <option value="cash">Nağd (çatdırılmada)</option>
-              <option value="card">Kart (çatdırılmada)</option>
+              <option value="cash">Cash (on delivery)</option>
+              <option value="card">Card (on delivery)</option>
             </select>
           </div>
-          <button class="checkout-submit" id="checkoutSubmit">Sifarişi Göndər →</button>
+          <button class="checkout-submit" id="checkoutSubmit">Send Order →</button>
         </div>
       </div>
       <div id="checkoutSuccess" class="success-screen" style="display:none">
         <span class="big-check">✅</span>
-        <h3>Sifariş Alındı!</h3>
-        <p>Sifarişiniz qəbul edildi.<br>Tezliklə sizinlə əlaqə saxlayacağıq.<br><br>Təxmini çatdırılma vaxtı: <strong style="color:var(--terra)">30–45 dəqiqə</strong></p>
-        <button class="new-order-btn" id="newOrderBtn">Yeni Sifariş Ver</button>
+        <h3>Order Received!</h3>
+        <p>Your order has been accepted.<br>We will contact you shortly.<br><br>Estimated delivery time: <strong style="color:var(--terra)">30–45 minutes</strong></p>
+        <button class="new-order-btn" id="newOrderBtn">Place a New Order</button>
       </div>
     </div>
   </div>
@@ -573,53 +582,53 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
 <section id="reservation">
   <div class="reservation-inner">
     <div class="reveal">
-      <p class="section-label">Yerinizi qoruyun</p>
-      <h2 class="section-title">Masa <em>Rezervasiyası</em></h2>
-      <p>Telefon ilə də əlaqə saxlaya bilərsiniz: <a href="tel:+994000000000" style="color:var(--terra)">0?? ??? ?? ??</a></p>
+      <p class="section-label">Reserve your table</p>
+      <h2 class="section-title">Table <em>Reservation</em></h2>
+      <p>You can also contact us by phone: <a href="tel:+994501234567" style="color:var(--terra)">+994 50 123 45 67</a></p>
     </div>
     <form class="res-form reveal" id="resForm" style="transition-delay:0.1s">
   <div class="form-group">
-    <label>Ad Soyad *</label>
-    <input type="text" name="full_name" placeholder="Adınızı daxil edin" required autocomplete="name">
+    <label>Full Name *</label>
+    <input type="text" name="full_name" placeholder="Enter your name" required autocomplete="name">
   </div>
   <div class="form-group">
-    <label>Telefon *</label>
+    <label>Phone Number *</label>
     <input type="tel" name="phone" placeholder="050 000 00 00" required autocomplete="tel">
   </div>
   <div class="form-group">
-    <label>Tarix *</label>
+    <label>Date *</label>
     <input type="date" name="date" required>
   </div>
   <div class="form-group">
-    <label>Saat *</label>
+    <label>Time *</label>
     <input type="time" name="time" min="09:00" max="23:00" required>
   </div>
   <div class="form-group">
-    <label>Nəfər sayı</label>
+    <label>Number of guests</label>
     <select name="party_size">
-      <option>1 nəfər</option>
-      <option>2 nəfər</option>
-      <option selected>3–4 nəfər</option>
-      <option>5–6 nəfər</option>
-      <option>7–10 nəfər</option>
-      <option>10+ nəfər</option>
+      <option>1 person</option>
+      <option>2 people</option>
+      <option selected>3–4 people</option>
+      <option>5–6 people</option>
+      <option>7–10 people</option>
+      <option>10+ people</option>
     </select>
   </div>
   <div class="form-group">
-    <label>Xüsusi istək</label>
+    <label>Occasion</label>
     <select name="occasion">
-      <option value="">Yoxdur</option>
-      <option value="Ad günü">Ad günü</option>
-      <option value="Romantik axşam">Romantik axşam</option>
-      <option value="İş görüşməsi">İş görüşməsi</option>
-      <option value="Ailə toplanışı">Ailə toplanışı</option>
+      <option value="">None</option>
+      <option value="Birthday">Birthday</option>
+      <option value="Romantic evening">Romantic evening</option>
+      <option value="Business meeting">Business meeting</option>
+      <option value="Family gathering">Family gathering</option>
     </select>
   </div>
   <div class="form-group full">
-    <label>Qeyd (ixtiyari)</label>
-    <textarea name="notes" placeholder="Əlavə istəklərinizi yazın..."></textarea>
+    <label>Notes (optional)</label>
+    <textarea name="notes" placeholder="Write your additional requests..."></textarea>
   </div>
-  <button type="submit" class="res-submit">Rezervasiya Et →</button>
+  <button type="submit" class="res-submit">Reserve Table →</button>
 </form>
   </div>
 </section>
@@ -627,30 +636,30 @@ footer{background:var(--ink);padding:4rem 3.5rem;}
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="#hero" class="nav-logo">Rest<em>oran</em></a>
-      <p>Şəhərin mərkəzindəki xüsusi bistro. Ənənəvi ləzzətlər, müasir atmosfer.</p>
+      <a href="#hero" class="nav-logo">Kham<em>zeli</em></a>
+      <p>A special bistro in the heart of the city. Traditional flavors, modern atmosphere.</p>
       <div class="footer-socials">
-        <a href="#" target="_blank" class="footer-social">ig</a>
-        <a href="tel:+994000000000" class="footer-social">☎</a>
+        <a href="https://instagram.com/khamzeli.restaurant" target="_blank" class="footer-social">ig</a>
+        <a href="tel:+994501234567" class="footer-social">☎</a>
         <a href="https://maps.google.com" target="_blank" class="footer-social">📍</a>
       </div>
     </div>
-    <div class="footer-col"><p class="footer-col-title">Keçidlər</p><ul><li><a href="#about">Haqqımızda</a></li><li><a href="#menu">Menyu</a></li><li><a href="#reviews">Rəylər</a></li><li><a href="#gallery">Foto</a></li><li><a href="#reservation">Rezervasiya</a></li></ul></div>
-    <div class="footer-col"><p class="footer-col-title">Xidmətlər</p><ul><li><a href="#">İçəridə servis</a></li><li><a href="#">Paket servis</a></li><li><a href="#">Çatdırılma</a></li><li><a href="#">Canlı musiqi</a></li><li><a href="#">Korporativ tədbirlər</a></li></ul></div>
-    <div class="footer-col"><p class="footer-col-title">Əlaqə</p><ul><li><a href="tel:+994000000000">0?? ??? ?? ??</a></li><li><a href="mailto:info@restoran.az">info@restoran.az</a></li><li><a href="https://maps.google.com" target="_blank">Küçə ünvanı, Bakı</a></li><li><a href="#order">Online Sifariş</a></li></ul></div>
+    <div class="footer-col"><p class="footer-col-title">Links</p><ul><li><a href="#about">About Us</a></li><li><a href="#menu">Menu</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#gallery">Gallery</a></li><li><a href="#reservation">Reservation</a></li></ul></div>
+    <div class="footer-col"><p class="footer-col-title">Services</p><ul><li><a href="#">Dine-in</a></li><li><a href="#">Takeaway</a></li><li><a href="#">Delivery</a></li><li><a href="#">Live Music</a></li><li><a href="#">Corporate Events</a></li></ul></div>
+    <div class="footer-col"><p class="footer-col-title">Contact</p><ul><li><a href="tel:+994501234567">+994 50 123 45 67</a></li><li><a href="mailto:info@khamzeli.com">info@khamzeli.com</a></li><li><a href="https://maps.google.com" target="_blank">Street Address, Baku</a></li><li><a href="#order">Online Ordering</a></li></ul></div>
   </div>
   <div class="footer-bottom">
-    <p>© <span id="copyrightYear"></span> Restoran. Bütün hüquqlar qorunur.</p>
-    <div class="footer-legal"><a href="privacy.html">Məxfilik Siyasəti</a><a href="terms.html">İstifadə Şərtləri</a></div>
-    <p>Bakı, Azərbaycan</p>
+    <p>© <span id="copyrightYear"></span> Khamzeli Restaurant. All rights reserved.</p>
+    <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms of Use</a></div>
+    <p>Baku, Azerbaijan</p>
   </div>
 </footer>
 
-<div id="cookieBanner" role="region" aria-label="Cookie razılığı">
-  <p>Bu sayt sifarişlər, rezervasiyalar və saytın düzgün işləməsi üçün brauzer yaddaşından (localStorage) istifadə edir. Daha ətraflı məlumat üçün <a href="privacy.html">Məxfilik Siyasətimizə</a> baxın.</p>
+<div id="cookieBanner" role="region" aria-label="Cookie Consent">
+  <p>This site uses browser storage (localStorage) for orders, reservations, and to ensure proper function of the site. For more info, see our <a href="#">Privacy Policy</a>.</p>
   <div class="cookie-actions">
-    <button class="cookie-btn-decline" id="cookieDecline">Rədd et</button>
-    <button class="cookie-btn-accept" id="cookieAccept">Qəbul et</button>
+    <button class="cookie-btn-decline" id="cookieDecline">Decline</button>
+    <button class="cookie-btn-accept" id="cookieAccept">Accept</button>
   </div>
 </div>
 
@@ -688,7 +697,6 @@ let orderType = 'delivery';
 let currentMenuCat = 'all';
 let currentOrderCat = 'all';
 
-// Helper: render thumbnail for an item
 function itemThumb(item, size = '52px', radius = '10px') {
   if (item.image_url) {
     return `<div class="order-item-thumb" style="width:${size};height:${size};border-radius:${radius};">
@@ -717,7 +725,7 @@ async function loadMenuItems() {
 function renderMenuSection(cat) {
   const grid = document.getElementById('menuGrid');
   const items = cat === 'all' ? liveMenuItems : liveMenuItems.filter(i => i.category === cat);
-  if (!items.length) { grid.innerHTML = '<p style="text-align:center;color:var(--muted);padding:3rem;font-size:0.9rem;">Bu kateqoriyada məhsul yoxdur</p>'; return; }
+  if (!items.length) { grid.innerHTML = '<p style="text-align:center;color:var(--muted);padding:3rem;font-size:0.9rem;">No products in this category</p>'; return; }
   grid.innerHTML = items.map(item => `
     <div class="menu-card reveal visible">
       <div class="menu-card-img">
@@ -726,7 +734,7 @@ function renderMenuSection(cat) {
           : ''}
         <span class="menu-card-emoji-fallback" style="${item.image_url ? 'display:none' : ''}">${item.emoji||'🍽️'}</span>
       </div>
-      ${item.is_popular ? '<span class="menu-card-tag">Populyar</span>' : ''}
+      ${item.is_popular ? '<span class="menu-card-tag">Popular</span>' : ''}
       <div class="menu-card-body">
         <div class="menu-card-name">${item.name}</div>
         <div class="menu-card-desc">${item.description || ''}</div>
@@ -738,7 +746,7 @@ function renderMenuSection(cat) {
 function renderOrderItems(cat) {
   const container = document.getElementById('orderItems');
   const items = cat === 'all' ? liveMenuItems : liveMenuItems.filter(i => i.category === cat);
-  if (!items.length) { container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:3rem;font-size:0.9rem;">Bu kateqoriyada məhsul yoxdur</p>'; return; }
+  if (!items.length) { container.innerHTML = '<p style="text-align:center;color:var(--muted);padding:3rem;font-size:0.9rem;">No products in this category</p>'; return; }
   container.innerHTML = items.map(item => {
     const qty = cart[item.id]?.qty || 0;
     return `<div class="order-item${!item.available ? ' unavail' : ''}">
@@ -778,7 +786,7 @@ function updateCartPanel() {
 
   document.getElementById('cartCount').textContent = count;
   document.getElementById('cartSubtotal').textContent = `₼${sub.toFixed(2)}`;
-  document.getElementById('cartDelivery').textContent = delivery > 0 ? `₼${delivery.toFixed(2)}` : 'Pulsuz';
+  document.getElementById('cartDelivery').textContent = delivery > 0 ? `₼${delivery.toFixed(2)}` : 'Free';
   document.getElementById('cartTotal').textContent = `₼${total.toFixed(2)}`;
 
   if (!items.length) {
@@ -793,7 +801,7 @@ function updateCartPanel() {
       ${cartLineThumb(item)}
       <div class="cart-line-info">
         <div class="cart-line-name">${item.name}</div>
-        <div class="cart-line-qty">${qty} ədəd</div>
+        <div class="cart-line-qty">${qty} pcs</div>
       </div>
       <span class="cart-line-price">₼${(qty * Number(item.price)).toFixed(2)}</span>
       <button class="cart-line-remove" onclick="removeItem('${item.id}')">✕</button>
@@ -802,7 +810,7 @@ function updateCartPanel() {
 
 function openCheckout() {
   const items = Object.values(cart);
-  if (!items.length) { showToast('Səbətiniz boşdur'); return; }
+  if (!items.length) { showToast('Your cart is empty'); return; }
   const sub = items.reduce((s, c) => s + c.qty * Number(c.item.price), 0);
   const delivery = orderType === 'delivery' ? DELIVERY_FEE : 0;
   const total = sub + delivery;
@@ -814,7 +822,7 @@ function openCheckout() {
   document.getElementById('checkoutFormWrap').style.display = 'block';
   document.getElementById('checkoutSuccess').style.display = 'none';
   const btn = document.getElementById('checkoutSubmit');
-  btn.disabled = false; btn.textContent = 'Sifarişi Göndər →';
+  btn.disabled = false; btn.textContent = 'Send Order →';
   document.getElementById('checkoutOverlay').classList.add('open');
 }
 
@@ -827,8 +835,8 @@ async function submitOrder() {
   const note = document.getElementById('co-note').value.trim();
   const payment = document.getElementById('co-payment').value;
 
-  if (!name) { showToast('Adınızı daxil edin', 'warn'); return; }
-  if (orderType === 'delivery' && !address) { showToast('Çatdırılma ünvanını daxil edin', 'warn'); return; }
+  if (!name) { showToast('Please enter your name', 'warn'); return; }
+  if (orderType === 'delivery' && !address) { showToast('Please enter your delivery address', 'warn'); return; }
 
   const items = Object.values(cart);
   const sub = items.reduce((s, c) => s + c.qty * Number(c.item.price), 0);
@@ -836,18 +844,18 @@ async function submitOrder() {
   const total = sub + delivery;
 
   const btn = document.getElementById('checkoutSubmit');
-  btn.disabled = true; btn.textContent = 'Göndərilir...';
+  btn.disabled = true; btn.textContent = 'Sending...';
 
   try {
     const orderRes = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
       method: 'POST',
       headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
       body: JSON.stringify({
-  table_id: null,
-  status: 'pending',
-  total,
-  notes: `${name} | ${phone} | ${payment} | ${address || 'Pickup'} | ${note} | ${orderType} | WEBSITE`
-})
+        table_id: null,
+        status: 'pending',
+        total,
+        notes: `${name} | ${phone} | ${payment} | ${address || 'Pickup'} | ${note} | ${orderType} | WEBSITE`
+      })
     });
     const oData = await orderRes.json();
     const orderId = oData[0]?.id;
@@ -864,8 +872,8 @@ async function submitOrder() {
     cart = {}; renderOrderItems(currentOrderCat); updateCartPanel();
     ['co-name','co-phone','co-address','co-note'].forEach(id => { document.getElementById(id).value = ''; });
   } catch (e) {
-    showToast('Xəta baş verdi. Yenidən cəhd edin.', 'warn');
-    btn.disabled = false; btn.textContent = 'Sifarişi Göndər →';
+    showToast('An error occurred. Please try again.', 'warn');
+    btn.disabled = false; btn.textContent = 'Send Order →';
   }
 }
 
@@ -889,7 +897,7 @@ document.getElementById('orderCats').addEventListener('click', e => {
 });
 
 document.getElementById('cartCheckout').addEventListener('click', openCheckout);
-document.getElementById('cartClearBtn').addEventListener('click', () => { cart = {}; renderOrderItems(currentOrderCat); updateCartPanel(); showToast('Səbət təmizləndi'); });
+document.getElementById('cartClearBtn').addEventListener('click', () => { cart = {}; renderOrderItems(currentOrderCat); updateCartPanel(); showToast('Cart cleared'); });
 document.getElementById('checkoutClose').addEventListener('click', closeCheckout);
 document.getElementById('checkoutOverlay').addEventListener('click', e => { if (e.target === document.getElementById('checkoutOverlay')) closeCheckout(); });
 
@@ -898,7 +906,7 @@ document.getElementById('typeDelivery').addEventListener('click', () => {
   document.getElementById('typeDelivery').classList.add('active');
   document.getElementById('typePickup').classList.remove('active');
   document.getElementById('co-addr-group').style.display = 'flex';
-  document.getElementById('co-payment').innerHTML = `<option value="cash">Nağd (çatdırılmada)</option><option value="card">Kart (çatdırılmada)</option>`;
+  document.getElementById('co-payment').innerHTML = `<option value="cash">Cash (on delivery)</option><option value="card">Card (on delivery)</option>`;
   updateCartPanel();
 });
 document.getElementById('typePickup').addEventListener('click', () => {
@@ -906,7 +914,7 @@ document.getElementById('typePickup').addEventListener('click', () => {
   document.getElementById('typePickup').classList.add('active');
   document.getElementById('typeDelivery').classList.remove('active');
   document.getElementById('co-addr-group').style.display = 'none';
-  document.getElementById('co-payment').innerHTML = `<option value="cash">Nağd</option><option value="card">Kart</option>`;
+  document.getElementById('co-payment').innerHTML = `<option value="cash">Cash</option><option value="card">Card</option>`;
   updateCartPanel();
 });
 
@@ -921,10 +929,10 @@ document.getElementById('resForm').addEventListener('submit', async function(e) 
   var date  = form.date.value;
   var time  = form.time.value;
   if (!name || !phone || !date || !time) {
-    showToast('Ad, telefon, tarix və saatı doldurun', 'warn'); return;
+    showToast('Please fill in name, phone, date, and time', 'warn'); return;
   }
   var submitBtn = form.querySelector('.res-submit');
-  submitBtn.disabled = true; submitBtn.textContent = 'Göndərilir...';
+  submitBtn.disabled = true; submitBtn.textContent = 'Sending...';
   try {
     var res = await fetch(`${SUPABASE_URL}/rest/v1/reservations`, {
       method: 'POST',
@@ -946,12 +954,12 @@ document.getElementById('resForm').addEventListener('submit', async function(e) 
       })
     });
     if (!res.ok) { var err = await res.json(); throw new Error(err.message || res.status); }
-    showToast('✓ Rezervasiya sorğunuz göndərildi!', 'success');
+    showToast('✓ Your reservation request has been submitted!', 'success');
     form.reset();
   } catch(err) {
-    showToast('Xəta: ' + err.message, 'warn');
+    showToast('Error: ' + err.message, 'warn');
   } finally {
-    submitBtn.disabled = false; submitBtn.textContent = 'Rezervasiya Et →';
+    submitBtn.disabled = false; submitBtn.textContent = 'Reserve Table →';
   }
 });
 window.addEventListener('scroll', () => {
